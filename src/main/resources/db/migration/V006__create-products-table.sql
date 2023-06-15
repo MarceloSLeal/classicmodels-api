@@ -1,5 +1,5 @@
 CREATE TABLE `products` (
-  `productCode` varchar(15) NOT NULL,
+  `productCode` int NOT NULL AUTO_INCREMENT,
   `productName` varchar(70) NOT NULL,
   `productLine` varchar(50) NOT NULL,
   `productScale` varchar(10) NOT NULL,

@@ -1,5 +1,5 @@
 CREATE TABLE `customers` (
-  `customerNumber` int NOT NULL,
+  `customerNumber` int NOT NULL AUTO_INCREMENT,
   `customerName` varchar(50) NOT NULL,
   `contactLastName` varchar(50) NOT NULL,
   `contactFirstName` varchar(50) NOT NULL,

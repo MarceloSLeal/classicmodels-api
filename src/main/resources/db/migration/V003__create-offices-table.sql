@@ -1,5 +1,5 @@
 CREATE TABLE `offices` (
-  `officeCode` varchar(10) NOT NULL,
+  `officeCode` int NOT NULL AUTO_INCREMENT,
   `city` varchar(50) NOT NULL,
   `phone` varchar(50) NOT NULL,
   `addressLine1` varchar(50) NOT NULL,

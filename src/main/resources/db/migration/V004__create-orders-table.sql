@@ -1,5 +1,5 @@
 CREATE TABLE `orders` (
-  `orderNumber` int NOT NULL,
+  `orderNumber` int NOT NULL AUTO_INCREMENT,
   `orderDate` date NOT NULL,
   `requiredDate` date NOT NULL,
   `shippedDate` date DEFAULT NULL,
