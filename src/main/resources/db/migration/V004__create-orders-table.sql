@@ -1,9 +1,9 @@
 CREATE TABLE `orders` (
-  `orderNumber` int NOT NULL AUTO_INCREMENT,
-  `orderDate` date NOT NULL,
-  `requiredDate` date NOT NULL,
-  `shippedDate` date DEFAULT NULL,
+  `order_number` int NOT NULL AUTO_INCREMENT,
+  `order_date` date NOT NULL,
+  `required_date` date NOT NULL,
+  `shipped_date` date DEFAULT NULL,
   `status` varchar(15) NOT NULL,
   `comments` text,
-  `customerNumber` int NOT NULL,
-  PRIMARY KEY (`orderNumber`));
+  `customer_number` int NOT NULL,
+  PRIMARY KEY (`order_number`));

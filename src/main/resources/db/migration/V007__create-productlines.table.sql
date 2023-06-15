@@ -1,6 +1,6 @@
 CREATE TABLE `productlines` (
-  `productLine` varchar(50) NOT NULL,
-  `textDescription` varchar(4000) DEFAULT NULL,
-  `htmlDescription` mediumtext,
+  `product_line` varchar(50) NOT NULL,
+  `text_description` varchar(4000) DEFAULT NULL,
+  `html_description` mediumtext,
   `image` mediumblob,
-  PRIMARY KEY (`productLine`));
+  PRIMARY KEY (`product_line`));
