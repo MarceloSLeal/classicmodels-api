@@ -6,7 +6,7 @@ CREATE TABLE `employees` (
   `email` varchar(100) NOT NULL,
   `office_code` int NOT NULL,
   `reports_to` int DEFAULT NULL,
-  `jobTitle` varchar(50) NOT NULL,
+  `job_title` varchar(50) NOT NULL,
   PRIMARY KEY (`employee_number`),
   KEY `reportsTo` (`reports_to`),
   CONSTRAINT `employees_ibfk_1` FOREIGN KEY (`reports_to`) REFERENCES `employees` (`employee_number`)
