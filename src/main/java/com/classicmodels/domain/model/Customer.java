@@ -1,8 +1,21 @@
 package com.classicmodels.domain.model;
 
+import jakarta.persistence.*;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@Getter
+@Setter
+@Entity
+@Table(name = "customers")
 public class Customer {
 
-    private int customerNumber;
+    @EqualsAndHashCode.Include
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer customerNumber;
     private String customerName;
     private String contactLastName;
     private String contactFirstName;
@@ -13,8 +26,8 @@ public class Customer {
     private String state;
     private String postalCode;
     private String country;
-    private int salesRepEmployeeNumber;
-    private double creditLimit;
+    private Integer salesRepEmployeeNumber;
+    private Double creditLimit;
 
 
 }

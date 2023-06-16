@@ -1,15 +1,29 @@
 package com.classicmodels.domain.model;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@Getter
+@Setter
+@Entity
+@Table(name = "products")
 public class Products {
 
-    private String productCode;
+    @EqualsAndHashCode.Include
+    @Id
+    private Integer productCode;
     private String productName;
     private String productLine;
     private String productScale;
     private String productVendor;
     private String productDescription;
-    private int quantityInStock;
-    private double buyPrice;
-    private double MSRP;
+    private Integer quantityInStock;
+    private Double buyPrice;
+    private Double MSRP;
 
 }
