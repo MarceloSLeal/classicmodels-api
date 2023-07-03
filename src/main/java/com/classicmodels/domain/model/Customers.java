@@ -1,10 +1,13 @@
 package com.classicmodels.domain.model;
 
+import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.List;
 
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Getter
@@ -12,6 +15,10 @@ import lombok.Setter;
 @Entity
 @Table(name = "customers")
 public class Customer {
+
+    @ManyToOne
+    @JoinColumn(name = "salesRepEmployeeNumber")
+    private Employees employees;
 
     @EqualsAndHashCode.Include
     @Id
@@ -23,11 +30,9 @@ public class Customer {
     private String customerName;
 
     @NotBlank
-    @Size(max = 50)
     private String contactLastName;
 
     @NotBlank
-    @Size(max = 50)
     private String contactFirstName;
 
     @NotBlank
@@ -36,10 +41,9 @@ public class Customer {
     private String phone;
 
     @NotBlank
-    @Size(max = 50)
     private String addressLine1;
 
-    @Size(max = 50)
+    @NotBlank
     private String addressLine2;
 
     @NotBlank
@@ -60,7 +64,10 @@ public class Customer {
     @DecimalMax(value = "9999999999.99", inclusive = true)
     private Double creditLimit;
 
-    @Pattern(regexp = "[0-9]{10}")
-    private Integer salesRepEmployeeNumber;
+    //TODO create a validation on service to verify if the salesRepEmployeeNumber came from the POST exists on table Employees and
+    //TODO and if its null
+//    @Positive
+//    @Digits(integer = 10, fraction = 0)
+//    private Integer salesRepEmployeeNumber;
 
 }
