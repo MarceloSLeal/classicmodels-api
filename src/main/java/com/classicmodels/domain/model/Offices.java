@@ -5,12 +5,18 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Getter
 @Setter
 @Entity
 @Table(name = "offices")
 public class Offices {
+
+//    @OneToMany
+//    private List<Employees> employees;
 
     @EqualsAndHashCode.Include
     @Id

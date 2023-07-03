@@ -1,9 +1,9 @@
 package com.classicmodels.domain.repository;
 
-import com.classicmodels.domain.model.Customer;
+import com.classicmodels.domain.model.Customers;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface CustomerRepository extends JpaRepository<Customer, Integer> {
+public interface CustomersRepository extends JpaRepository<Customers, Integer> {
 }

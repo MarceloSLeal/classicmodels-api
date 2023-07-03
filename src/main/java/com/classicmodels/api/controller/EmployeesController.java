@@ -1,7 +1,7 @@
 package com.classicmodels.api.controller;
 
 import com.classicmodels.domain.model.Employees;
-import com.classicmodels.domain.repository.EmployeeRepository;
+import com.classicmodels.domain.repository.EmployeesRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,11 +14,11 @@ import java.util.List;
 @RequestMapping("/employees")
 public class EmployeesController {
 
-    private EmployeeRepository employeeRepository;
+    private EmployeesRepository employeesRepository;
 
     @GetMapping
     public List<Employees> listar() {
-        return employeeRepository.findAll();
+        return employeesRepository.findAll();
     }
 
 }

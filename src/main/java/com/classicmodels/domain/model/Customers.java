@@ -1,23 +1,23 @@
 package com.classicmodels.domain.model;
 
-import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.util.List;
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
 
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Getter
 @Setter
 @Entity
 @Table(name = "customers")
-public class Customer {
+public class Customers {
 
     @ManyToOne
     @JoinColumn(name = "salesRepEmployeeNumber")
+    @NotFound(action = NotFoundAction.IGNORE)
     private Employees employees;
 
     @EqualsAndHashCode.Include
