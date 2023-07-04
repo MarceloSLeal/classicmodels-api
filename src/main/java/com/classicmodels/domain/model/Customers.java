@@ -27,6 +27,7 @@ public class Customers {
 
     @Email
     @Size(max = 50)
+    @Column(unique = true)
     private String customerEmail;
 
     @NotBlank
@@ -47,7 +48,6 @@ public class Customers {
     @NotBlank
     private String addressLine1;
 
-    @NotBlank
     private String addressLine2;
 
     @NotBlank
