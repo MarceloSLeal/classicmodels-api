@@ -6,6 +6,7 @@ import com.classicmodels.domain.model.Employees;
 import com.classicmodels.domain.repository.CustomersRepository;
 import com.classicmodels.domain.repository.EmployeesRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,21 +19,6 @@ public class CustomerCatalogService {
 
     private CustomersRepository customersRepository;
     private EmployeesRepository employeesRepository;
-
-    public List<Customers> buscarTodos() {
-        return customersRepository.findAll();
-    }
-
-    public Customers buscarPorId(Integer customerNumber) {
-        return customersRepository.findById(customerNumber)
-                .orElseThrow(() -> new EntityNotFoundException("Customer not Found"));
-    }
-
-    public Customers buscarPorEmail(String customerEmail) {
-        Customers customers = new Customers();
-        customers = customersRepository.findByCustomerEmail(customerEmail);
-        return  customers;
-    }
 
     @Transactional
     public Customers salvar(Customers customers) {
@@ -50,5 +36,18 @@ public class CustomerCatalogService {
 
         return null;
     }
+
+    @Transactional
+    public ResponseEntity<Void> excluir(Integer customerNumber) {
+
+        if (!customersRepository.existsById(customerNumber)) {
+            return ResponseEntity.notFound().build();
+        }
+
+        customersRepository.deleteById(customerNumber);
+
+        return ResponseEntity.noContent().build();
+    }
+
 
 }
