@@ -22,9 +22,9 @@ select employeeNumber, lastName, firstName, extension, email, officeCode, report
 from classicmodels.employees;
 
 ##customers
-insert into customers (customer_number, customer_name, contact_last_name, contact_first_name, phone,
+insert into customers (customer_number, customer_email, customer_name, contact_last_name, contact_first_name, phone,
 address_line1, address_line2, city, state, postal_code, country, sales_rep_employee_number, credit_limit)
-select customerNumber, customerName, contactLastName, contactFirstName, phone, addressLine1, addressLine2,
+select customerNumber, customerEmail, customerName, contactLastName, contactFirstName, phone, addressLine1, addressLine2,
 city, state, postalCode, country, salesRepEmployeeNumber, creditLimit
 from classicmodels.customers;
 

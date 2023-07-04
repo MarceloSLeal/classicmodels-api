@@ -1,5 +1,6 @@
 CREATE TABLE `customers` (
   `customer_number` int NOT NULL AUTO_INCREMENT,
+  `customer_email` varchar(50) NOT NULL,
   `customer_name` varchar(50) NOT NULL,
   `contact_last_name` varchar(50) NOT NULL,
   `contact_first_name` varchar(50) NOT NULL,
@@ -12,4 +13,4 @@ CREATE TABLE `customers` (
   `country` varchar(50) NOT NULL,
   `credit_limit` decimal(10,2) DEFAULT NULL,
   `sales_rep_employee_number` int DEFAULT NULL,
-  PRIMARY KEY (`customer_number`) );
+  PRIMARY KEY (`customer_number`, `customer_email`) );
