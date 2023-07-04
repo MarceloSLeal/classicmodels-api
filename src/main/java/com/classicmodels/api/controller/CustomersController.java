@@ -5,8 +5,6 @@ import com.classicmodels.domain.repository.CustomersRepository;
 import com.classicmodels.domain.service.CustomerCatalogService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import org.hibernate.annotations.NotFound;
-import org.hibernate.annotations.NotFoundAction;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,8 +24,13 @@ public class CustomersController {
     }
 
     @GetMapping("/{customerNumber}")
-    public Customers listarPorId(@PathVariable Integer customerNumber) {
+    public Customers buscarPorId(@PathVariable Integer customerNumber) {
         return customerCatalogService.buscarPorId(customerNumber);
+    }
+
+    @GetMapping("/findbyemail/{customerEmail}")
+    public Customers buscarPorEmail(@PathVariable String customerEmail) {
+        return customerCatalogService.buscarPorEmail(customerEmail);
     }
 
     @PostMapping
