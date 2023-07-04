@@ -25,6 +25,10 @@ public class Customers {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer customerNumber;
 
+    @Email
+    @Size(max = 50)
+    private String customerEmail;
+
     @NotBlank
     @Size(max = 50)
     private String customerName;
