@@ -1,5 +1,6 @@
 package com.classicmodels.api.controller;
 
+import com.classicmodels.domain.exception.BusinessException;
 import com.classicmodels.domain.model.Customers;
 import com.classicmodels.domain.repository.CustomersRepository;
 import com.classicmodels.domain.service.CustomerCatalogService;
@@ -10,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @AllArgsConstructor
 @RestController
@@ -50,19 +52,32 @@ public class CustomersController {
     @PutMapping("/{customerNumber}")
     public ResponseEntity<Customers> atualizar(@PathVariable Integer customerNumber, @Valid @RequestBody Customers customers) {
 
+        boolean customerEmail = customersRepository.findByCustomerEmail(customers.getCustomerEmail()).isEmpty();
+
         if (!customersRepository.existsById(customerNumber)) {
             return ResponseEntity.notFound().build();
         }
 
+        if (!customerEmail) {
+            throw new BusinessException("There is already a customer registered with this email");
+        }
+
         customers.setCustomerNumber(customerNumber);
-        customerCatalogService.salvar(customers);
+        customers = customerCatalogService.salvar(customers);
 
         return ResponseEntity.ok(customers);
     }
 
     @DeleteMapping("/{customerNumber}")
-    public void excluir(@PathVariable Integer customerNumber) {
+    public ResponseEntity<Void> excluir(@PathVariable Integer customerNumber) {
+
+        if(!customersRepository.existsById(customerNumber)) {
+            return ResponseEntity.notFound().build();
+        }
+
         customerCatalogService.excluir(customerNumber);
+
+        return ResponseEntity.noContent().build();
     }
 
 }
