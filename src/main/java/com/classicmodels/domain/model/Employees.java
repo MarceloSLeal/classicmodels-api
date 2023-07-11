@@ -16,13 +16,16 @@ import java.util.List;
 @Table(name = "employees")
 public class Employees {
 
-//    @ManyToOne
+//    @ManyToOne()
 //    @JoinColumn(name = "officeCode")
 //    private Offices offices;
 
 //    @ManyToOne
 //    @JoinColumn(name = "reportsTo")
 //    private Employees manager;
+
+    @OneToMany(mappedBy = "employees")
+    private List<Customers> customers = new ArrayList<>();
 
     @EqualsAndHashCode.Include
     @Id
@@ -34,8 +37,8 @@ public class Employees {
     private String extension;
     private String email;
 
-    @Column(insertable = false, updatable = false)
-    private Integer officeCode;
+//    @Column(insertable = false, updatable = false)
+//    private Integer officeCode;
 
     private Integer reportsTo;
     private String jobTitle;

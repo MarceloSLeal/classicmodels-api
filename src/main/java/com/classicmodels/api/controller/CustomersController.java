@@ -4,6 +4,7 @@ import com.classicmodels.domain.exception.BusinessException;
 import com.classicmodels.domain.model.Customers;
 import com.classicmodels.domain.repository.CustomersRepository;
 import com.classicmodels.domain.service.CustomerCatalogService;
+import com.classicmodels.domain.service.EmployeesCatalogService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -21,10 +22,13 @@ public class CustomersController {
     private CustomersRepository customersRepository;
     private CustomerCatalogService customerCatalogService;
 
+    private EmployeesCatalogService employeesCatalogService;
+
     @GetMapping
     public List<Customers> listar() {
         return customersRepository.findAll();
     }
+
 
     @GetMapping("/{customerNumber}")
     public ResponseEntity<Customers> buscarPorId(@PathVariable Integer customerNumber) {
