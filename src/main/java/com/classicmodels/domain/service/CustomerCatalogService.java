@@ -22,7 +22,7 @@ public class CustomerCatalogService {
     @Transactional
     public Customers salvar(Customers customers) {
 
-        Integer employeeNumber = customers.getEmployees().getEmployeeNumber();
+        Integer employeeNumber = customers.getEmployees().getId();
         boolean customerEmail = customersRepository.findByCustomerEmail(customers.getCustomerEmail())
                 .stream()
                 .anyMatch(customerExists -> !customerExists.equals(customers));

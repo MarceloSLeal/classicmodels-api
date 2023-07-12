@@ -21,7 +21,7 @@ public class Offices {
     @EqualsAndHashCode.Include
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer officeCode;
+    private Integer id;
     private String city;
     private String phone;
     private String addressLine1;

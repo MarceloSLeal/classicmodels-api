@@ -30,7 +30,7 @@ public class Employees {
     @EqualsAndHashCode.Include
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer employeeNumber;
+    private Integer id;
 
     private String lastName;
     private String firstName;

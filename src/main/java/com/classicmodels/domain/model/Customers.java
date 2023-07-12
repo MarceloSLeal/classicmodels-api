@@ -18,14 +18,14 @@ import org.hibernate.annotations.NotFoundAction;
 public class Customers {
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "employeeNumber")
+    @JoinColumn(name = "employee_id")
 //    @NotFound(action = NotFoundAction.IGNORE)
     private Employees employees;
 
     @EqualsAndHashCode.Include
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer customerNumber;
+    private Integer id;
 
     @Email
     @Size(max = 50)

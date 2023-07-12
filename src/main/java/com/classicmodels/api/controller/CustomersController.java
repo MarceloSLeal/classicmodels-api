@@ -66,7 +66,7 @@ public class CustomersController {
             throw new BusinessException("There is already a customer registered with this email");
         }
 
-        customers.setCustomerNumber(customerNumber);
+        customers.setId(customerNumber);
         customers = customerCatalogService.salvar(customers);
 
         return ResponseEntity.ok(customers);
