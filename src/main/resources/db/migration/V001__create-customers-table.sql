@@ -1,7 +1,7 @@
 CREATE TABLE `customers` (
-  `customer_number` int NOT NULL AUTO_INCREMENT,
-  `customer_email` varchar(50) NOT NULL UNIQUE,
-  `customer_name` varchar(50) NOT NULL,
+  `id` int NOT NULL AUTO_INCREMENT,
+  `email` varchar(50) NOT NULL UNIQUE,
+  `name` varchar(50) NOT NULL,
   `contact_last_name` varchar(50) NOT NULL,
   `contact_first_name` varchar(50) NOT NULL,
   `phone` varchar(50) NOT NULL,
@@ -12,5 +12,5 @@ CREATE TABLE `customers` (
   `postal_code` varchar(15) DEFAULT NULL,
   `country` varchar(50) NOT NULL,
   `credit_limit` decimal(10,2) DEFAULT NULL,
-  `sales_rep_employee_number` int DEFAULT NULL,
-  PRIMARY KEY (`customer_number`) );
+  `employee_id` int DEFAULT NULL,
+  PRIMARY KEY (`id`) );
