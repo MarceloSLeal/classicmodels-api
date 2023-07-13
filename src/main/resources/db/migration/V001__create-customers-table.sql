@@ -12,5 +12,5 @@ CREATE TABLE `customers` (
   `postal_code` varchar(15) DEFAULT NULL,
   `country` varchar(50) NOT NULL,
   `credit_limit` decimal(10,2) DEFAULT NULL,
-  `employee_id` int DEFAULT NULL,
+  `employees_id` int DEFAULT NULL,
   PRIMARY KEY (`id`) );

@@ -16,14 +16,14 @@ public class Products {
 
     @EqualsAndHashCode.Include
     @Id
-    private Integer productCode;
-    private String productName;
+    private Integer id;
+    private String name;
     private String productLine;
-    private String productScale;
-    private String productVendor;
-    private String productDescription;
+    private String scale;
+    private String vendor;
+    private String description;
     private Integer quantityInStock;
     private Double buyPrice;
-    private Double MSRP;
+    private Double msrp;
 
 }

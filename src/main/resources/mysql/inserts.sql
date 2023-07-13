@@ -23,7 +23,7 @@ from classicmodels.employees;
 
 ##customers
 insert into customers (id, email, name, contact_last_name, contact_first_name, phone,
-address_line1, address_line2, city, state, postal_code, country, employee_id, credit_limit)
+address_line1, address_line2, city, state, postal_code, country, employees_id, credit_limit)
 select id, email, name, contact_last_name, contact_first_name, phone, address_line1, address_line2,
 city, state, postal_code, country, employee_id, credit_limit
 from classicmodels.customers;

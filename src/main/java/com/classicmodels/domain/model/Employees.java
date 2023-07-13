@@ -1,10 +1,13 @@
 package com.classicmodels.domain.model;
 
 import com.classicmodels.domain.service.CustomerCatalogService;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,8 +40,8 @@ public class Employees {
     private String extension;
     private String email;
 
-//    @Column(insertable = false, updatable = false)
-//    private Integer officeCode;
+    @Column(insertable = false, updatable = false)
+    private Integer officeId;
 
     private Integer reportsTo;
     private String jobTitle;

@@ -23,7 +23,7 @@ public class CustomerCatalogService {
     public Customers salvar(Customers customers) {
 
         Integer employeeNumber = customers.getEmployees().getId();
-        boolean customerEmail = customersRepository.findByCustomerEmail(customers.getCustomerEmail())
+        boolean customerEmail = customersRepository.findByEmail(customers.getEmail())
                 .stream()
                 .anyMatch(customerExists -> !customerExists.equals(customers));
 

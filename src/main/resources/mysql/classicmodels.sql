@@ -44,11 +44,11 @@ CREATE TABLE `customers` (
   `state` varchar(50) DEFAULT NULL,
   `postal_code` varchar(15) DEFAULT NULL,
   `country` varchar(50) NOT NULL,
-  `employee_id` int DEFAULT NULL,
+  `employees_id` int DEFAULT NULL,
   `credit_limit` decimal(10,2) DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `employee_id` (`employee_id`),
-  CONSTRAINT `customers_ibfk_1` FOREIGN KEY (`employee_id`) REFERENCES `employees` (`id`)
+  KEY `employees_id` (`employees_id`),
+  CONSTRAINT `customers_ibfk_1` FOREIGN KEY (`employees_id`) REFERENCES `employees` (`id`)
 ) engine=InnoDB default charset=UTF8MB4;
 
 /*Data for the table `customers` */

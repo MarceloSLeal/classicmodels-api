@@ -17,15 +17,15 @@ public class Orders {
     @EqualsAndHashCode.Include
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer orderNumber;
+    private Integer id;
     @Temporal(TemporalType.DATE)
-    private Date orderDate;
+    private Date date;
     @Temporal(TemporalType.DATE)
     private Date requiredDate;
     @Temporal(TemporalType.DATE)
     private Date shippedDate;
     private String status;
     private String comments;
-    private Integer customerNumber;
+    private Integer customerId;
 
 }

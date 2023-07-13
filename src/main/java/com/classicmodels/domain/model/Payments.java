@@ -17,7 +17,7 @@ public class Payments {
     @EqualsAndHashCode.Include
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer customerNumber;
+    private Integer customerId;
     private String checkNumber;
     @Temporal(TemporalType.DATE)
     private Date paymentDate;

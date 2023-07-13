@@ -1,5 +1,6 @@
 package com.classicmodels.api.controller;
 
+import com.classicmodels.api.model.CustomCustomer;
 import com.classicmodels.domain.exception.BusinessException;
 import com.classicmodels.domain.model.Customers;
 import com.classicmodels.domain.repository.CustomersRepository;
@@ -11,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -41,7 +43,7 @@ public class CustomersController {
     @GetMapping("/findbyemail/{customerEmail}")
     public ResponseEntity<Customers> buscarPorEmail(@PathVariable String customerEmail) {
 
-        return customersRepository.findByCustomerEmail(customerEmail)
+        return customersRepository.findByEmail(customerEmail)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
 
@@ -56,7 +58,7 @@ public class CustomersController {
     @PutMapping("/{customerNumber}")
     public ResponseEntity<Customers> atualizar(@PathVariable Integer customerNumber, @Valid @RequestBody Customers customers) {
 
-        boolean customerEmail = customersRepository.findByCustomerEmail(customers.getCustomerEmail()).isEmpty();
+        boolean customerEmail = customersRepository.findByEmail(customers.getEmail()).isEmpty();
 
         if (!customersRepository.existsById(customerNumber)) {
             return ResponseEntity.notFound().build();
@@ -82,6 +84,27 @@ public class CustomersController {
         customerCatalogService.excluir(customerNumber);
 
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/custom")
+    public List<CustomCustomer> listCustom() {
+        List<Customers> customers = customersRepository.findAll();
+        List<CustomCustomer> customCustomers = new ArrayList<>();
+        Integer employeeID;
+
+        for (Customers customers1 : customers) {
+            employeeID = customers1.getEmployees().getId() != null ? customers1.getEmployees().getId() : null;
+
+            CustomCustomer cc = new CustomCustomer(
+                    customers1.getId(),
+                    customers1.getName(),
+                    customers1.getEmail(),
+                    employeeID);
+
+            customCustomers.add(cc);
+        }
+
+        return customCustomers;
     }
 
 }
