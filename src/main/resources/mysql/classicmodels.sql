@@ -44,11 +44,11 @@ CREATE TABLE `customers` (
   `state` varchar(50) DEFAULT NULL,
   `postal_code` varchar(15) DEFAULT NULL,
   `country` varchar(50) NOT NULL,
-  `employees_id` int DEFAULT NULL,
+  `employee_id` int DEFAULT NULL,
   `credit_limit` decimal(10,2) DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `employees_id` (`employees_id`),
-  CONSTRAINT `customers_ibfk_1` FOREIGN KEY (`employees_id`) REFERENCES `employees` (`id`)
+  KEY `employee_id` (`employee_id`),
+  CONSTRAINT `customers_ibfk_1` FOREIGN KEY (`employee_id`) REFERENCES `employees` (`id`)
 ) engine=InnoDB default charset=UTF8MB4;
 
 /*Data for the table `customers` */
@@ -6422,9 +6422,9 @@ DROP TABLE IF EXISTS `orders`;
 
 CREATE TABLE `orders` (
   `id` int NOT NULL,
-  `date` date NOT NULL,
-  `required_date` date NOT NULL,
-  `shipped_date` date DEFAULT NULL,
+  `date` datetime NOT NULL,
+  `required_date` datetime NOT NULL,
+  `shipped_date` datetime DEFAULT NULL,
   `status` varchar(15) NOT NULL,
   `comments` text,
   `customer_id` int NOT NULL,
@@ -7096,7 +7096,7 @@ DROP TABLE IF EXISTS `payments`;
 CREATE TABLE `payments` (
   `customer_id` int NOT NULL,
   `check_number` varchar(50) NOT NULL,
-  `payment_date` date NOT NULL,
+  `payment_date` datetime NOT NULL,
   `amount` decimal(10,2) NOT NULL,
   PRIMARY KEY (`customer_id`,`check_number`),
   CONSTRAINT `payments_ibfk_1` FOREIGN KEY (`customer_id`) REFERENCES `customers` (`id`)

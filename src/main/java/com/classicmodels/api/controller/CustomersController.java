@@ -1,8 +1,8 @@
 package com.classicmodels.api.controller;
 
-import com.classicmodels.api.model.CustomCustomer;
+import com.classicmodels.api.model.CustomerRepModel;
 import com.classicmodels.domain.exception.BusinessException;
-import com.classicmodels.domain.model.Customers;
+import com.classicmodels.domain.model.Customer;
 import com.classicmodels.domain.repository.CustomersRepository;
 import com.classicmodels.domain.service.CustomerCatalogService;
 import com.classicmodels.domain.service.EmployeesCatalogService;
@@ -12,9 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @AllArgsConstructor
 @RestController
@@ -27,21 +25,40 @@ public class CustomersController {
     private EmployeesCatalogService employeesCatalogService;
 
     @GetMapping
-    public List<Customers> listar() {
+    public List<Customer> listar() {
         return customersRepository.findAll();
     }
 
+    @GetMapping("/{customerId}")
+    public ResponseEntity<CustomerRepModel> buscarPorId(@PathVariable Long customerId) {
 
-    @GetMapping("/{customerNumber}")
-    public ResponseEntity<Customers> buscarPorId(@PathVariable Integer customerNumber) {
+        return customersRepository.findById(customerId)
+                .map(customer -> {
 
-        return customersRepository.findById(customerNumber)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+                    Long employeeId = customer.getEmployee() != null ? customer.getEmployee().getId() : null;
+
+                    CustomerRepModel customerRepModel = new CustomerRepModel();
+                    customerRepModel.setId(customer.getId());
+                    customerRepModel.setEmail(customer.getEmail());
+                    customerRepModel.setName(customer.getName());
+                    customerRepModel.setContactLastName(customer.getContactLastName());
+                    customerRepModel.setContactFirstName(customer.getContactFirstName());
+                    customerRepModel.setPhone(customer.getPhone());
+                    customerRepModel.setAddressLine1(customer.getAddressLine1());
+                    customerRepModel.setAddressLine2(customer.getAddressLine2());
+                    customerRepModel.setCity(customer.getCity());
+                    customerRepModel.setState(customer.getState());
+                    customerRepModel.setPostalCode(customer.getPostalCode());
+                    customerRepModel.setCountry(customer.getCountry());
+                    customerRepModel.setCreditLimit(customer.getCreditLimit());
+                    customerRepModel.setEmployeeId(employeeId);
+
+                    return ResponseEntity.ok(customerRepModel);
+                }).orElse(ResponseEntity.notFound().build());
     }
 
     @GetMapping("/findbyemail/{customerEmail}")
-    public ResponseEntity<Customers> buscarPorEmail(@PathVariable String customerEmail) {
+    public ResponseEntity<Customer> buscarPorEmail(@PathVariable String customerEmail) {
 
         return customersRepository.findByEmail(customerEmail)
                 .map(ResponseEntity::ok)
@@ -51,14 +68,14 @@ public class CustomersController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Customers adicionar(@Valid @RequestBody Customers customers) {
-        return customerCatalogService.salvar(customers);
+    public Customer adicionar(@Valid @RequestBody Customer customer) {
+        return customerCatalogService.salvar(customer);
     }
 
     @PutMapping("/{customerNumber}")
-    public ResponseEntity<Customers> atualizar(@PathVariable Integer customerNumber, @Valid @RequestBody Customers customers) {
+    public ResponseEntity<Customer> atualizar(@PathVariable Long customerNumber, @Valid @RequestBody Customer customer) {
 
-        boolean customerEmail = customersRepository.findByEmail(customers.getEmail()).isEmpty();
+        boolean customerEmail = customersRepository.findByEmail(customer.getEmail()).isEmpty();
 
         if (!customersRepository.existsById(customerNumber)) {
             return ResponseEntity.notFound().build();
@@ -68,14 +85,14 @@ public class CustomersController {
             throw new BusinessException("There is already a customer registered with this email");
         }
 
-        customers.setId(customerNumber);
-        customers = customerCatalogService.salvar(customers);
+        customer.setId(customerNumber);
+        customer = customerCatalogService.salvar(customer);
 
-        return ResponseEntity.ok(customers);
+        return ResponseEntity.ok(customer);
     }
 
     @DeleteMapping("/{customerNumber}")
-    public ResponseEntity<Void> excluir(@PathVariable Integer customerNumber) {
+    public ResponseEntity<Void> excluir(@PathVariable Long customerNumber) {
 
         if(!customersRepository.existsById(customerNumber)) {
             return ResponseEntity.notFound().build();
@@ -84,27 +101,6 @@ public class CustomersController {
         customerCatalogService.excluir(customerNumber);
 
         return ResponseEntity.noContent().build();
-    }
-
-    @GetMapping("/custom")
-    public List<CustomCustomer> listCustom() {
-        List<Customers> customers = customersRepository.findAll();
-        List<CustomCustomer> customCustomers = new ArrayList<>();
-        Integer employeeID;
-
-        for (Customers customers1 : customers) {
-            employeeID = customers1.getEmployees().getId() != null ? customers1.getEmployees().getId() : null;
-
-            CustomCustomer cc = new CustomCustomer(
-                    customers1.getId(),
-                    customers1.getName(),
-                    customers1.getEmail(),
-                    employeeID);
-
-            customCustomers.add(cc);
-        }
-
-        return customCustomers;
     }
 
 }

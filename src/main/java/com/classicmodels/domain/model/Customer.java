@@ -1,14 +1,10 @@
 package com.classicmodels.domain.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
-import org.hibernate.annotations.JoinFormula;
 import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.NotFoundAction;
 
@@ -17,17 +13,17 @@ import org.hibernate.annotations.NotFoundAction;
 @Setter
 @Entity
 @Table(name = "customers")
-public class Customers {
+public class Customer {
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "employees_id", nullable = false)
+    @JoinColumn(name = "employee_id", nullable = false)
 //    @NotFound(action = NotFoundAction.IGNORE)
-    private Employees employees;
+    private Employee employee;
 
     @EqualsAndHashCode.Include
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
     @Email
     @Size(max = 50)

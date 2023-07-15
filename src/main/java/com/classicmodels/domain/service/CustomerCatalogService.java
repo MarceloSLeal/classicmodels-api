@@ -2,8 +2,8 @@ package com.classicmodels.domain.service;
 
 import com.classicmodels.domain.exception.BusinessException;
 import com.classicmodels.domain.exception.EntityNotFoundException;
-import com.classicmodels.domain.model.Customers;
-import com.classicmodels.domain.model.Employees;
+import com.classicmodels.domain.model.Customer;
+import com.classicmodels.domain.model.Employee;
 import com.classicmodels.domain.repository.CustomersRepository;
 import com.classicmodels.domain.repository.EmployeesRepository;
 import lombok.AllArgsConstructor;
@@ -20,17 +20,17 @@ public class CustomerCatalogService {
     private EmployeesRepository employeesRepository;
 
     @Transactional
-    public Customers salvar(Customers customers) {
+    public Customer salvar(Customer customer) {
 
-        Integer employeeNumber = customers.getEmployees().getId();
-        boolean customerEmail = customersRepository.findByEmail(customers.getEmail())
+        Long employeeNumber = customer.getEmployee().getId();
+        boolean customerEmail = customersRepository.findByEmail(customer.getEmail())
                 .stream()
-                .anyMatch(customerExists -> !customerExists.equals(customers));
+                .anyMatch(customerExists -> !customerExists.equals(customer));
 
         if (employeeNumber == null) {
-            return customersRepository.save(customers);
+            return customersRepository.save(customer);
         } else if (employeeNumber != null) {
-            Optional<Employees> employees = Optional.ofNullable(employeesRepository.findById(employeeNumber)
+            Optional<Employee> employees = Optional.ofNullable(employeesRepository.findById(employeeNumber)
                     .orElseThrow(() -> new EntityNotFoundException("Employee not found")));
         }
 
@@ -38,11 +38,11 @@ public class CustomerCatalogService {
             throw new BusinessException("There is already a customer registered with this email");
         }
 
-        return customersRepository.save(customers);
+        return customersRepository.save(customer);
     }
 
     @Transactional
-    public void excluir(Integer customerNumber) {
+    public void excluir(Long customerNumber) {
 
         customersRepository.deleteById(customerNumber);
 

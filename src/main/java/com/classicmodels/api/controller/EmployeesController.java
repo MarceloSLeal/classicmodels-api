@@ -1,6 +1,6 @@
 package com.classicmodels.api.controller;
 
-import com.classicmodels.domain.model.Employees;
+import com.classicmodels.domain.model.Employee;
 import com.classicmodels.domain.repository.EmployeesRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,7 +17,7 @@ public class EmployeesController {
     private EmployeesRepository employeesRepository;
 
     @GetMapping
-    public List<Employees> listar() {
+    public List<Employee> listar() {
         return employeesRepository.findAll();
     }
 

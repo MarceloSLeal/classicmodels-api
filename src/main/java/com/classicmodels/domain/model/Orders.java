@@ -5,6 +5,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.OffsetDateTime;
 import java.util.Date;
 
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
@@ -18,12 +19,12 @@ public class Orders {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    @Temporal(TemporalType.DATE)
-    private Date date;
-    @Temporal(TemporalType.DATE)
-    private Date requiredDate;
-    @Temporal(TemporalType.DATE)
-    private Date shippedDate;
+    @Temporal(TemporalType.TIMESTAMP)
+    private OffsetDateTime date;
+    @Temporal(TemporalType.TIMESTAMP)
+    private OffsetDateTime requiredDate;
+    @Temporal(TemporalType.TIMESTAMP)
+    private OffsetDateTime shippedDate;
     private String status;
     private String comments;
     private Integer customerId;

@@ -1,8 +1,7 @@
 package com.classicmodels.domain.service;
 
 import com.classicmodels.domain.exception.BusinessException;
-import com.classicmodels.domain.exception.EntityNotFoundException;
-import com.classicmodels.domain.model.Employees;
+import com.classicmodels.domain.model.Employee;
 import com.classicmodels.domain.repository.EmployeesRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,19 +15,19 @@ public class EmployeesCatalogService {
 
     private EmployeesRepository employeesRepository;
 
-    public List<Employees> buscarTodos() {
+    public List<Employee> buscarTodos() {
         return employeesRepository.findAll();
     }
 
-    public Employees buscarPorId(Integer employeeNumber) {
-        return employeesRepository.findById(employeeNumber)
+    public Employee buscarPorId(Long id) {
+        return employeesRepository.findById(id)
                 .orElseThrow(() -> new BusinessException("Employee not found"));
     }
 
     @Transactional
-    public Employees salvar(Employees employees) {
+    public Employee salvar(Employee employee) {
 
-        return employeesRepository.save(employees);
+        return employeesRepository.save(employee);
 
     }
 

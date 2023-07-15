@@ -1,13 +1,9 @@
 package com.classicmodels.domain.model;
 
-import com.classicmodels.domain.service.CustomerCatalogService;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +13,7 @@ import java.util.List;
 @Setter
 @Entity
 @Table(name = "employees")
-public class Employees {
+public class Employee {
 
 //    @ManyToOne()
 //    @JoinColumn(name = "officeCode")
@@ -27,13 +23,13 @@ public class Employees {
 //    @JoinColumn(name = "reportsTo")
 //    private Employees manager;
 
-    @OneToMany(mappedBy = "employees")
-    private List<Customers> customers = new ArrayList<>();
+    @OneToMany(mappedBy = "employee")
+    private List<Customer> customers = new ArrayList<>();
 
     @EqualsAndHashCode.Include
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
     private String lastName;
     private String firstName;
