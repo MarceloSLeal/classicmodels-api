@@ -16,7 +16,7 @@ import java.util.List;
 public class Employee {
 
 //    @ManyToOne()
-//    @JoinColumn(name = "officeCode")
+//    @JoinColumn(name = "officeId")
 //    private Offices offices;
 
 //    @ManyToOne

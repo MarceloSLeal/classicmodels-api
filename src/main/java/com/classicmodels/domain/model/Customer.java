@@ -5,8 +5,6 @@ import jakarta.validation.constraints.*;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.NotFound;
-import org.hibernate.annotations.NotFoundAction;
 
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Getter
@@ -64,14 +62,8 @@ public class Customer {
     @Size(max = 50)
     private String country;
 
-    @DecimalMin(value = "0.00", inclusive = true)
-    @DecimalMax(value = "9999999999.99", inclusive = true)
+    @DecimalMin(value = "0.00")
+    @DecimalMax(value = "9999999999.99")
     private Double creditLimit;
-
-    //TODO create a validation on service to verify if the salesRepEmployeeNumber came from the POST exists on table Employees and
-    //TODO and if its null
-//    @Positive
-//    @Digits(integer = 10, fraction = 0)
-//    private Integer salesRepEmployeeNumber;
 
 }
