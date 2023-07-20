@@ -1,11 +1,12 @@
 package com.classicmodels.api.controller;
 
+import com.classicmodels.api.mapper.CustomerMapper;
 import com.classicmodels.api.model.CustomerRepModel;
+import com.classicmodels.api.model.input.CustomerImput;
 import com.classicmodels.domain.exception.BusinessException;
 import com.classicmodels.domain.model.Customer;
 import com.classicmodels.domain.repository.CustomersRepository;
 import com.classicmodels.domain.service.CustomerCatalogService;
-import com.classicmodels.domain.service.EmployeesCatalogService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -21,84 +22,84 @@ public class CustomersController {
 
     private CustomersRepository customersRepository;
     private CustomerCatalogService customerCatalogService;
-
-    private EmployeesCatalogService employeesCatalogService;
+    private CustomerMapper customerMapper;
 
     @GetMapping
-    public List<Customer> listar() {
-        return customersRepository.findAll();
+    public List<CustomerRepModel> listar() {
+
+        return customerMapper.toCollectionModel(customersRepository.findAll());
     }
 
-    @GetMapping("/{customerId}")
-    public ResponseEntity<CustomerRepModel> buscarPorId(@PathVariable Long customerId) {
+    @GetMapping("/{id}")
+    public ResponseEntity<CustomerRepModel> buscarPorId(@PathVariable Long id) {
 
-        return customersRepository.findById(customerId)
-                .map(customer -> {
-
-                    Long employeeId = customer.getEmployee() != null ? customer.getEmployee().getId() : null;
-
-                    CustomerRepModel customerRepModel = new CustomerRepModel();
-                    customerRepModel.setId(customer.getId());
-                    customerRepModel.setEmail(customer.getEmail());
-                    customerRepModel.setName(customer.getName());
-                    customerRepModel.setContactLastName(customer.getContactLastName());
-                    customerRepModel.setContactFirstName(customer.getContactFirstName());
-                    customerRepModel.setPhone(customer.getPhone());
-                    customerRepModel.setAddressLine1(customer.getAddressLine1());
-                    customerRepModel.setAddressLine2(customer.getAddressLine2());
-                    customerRepModel.setCity(customer.getCity());
-                    customerRepModel.setState(customer.getState());
-                    customerRepModel.setPostalCode(customer.getPostalCode());
-                    customerRepModel.setCountry(customer.getCountry());
-                    customerRepModel.setCreditLimit(customer.getCreditLimit());
-                    customerRepModel.setEmployeeId(employeeId);
-
-                    return ResponseEntity.ok(customerRepModel);
-                }).orElse(ResponseEntity.notFound().build());
-    }
-
-    @GetMapping("/findbyemail/{customerEmail}")
-    public ResponseEntity<Customer> buscarPorEmail(@PathVariable String customerEmail) {
-
-        return customersRepository.findByEmail(customerEmail)
-                .map(ResponseEntity::ok)
+        return customersRepository.findById(id)
+                .map(customer -> ResponseEntity.ok(customerMapper.toModel(customer)))
                 .orElse(ResponseEntity.notFound().build());
+    }
 
+    @GetMapping("/findbyemail/{email}")
+    public ResponseEntity<CustomerRepModel> buscarPorEmail(@PathVariable String email) {
+
+        return customersRepository.findByEmail(email)
+                .map(customer -> ResponseEntity.ok(customerMapper.toModel(customer)))
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Customer adicionar(@Valid @RequestBody Customer customer) {
-        return customerCatalogService.salvar(customer);
-    }
+    public CustomerRepModel adicionar(@Valid @RequestBody CustomerImput customerImput) {
+        Customer newCustomer = customerMapper.toEntity(customerImput);
+        CustomerRepModel customerRepModel = customerMapper.toModel(newCustomer);
 
-    @PutMapping("/{customerNumber}")
-    public ResponseEntity<Customer> atualizar(@PathVariable Long customerNumber, @Valid @RequestBody Customer customer) {
+        boolean customerEmail = customersRepository.findByEmail(newCustomer.getEmail())
+                .stream()
+                .anyMatch(customerExists -> !customerExists.equals(newCustomer));
 
-        boolean customerEmail = customersRepository.findByEmail(customer.getEmail()).isEmpty();
-
-        if (!customersRepository.existsById(customerNumber)) {
-            return ResponseEntity.notFound().build();
-        }
-
-        if (!customerEmail) {
+        if (customerEmail) {
             throw new BusinessException("There is already a customer registered with this email");
         }
 
-        customer.setId(customerNumber);
-        customer = customerCatalogService.salvar(customer);
+        customerCatalogService.salvar(newCustomer);
 
-        return ResponseEntity.ok(customer);
+        return customerRepModel;
     }
 
-    @DeleteMapping("/{customerNumber}")
-    public ResponseEntity<Void> excluir(@PathVariable Long customerNumber) {
+    @PutMapping("/{id}")
+    public ResponseEntity<CustomerRepModel> atualizar(@PathVariable Long id, @Valid @RequestBody CustomerImput customerImput) {
 
-        if(!customersRepository.existsById(customerNumber)) {
+        Customer customer = customersRepository.findById(id)
+                .orElseThrow(() -> new BusinessException("Customer not exists"));
+        Customer customerEdit = customerMapper.toEntity(customerImput);
+        customerEdit.setId(id);
+
+        boolean emailCustomerIgualCustomerEdit = customer.getEmail().equals(customerEdit.getEmail());
+        boolean email;
+
+        if (!emailCustomerIgualCustomerEdit) {
+            email = customersRepository.findByEmail(customerEdit.getEmail()).isPresent();
+        } else {
+            customerCatalogService.salvar(customerEdit);
+            return ResponseEntity.ok(customerMapper.toModel(customerEdit));
+        }
+
+        if (!email) {
+            customerCatalogService.salvar(customerEdit);
+            return ResponseEntity.ok(customerMapper.toModel(customerEdit));
+        } else {
+            throw new BusinessException("There is already a customer registered with this email");
+        }
+
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> excluir(@PathVariable Long id) {
+
+        if (!customersRepository.existsById(id)) {
             return ResponseEntity.notFound().build();
         }
 
-        customerCatalogService.excluir(customerNumber);
+        customerCatalogService.excluir(id);
 
         return ResponseEntity.noContent().build();
     }
