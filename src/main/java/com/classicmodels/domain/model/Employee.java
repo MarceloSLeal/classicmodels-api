@@ -15,9 +15,9 @@ import java.util.List;
 @Table(name = "employees")
 public class Employee {
 
-//    @ManyToOne()
-//    @JoinColumn(name = "officeId")
-//    private Offices offices;
+    @ManyToOne()
+    @JoinColumn(name = "officesId")
+    private Offices offices;
 
 //    @ManyToOne
 //    @JoinColumn(name = "reportsTo")

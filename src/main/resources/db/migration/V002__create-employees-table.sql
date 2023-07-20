@@ -8,6 +8,7 @@ CREATE TABLE `employees` (
   `reports_to` int DEFAULT NULL,
   `job_title` varchar(50) NOT NULL,
   PRIMARY KEY (`id`),
+  UNIQUE KEY `email` (`email`),
   KEY `reportsTo` (`reports_to`),
   CONSTRAINT `employees_ibfk_1` FOREIGN KEY (`reports_to`) REFERENCES `employees` (`id`)
   on update CASCADE);
