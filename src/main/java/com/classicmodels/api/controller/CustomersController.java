@@ -2,7 +2,7 @@ package com.classicmodels.api.controller;
 
 import com.classicmodels.api.mapper.CustomerMapper;
 import com.classicmodels.api.model.CustomerRepModel;
-import com.classicmodels.api.model.input.CustomerImput;
+import com.classicmodels.api.model.input.CustomerInput;
 import com.classicmodels.domain.exception.BusinessException;
 import com.classicmodels.domain.model.Customer;
 import com.classicmodels.domain.repository.CustomersRepository;
@@ -48,8 +48,9 @@ public class CustomersController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public CustomerRepModel adicionar(@Valid @RequestBody CustomerImput customerImput) {
-        Customer newCustomer = customerMapper.toEntity(customerImput);
+    public CustomerRepModel adicionar(@Valid @RequestBody CustomerInput customerInput) {
+        Customer newCustomer = customerMapper.toEntity(customerInput);
+
         CustomerRepModel customerRepModel = customerMapper.toModel(newCustomer);
 
         boolean customerEmail = customersRepository.findByEmail(newCustomer.getEmail())
@@ -66,11 +67,11 @@ public class CustomersController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<CustomerRepModel> atualizar(@PathVariable Long id, @Valid @RequestBody CustomerImput customerImput) {
+    public ResponseEntity<CustomerRepModel> atualizar(@PathVariable Long id, @Valid @RequestBody CustomerInput customerInput) {
 
         Customer customer = customersRepository.findById(id)
                 .orElseThrow(() -> new BusinessException("Customer not exists"));
-        Customer customerEdit = customerMapper.toEntity(customerImput);
+        Customer customerEdit = customerMapper.toEntity(customerInput);
         customerEdit.setId(id);
 
         boolean emailCustomerIgualCustomerEdit = customer.getEmail().equals(customerEdit.getEmail());

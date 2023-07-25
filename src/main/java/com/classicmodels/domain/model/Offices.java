@@ -15,8 +15,8 @@ import java.util.List;
 @Table(name = "offices")
 public class Offices {
 
-//    @OneToMany
-//    private List<Employees> employees;
+    @OneToMany(mappedBy = "offices")
+    private List<Employee> employee;
 
     @EqualsAndHashCode.Include
     @Id

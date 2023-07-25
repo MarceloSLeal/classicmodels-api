@@ -1,7 +1,7 @@
 package com.classicmodels.api.mapper;
 
 import com.classicmodels.api.model.CustomerRepModel;
-import com.classicmodels.api.model.input.CustomerImput;
+import com.classicmodels.api.model.input.CustomerInput;
 import com.classicmodels.domain.model.Customer;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -16,6 +16,10 @@ public class CustomerMapper {
 
     private ModelMapper modelMapper;
 
+    public CustomerMapper() {
+
+    }
+
     public CustomerRepModel toModel(Customer customer) {
         return modelMapper.map(customer, CustomerRepModel.class);
     }
@@ -26,8 +30,11 @@ public class CustomerMapper {
                 .collect(Collectors.toList());
     }
 
-    public Customer toEntity(CustomerImput customerImput) {
-        return modelMapper.map(customerImput, Customer.class);
+    public Customer toEntity(CustomerInput customerInput) {
+        return modelMapper.map(customerInput, Customer.class);
     }
 
+    public CustomerInput toInput(Customer customer) {
+        return modelMapper.map(customer, CustomerInput.class);
+    }
 }

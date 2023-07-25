@@ -1,9 +1,11 @@
 package com.classicmodels.domain.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.java.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,12 +18,8 @@ import java.util.List;
 public class Employee {
 
     @ManyToOne()
-    @JoinColumn(name = "officesId")
+    @JoinColumn(name = "officeId")
     private Offices offices;
-
-//    @ManyToOne
-//    @JoinColumn(name = "reportsTo")
-//    private Employees manager;
 
     @OneToMany(mappedBy = "employee")
     private List<Customer> customers = new ArrayList<>();
@@ -35,12 +33,7 @@ public class Employee {
     private String firstName;
     private String extension;
     private String email;
-
-    @Column(insertable = false, updatable = false)
-    private Integer officeId;
-
-    private Integer reportsTo;
+    private Long reportsTo;
     private String jobTitle;
-
 
 }
