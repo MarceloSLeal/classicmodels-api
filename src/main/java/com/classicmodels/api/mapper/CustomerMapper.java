@@ -16,10 +16,6 @@ public class CustomerMapper {
 
     private ModelMapper modelMapper;
 
-    public CustomerMapper() {
-
-    }
-
     public CustomerRepModel toModel(Customer customer) {
         return modelMapper.map(customer, CustomerRepModel.class);
     }
@@ -34,7 +30,4 @@ public class CustomerMapper {
         return modelMapper.map(customerInput, Customer.class);
     }
 
-    public CustomerInput toInput(Customer customer) {
-        return modelMapper.map(customer, CustomerInput.class);
-    }
 }
