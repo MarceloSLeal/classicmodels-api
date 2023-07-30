@@ -8,8 +8,6 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
-
 @AllArgsConstructor
 @Service
 public class CustomerCatalogService {
@@ -18,7 +16,7 @@ public class CustomerCatalogService {
     private EmployeesRepository employeesRepository;
 
     @Transactional
-    public Customer salvar(Customer customer) {
+    public void salvar(Customer customer) {
 
         Long employeeId = customer.getEmployee() == null ? null : customer.getEmployee().getId();
 
@@ -28,7 +26,7 @@ public class CustomerCatalogService {
             employeesRepository.findById(employeeId)
                     .orElseThrow(() -> new EntityNotFoundException("Employee not found"));
         }
-       return customersRepository.save(customer);
+       customersRepository.save(customer);
     }
 
     @Transactional
