@@ -8,16 +8,19 @@ import lombok.Setter;
 @Setter
 public class CustomerInput {
 
-    @NotBlank
+    @Email
+    @Size(max = 50)
     private String email;
 
     @NotBlank
     private String name;
 
     @NotBlank
+    @Size(max = 50)
     private String contactLastName;
 
     @NotBlank
+    @Size(max = 50)
     private String contactFirstName;
 
     @NotBlank

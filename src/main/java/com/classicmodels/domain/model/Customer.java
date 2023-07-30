@@ -32,9 +32,11 @@ public class Customer {
     private String name;
 
     @NotBlank
+    @Size(max = 50)
     private String contactLastName;
 
     @NotBlank
+    @Size(max = 50)
     private String contactFirstName;
 
     @NotBlank
@@ -43,8 +45,10 @@ public class Customer {
     private String phone;
 
     @NotBlank
+    @Size(max = 50)
     private String addressLine1;
 
+    @Size(max = 50)
     private String addressLine2;
 
     @NotBlank
