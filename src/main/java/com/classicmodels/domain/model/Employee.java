@@ -20,8 +20,8 @@ import java.util.List;
 @Table(name = "employees")
 public class Employee {
 
-    @ManyToOne()
-    @JoinColumn(name = "officeId")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "officeId", nullable = false)
     private Offices offices;
 
     @OneToMany(mappedBy = "employee")
