@@ -1,9 +1,6 @@
 package com.classicmodels.api.model.input;
 
-import jakarta.validation.constraints.Digits;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -11,8 +8,9 @@ import lombok.Setter;
 @Setter
 public class EmployeeInput {
 
+    @NotNull
     @Digits(integer = 19, fraction = 0, message = "Invalid Long value")
-    private Long officeId;
+    private Long officesId;
 
     @NotBlank
     @Size(max = 50)
