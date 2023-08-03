@@ -57,8 +57,6 @@ public class EmployeesController {
 
         Employee newEmployee = employeeMapper.toEntity(employeeInput);
 
-        EmployeeRepModel employeeRepModel = employeeMapper.toModel(newEmployee);
-
         boolean employeeEmail = employeesRepository.findByEmail(newEmployee.getEmail())
                 .stream()
                 .anyMatch(employeeExists -> !employeeExists.equals(newEmployee));
@@ -70,12 +68,13 @@ public class EmployeesController {
             throw  new BusinessException("There is already a employee registered with this email");
         }
 
-        employeesRepository.findById(employeeInput.getReportsTo())
-                .orElseThrow(() -> new EntityNotFoundException("There is no employee with that id"));
+        if (employeeInput.getReportsTo() != null) {
+            employeesRepository.findById(employeeInput.getReportsTo())
+                    .orElseThrow(() -> new EntityNotFoundException("There is no employee with that id"));
+        }
 
-        employeesCatalogService.salvar(newEmployee);
-
-        return employeeRepModel;
+        Employee savedEmployee = employeesCatalogService.salvar(newEmployee);
+        return employeeMapper.toModel(savedEmployee);
     }
 
 }

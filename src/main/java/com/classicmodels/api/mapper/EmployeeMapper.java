@@ -17,8 +17,8 @@ public class EmployeeMapper {
     private ModelMapper modelMapper;
 
     public  EmployeeRepModel toModel(Employee employee) {
-//        return new EmployeeRepModel(employee);
-        return modelMapper.map(employee, EmployeeRepModel.class);
+        return new EmployeeRepModel(employee);
+//        return modelMapper.map(employee, EmployeeRepModel.class);
     }
 
     public List<EmployeeRepModel> toCollectionModel(List<Employee> employees) {

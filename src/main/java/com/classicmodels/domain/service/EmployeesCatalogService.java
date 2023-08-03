@@ -28,9 +28,9 @@ public class EmployeesCatalogService {
     }
 
     @Transactional
-    public void salvar(Employee employee) {
+    public Employee salvar(Employee employee) {
 
-        employeesRepository.save(employee);
+        return employeesRepository.save(employee);
     }
 
 }

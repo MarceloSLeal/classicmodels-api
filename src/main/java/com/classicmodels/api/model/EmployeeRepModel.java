@@ -5,6 +5,8 @@ import com.classicmodels.domain.model.Employee;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -26,10 +28,17 @@ public class EmployeeRepModel {
     }
 
     public EmployeeRepModel(Employee employee) {
-        this.officesId = employee.getOffices().getId();
-        this.customersId = employee.getCustomers().stream()
-                .map(Customer::getId)
-                .collect(Collectors.toList());
+
+        this.officesId = employee.getOfficeId();
+
+        if (employee.getCustomersId() != null) {
+            this.customersId = Arrays.stream(employee.getCustomersId().split(","))
+                    .map(Long::parseLong)
+                    .collect(Collectors.toList());
+        } else {
+            this.customersId = new ArrayList<>();
+        }
+
         this.id = employee.getId();
         this.lastName = employee.getLastName();
         this.firstName = employee.getFirstName();
