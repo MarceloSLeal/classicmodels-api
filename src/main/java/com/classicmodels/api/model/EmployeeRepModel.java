@@ -1,6 +1,5 @@
 package com.classicmodels.api.model;
 
-import com.classicmodels.domain.model.Customer;
 import com.classicmodels.domain.model.Employee;
 import lombok.Getter;
 import lombok.Setter;

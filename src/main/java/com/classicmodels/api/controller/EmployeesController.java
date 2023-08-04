@@ -61,7 +61,7 @@ public class EmployeesController {
                 .stream()
                 .anyMatch(employeeExists -> !employeeExists.equals(newEmployee));
 
-        officesRepository.findById(Math.toIntExact(employeeInput.getOfficesId()))
+        officesRepository.findById(employeeInput.getOfficesId())
                 .orElseThrow(() -> new EntityNotFoundException("There is no office with that Id"));
 
         if (employeeEmail) {
@@ -86,7 +86,7 @@ public class EmployeesController {
         employeeEdit.setId(id);
         employeeEdit.setOfficeId(employeeInput.getOfficesId());
 
-        officesRepository.findById(Math.toIntExact(employeeInput.getOfficesId()))
+        officesRepository.findById(employeeInput.getOfficesId())
                 .orElseThrow(() -> new EntityNotFoundException("Office not exists"));
 
         boolean emailEmployeeIgualEmployeeEdit = employee.getEmail().equals(employeeEdit.getEmail());
@@ -110,6 +110,18 @@ public class EmployeesController {
         } else {
             throw new BusinessException("There is already a customer registered with this email");
         }
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> excluir(@PathVariable Long id) {
+
+        if (!employeesRepository.existsById(id)) {
+            return ResponseEntity.notFound().build();
+        }
+
+        employeesCatalogService.excluir(id);
+
+        return ResponseEntity.noContent().build();
     }
 
 }
