@@ -77,4 +77,39 @@ public class EmployeesController {
         return employeeMapper.toModel(savedEmployee);
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<EmployeeRepModel> atualizar(@PathVariable Long id, @Valid @RequestBody EmployeeInput employeeInput) {
+
+        Employee employee = employeesRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Employee not exists"));
+        Employee employeeEdit = employeeMapper.toEntity(employeeInput);
+        employeeEdit.setId(id);
+        employeeEdit.setOfficeId(employeeInput.getOfficesId());
+
+        officesRepository.findById(Math.toIntExact(employeeInput.getOfficesId()))
+                .orElseThrow(() -> new EntityNotFoundException("Office not exists"));
+
+        boolean emailEmployeeIgualEmployeeEdit = employee.getEmail().equals(employeeEdit.getEmail());
+        boolean email;
+
+        if (employeeInput.getReportsTo() != null) {
+            employeesRepository.findById(employeeInput.getReportsTo())
+                    .orElseThrow(() -> new EntityNotFoundException("reportsTo: There is no employee with this id -> "));
+        }
+
+        if (!emailEmployeeIgualEmployeeEdit) {
+            email = employeesRepository.findByEmail(employeeEdit.getEmail()).isPresent();
+        } else {
+            employeesCatalogService.salvar(employeeEdit);
+            return ResponseEntity.ok(employeeMapper.toModel(employeeEdit));
+        }
+
+        if (!email) {
+            employeesCatalogService.salvar(employeeEdit);
+            return ResponseEntity.ok(employeeMapper.toModel(employeeEdit));
+        } else {
+            throw new BusinessException("There is already a customer registered with this email");
+        }
+    }
+
 }

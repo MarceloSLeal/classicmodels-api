@@ -4,6 +4,7 @@ import com.classicmodels.api.mapper.CustomerMapper;
 import com.classicmodels.api.model.CustomerRepModel;
 import com.classicmodels.api.model.input.CustomerInput;
 import com.classicmodels.domain.exception.BusinessException;
+import com.classicmodels.domain.exception.EntityNotFoundException;
 import com.classicmodels.domain.model.Customer;
 import com.classicmodels.domain.repository.CustomersRepository;
 import com.classicmodels.domain.service.CustomerCatalogService;
@@ -70,7 +71,7 @@ public class CustomersController {
     public ResponseEntity<CustomerRepModel> atualizar(@PathVariable Long id, @Valid @RequestBody CustomerInput customerInput) {
 
         Customer customer = customersRepository.findById(id)
-                .orElseThrow(() -> new BusinessException("Customer not exists"));
+                .orElseThrow(() -> new EntityNotFoundException("Customer not exists"));
         Customer customerEdit = customerMapper.toEntity(customerInput);
         customerEdit.setId(id);
 
