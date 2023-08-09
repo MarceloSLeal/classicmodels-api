@@ -70,7 +70,7 @@ public class EmployeesController {
 
         if (employeeInput.getReportsTo() != null) {
             employeesRepository.findById(employeeInput.getReportsTo())
-                    .orElseThrow(() -> new EntityNotFoundException("There is no employee with that id"));
+                    .orElseThrow(() -> new EntityNotFoundException("There is no employee with that id " + employeeInput.getReportsTo()));
         }
 
         Employee savedEmployee = employeesCatalogService.salvar(newEmployee);
