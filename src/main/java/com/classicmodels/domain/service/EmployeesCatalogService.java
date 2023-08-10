@@ -17,15 +17,6 @@ public class EmployeesCatalogService {
     private EmployeesRepository employeesRepository;
     private OfficesRepository officesRepository;
 
-    public List<Employee> buscarTodos() {
-        return employeesRepository.findAll();
-    }
-
-    public Employee buscarPorId(Long id) {
-        return employeesRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Employee not found"));
-    }
-
     @Transactional
     public Employee salvar(Employee employee) {
 
