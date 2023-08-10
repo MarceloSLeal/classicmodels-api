@@ -1,5 +1,7 @@
 package com.classicmodels.api.controller;
 
+import com.classicmodels.api.mapper.OfficesMapper;
+import com.classicmodels.api.model.OfficesRepModel;
 import com.classicmodels.domain.model.Offices;
 import com.classicmodels.domain.repository.OfficesRepository;
 import lombok.AllArgsConstructor;
@@ -15,10 +17,11 @@ import java.util.List;
 public class OfficesController {
 
     private OfficesRepository officesRepository;
+    private OfficesMapper officesMapper;
 
     @GetMapping
-    public List<Offices> listar() {
-        return officesRepository.findAll();
+    public List<OfficesRepModel> listar() {
+        return officesMapper.toCollectionModel(officesRepository.findAll());
     }
 
 }

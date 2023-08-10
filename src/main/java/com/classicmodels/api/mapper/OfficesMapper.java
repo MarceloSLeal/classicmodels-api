@@ -17,8 +17,8 @@ public class OfficesMapper {
     private ModelMapper modelMapper;
 
     public OfficesRepModel toModel(Offices offices) {
-//        return new OfficesRepModel(offices);
-        return modelMapper.map(offices, OfficesRepModel.class);
+        return new OfficesRepModel(offices);
+//        return modelMapper.map(offices, OfficesRepModel.class);
     }
 
     public List<OfficesRepModel> toCollectionModel(List<Offices> offices) {

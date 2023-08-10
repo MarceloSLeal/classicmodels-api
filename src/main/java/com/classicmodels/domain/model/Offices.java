@@ -6,6 +6,9 @@ import jakarta.validation.constraints.Size;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.Formula;
 
 import java.util.List;
 
@@ -18,6 +21,10 @@ public class Offices {
 
     @OneToMany(mappedBy = "offices")
     private List<Employee> employee;
+
+    @Formula("(SELECT GROUP_CONCAT(e.id SEPARATOR ',') FROM employees e WHERE e.office_id = id)")
+    @Fetch(FetchMode.SELECT)
+    private String employeeId;
 
     @EqualsAndHashCode.Include
     @Id
