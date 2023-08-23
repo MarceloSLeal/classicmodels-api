@@ -3,14 +3,17 @@ package com.classicmodels.api.controller;
 import com.classicmodels.api.mapper.OfficesMapper;
 import com.classicmodels.api.model.OfficesRepModel;
 import com.classicmodels.api.model.input.OfficesInput;
+import com.classicmodels.domain.exception.EntityNotFoundException;
 import com.classicmodels.domain.model.Offices;
 import com.classicmodels.domain.repository.OfficesRepository;
 import com.classicmodels.domain.service.OfficesCatalogService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +25,10 @@ import java.util.stream.Collectors;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class OfficesControllerTest {
@@ -143,13 +149,59 @@ public class OfficesControllerTest {
 
 
     @Test
-    public void testAdicionarSalvo() {
+    public void testAdicionarOfficesSucesso() {
 
         when(officesController.adicionar(mockOfficesInput)).thenReturn(mockOfficesRepModel);
 
         OfficesRepModel response = officesController.adicionar(mockOfficesInput);
 
         assertThat(response, is(notNullValue()));
+    }
+
+    @Test
+    public void testAtualizarOfficesSucesso() {
+
+        mockOfficesInput.setCity("Mauá");
+
+        when(officesRepository.findById(anyLong())).thenReturn(Optional.of(mockOffices1));
+        when(officesMapper.toEntity(Mockito.any())).thenReturn(mockOffices1);
+
+        ResponseEntity<OfficesRepModel> response = officesController.atualizar(3L, mockOfficesInput);
+
+        verify(officesCatalogService, times(1)).salvar(ArgumentMatchers.any());
+        verify(officesMapper, times(1)).toModel(ArgumentMatchers.any());
+        assertThat(response.getStatusCode(), is(HttpStatus.OK));
+    }
+
+    @Test
+    public void testAtualizarOfficesIdNaoEncontrado() {
+
+        when(officesRepository.findById(1L)).thenReturn(Optional.empty());
+
+        assertThrows(EntityNotFoundException.class, () -> {
+            officesController.atualizar(1L, mockOfficesInput);
+        });
+    }
+
+    @Test
+    public void testExcluirSucesso() {
+
+        when(officesRepository.existsById(anyLong())).thenReturn(true);
+
+        ResponseEntity<Void> response = officesController.excluir(1L);
+
+        verify(officesCatalogService, times(1)).excluir(anyLong());
+        assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
+    }
+
+    @Test
+    public void testExcluirNotFound() {
+
+        when(officesRepository.existsById(anyLong())).thenReturn(false);
+
+        ResponseEntity<Void> response = officesController.excluir(1L);
+
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 
 
