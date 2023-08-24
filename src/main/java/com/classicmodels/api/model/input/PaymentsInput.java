@@ -11,6 +11,9 @@ import java.util.Date;
 public class PaymentsInput {
 
     @NotBlank
+    private Long customerId;
+
+    @NotBlank
     @Size(max = 50)
     private String checkNumber;
 

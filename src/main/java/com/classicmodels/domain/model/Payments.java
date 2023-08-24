@@ -9,18 +9,18 @@ import lombok.Setter;
 import java.time.OffsetDateTime;
 import java.util.Date;
 
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Getter
 @Setter
 @Entity
 @Table(name = "payments")
+@IdClass(PaymentsId.class)
 public class Payments {
 
-    @EqualsAndHashCode.Include
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @NotBlank
     private Long customerId;
 
+    @Id
     @NotBlank
     @Size(max = 50)
     private String checkNumber;
