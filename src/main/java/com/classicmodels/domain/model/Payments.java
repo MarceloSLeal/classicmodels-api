@@ -1,6 +1,7 @@
 package com.classicmodels.domain.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -18,9 +19,17 @@ public class Payments {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer customerId;
+
+    @NotBlank
+    @Size(max = 50)
     private String checkNumber;
-    @Temporal(TemporalType.DATE)
+
+    @NotBlank
+    @PastOrPresent
     private Date paymentDate;
+
+    @DecimalMin(value = "0.00")
+    @DecimalMax(value = "9999999999.99")
     private Double amount;
 
 }
