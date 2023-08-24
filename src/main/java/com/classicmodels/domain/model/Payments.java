@@ -6,6 +6,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.OffsetDateTime;
 import java.util.Date;
 
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
@@ -18,7 +19,7 @@ public class Payments {
     @EqualsAndHashCode.Include
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer customerId;
+    private Long customerId;
 
     @NotBlank
     @Size(max = 50)
@@ -26,7 +27,7 @@ public class Payments {
 
     @NotBlank
     @PastOrPresent
-    private Date paymentDate;
+    private OffsetDateTime paymentDate;
 
     @DecimalMin(value = "0.00")
     @DecimalMax(value = "9999999999.99")
