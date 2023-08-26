@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @Component
-public class PaymentMapper {
+public class PaymentsMapper {
 
     private ModelMapper modelMapper;
 
