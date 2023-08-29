@@ -4,25 +4,23 @@ import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.Date;
+import java.time.OffsetDateTime;
 
 @Getter
 @Setter
 public class PaymentsInput {
 
-    @NotBlank
+    @NotNull
     private Long customerId;
 
     @NotBlank
     @Size(max = 50)
     private String checkNumber;
 
-    @NotBlank
-    @PastOrPresent
-    private Date paymentDate;
+    @Pattern(regexp = "[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]+)?([Zz]|([+-])([01]\\d|2[0-3]):?([0-5]\\d)?)?")
+    private String paymentDate;
 
-    @DecimalMin(value = "0.00")
-    @DecimalMax(value = "9999999999.99")
+    @Digits(integer = 10, fraction = 2, message = "max 10 digits and 2 after the .")
     private Double amount;
 
 }

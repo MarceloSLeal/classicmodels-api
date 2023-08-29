@@ -29,5 +29,4 @@ public class PaymentsMapper {
     public Payments toEntity(PaymentsInput paymentsInput) {
         return modelMapper.map(paymentsInput, Payments.class);
     }
-
 }

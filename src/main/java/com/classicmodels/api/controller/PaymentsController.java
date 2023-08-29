@@ -1,18 +1,24 @@
 package com.classicmodels.api.controller;
 
+import ch.qos.logback.classic.pattern.DateConverter;
 import com.classicmodels.api.mapper.PaymentsMapper;
-import com.classicmodels.api.model.OfficesRepModel;
 import com.classicmodels.api.model.PaymentsRepModel;
+import com.classicmodels.api.model.input.PaymentsInput;
+import com.classicmodels.domain.exception.EntityNotFoundException;
 import com.classicmodels.domain.model.Payments;
+import com.classicmodels.domain.repository.CustomersRepository;
 import com.classicmodels.domain.repository.PaymentsRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import org.apache.coyote.Response;
+import org.modelmapper.ModelMapper;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.time.OffsetDateTime;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -24,6 +30,9 @@ public class PaymentsController {
 
     private PaymentsRepository paymentsRepository;
     private PaymentsMapper paymentsMapper;
+    private CustomersRepository customersRepository;
+    private ObjectMapper objectMapper;
+    private ModelMapper modelMapper;
 
     @GetMapping
     public List<Payments> listar() {
@@ -72,6 +81,22 @@ public class PaymentsController {
         } else {
             return ResponseEntity.notFound().build();
         }
+    }
+
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public PaymentsRepModel adicionar(@Valid @RequestBody PaymentsInput paymentsInput) {
+
+        Payments payments = paymentsMapper.toEntity(paymentsInput);
+        payments.setPaymentDate(OffsetDateTime.parse(paymentsInput.getPaymentDate()));
+
+        PaymentsRepModel paymentsRepModel = paymentsMapper.toModel(payments);
+
+        customersRepository.findById(paymentsInput.getCustomerId())
+                .orElseThrow(() -> new EntityNotFoundException("There is no customer with that Id"));
+
+
+        return paymentsRepModel;
     }
 
 }

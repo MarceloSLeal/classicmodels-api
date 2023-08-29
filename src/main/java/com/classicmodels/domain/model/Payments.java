@@ -17,7 +17,7 @@ import java.util.Date;
 public class Payments {
 
     @Id
-    @NotBlank
+    @NotNull
     private Long customerId;
 
     @Id
@@ -25,12 +25,11 @@ public class Payments {
     @Size(max = 50)
     private String checkNumber;
 
-    @NotBlank
+    @NotNull
     @PastOrPresent
     private OffsetDateTime paymentDate;
 
-    @DecimalMin(value = "0.00")
-    @DecimalMax(value = "9999999999.99")
+    @Digits(integer = 10, fraction = 2, message = "max 10 digits and 2 after the .")
     private Double amount;
 
 }
