@@ -1,32 +1,35 @@
 package com.classicmodels.domain.model;
 
-import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
-import lombok.EqualsAndHashCode;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.Digits;
+import jakarta.validation.constraints.FutureOrPresent;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.JdbcTypeCode;
 
+import java.sql.Types;
 import java.time.OffsetDateTime;
-import java.util.Date;
+import java.util.UUID;
 
 @Getter
 @Setter
 @Entity
 @Table(name = "payments")
-@IdClass(PaymentsId.class)
 public class Payments {
 
-    @Id
     @NotNull
     private Long customerId;
 
     @Id
-    @NotBlank
-    @Size(max = 50)
-    private String checkNumber;
+    @GeneratedValue
+    @JdbcTypeCode(Types.VARCHAR)
+    private UUID checkNumber;
 
-    @NotNull
-    @PastOrPresent
+    @FutureOrPresent
     private OffsetDateTime paymentDate;
 
     @Digits(integer = 10, fraction = 2, message = "max 10 digits and 2 after the .")
