@@ -70,4 +70,31 @@ public class PaymentsController {
         return paymentsMapper.toModel(paymentsCatalogService.salvar(payments));
     }
 
+    @PutMapping("/{checkNumber}")
+    public ResponseEntity<PaymentsRepModel> atualizar(@PathVariable UUID checkNumber, @Valid @RequestBody PaymentsInput paymentsInput) {
+
+        customersRepository.findById(paymentsInput.getCustomerId())
+                .orElseThrow(() -> new EntityNotFoundException("There is no customer with that Id"));
+
+        Payments payments = paymentsRepository.findByCheckNumber(checkNumber)
+                .orElseThrow(() -> new EntityNotFoundException("There is no payment with that ckeckNumber"));
+
+        payments.setPaymentDate(paymentsInput.getPaymentDate());
+
+        return ResponseEntity.ok(paymentsMapper
+                .toModel(paymentsCatalogService.salvar(payments)));
+    }
+
+    @DeleteMapping("/{checkNumber}")
+    public ResponseEntity<Void> excluir(@PathVariable UUID checkNumber) {
+
+        if (!paymentsRepository.existsById(checkNumber)) {
+            return ResponseEntity.notFound().build();
+        }
+
+        paymentsCatalogService.excluir(checkNumber);
+
+        return ResponseEntity.noContent().build();
+    }
+
 }
