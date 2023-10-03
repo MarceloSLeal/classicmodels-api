@@ -1,82 +1,118 @@
 package com.classicmodels.api.controller;
 
-
 import com.classicmodels.api.mapper.PaymentsMapper;
+import com.classicmodels.api.model.PaymentsRepModel;
 import com.classicmodels.domain.model.Payments;
-import com.classicmodels.domain.repository.CustomersRepository;
 import com.classicmodels.domain.repository.PaymentsRepository;
-import com.classicmodels.domain.service.PaymentsCatalogService;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.web.context.WebApplicationContext;
+import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.springframework.http.ResponseEntity;
 
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.*;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
-@AutoConfigureMockMvc
 //@WebMvcTest(PaymentsController.class)
 public class PaymentsControllerTest {
 
-    @Autowired
-    private MockMvc mockMvc;
-    @Autowired
-    private ObjectMapper objectMapper;
-    @Autowired
-    private WebApplicationContext wac;
-
-
-    @MockBean
+    @Mock
     private PaymentsRepository paymentsRepository;
-    @MockBean
-    private PaymentsController paymentsController;
-    @MockBean
+    @Mock
     private PaymentsMapper paymentsMapper;
-
-    @MockBean
-    private PaymentsCatalogService paymentsCatalogService;
-    @MockBean
-    private CustomersRepository customersRepository;
-
-    private List<Payments> mockPaymentsList;
+    @InjectMocks
+    private PaymentsController paymentsController;
 
     @BeforeEach
     public void setup() {
+        MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    public void testListar() throws Exception {
+
+        List<Payments> mockPaymentsList = new ArrayList<>();
+
         Payments payments1 = new Payments();
         payments1.setPaymentDate(OffsetDateTime.now());
-        payments1.setCheckNumber(UUID.fromString("34b97957-543c-11ee-9da2-0242ac120002"));
         payments1.setAmount(1001.0);
+        payments1.setCheckNumber(UUID.fromString("1a1c07e0-a04c-46ed-805f-290d573d5e40"));
         payments1.setCustomerId(1L);
         Payments payments2 = new Payments();
         payments2.setPaymentDate(OffsetDateTime.now());
-        payments2.setCheckNumber(UUID.fromString("6eea3201-543c-11ee-9da2-0242ac120002"));
         payments2.setAmount(1002.0);
+        payments2.setCheckNumber(UUID.fromString("40688a64-5125-11ee-8eaa-0242ac120002"));
         payments2.setCustomerId(2L);
-        Payments payments3 = new Payments();
-        payments3.setPaymentDate(OffsetDateTime.now());
-        payments3.setCheckNumber(UUID.fromString("9765c73c-543c-11ee-9da2-0242ac120002"));
-        payments3.setAmount(1003.0);
-        payments3.setCustomerId(3L);
-        Payments payments4 = new Payments();
-        payments4.setPaymentDate(OffsetDateTime.now());
-        payments4.setCheckNumber(UUID.fromString("defe37cb-565e-11ee-8c61-0242ac120002"));
-        payments4.setAmount(1004.0);
-        payments4.setCustomerId(1L);
 
-        mockPaymentsList = new ArrayList<>();
         mockPaymentsList.add(payments1);
         mockPaymentsList.add(payments2);
-        mockPaymentsList.add(payments3);
-        mockPaymentsList.add(payments4);
 
+        when(paymentsRepository.findAll()).thenReturn(mockPaymentsList);
+
+        List<Payments> result = paymentsController.listar();
+
+        verify(paymentsRepository, times(1)).findAll();
+        assertEquals(mockPaymentsList, result);
+        verifyNoMoreInteractions(paymentsRepository);
+    }
+
+    @Test
+    public void testBuscarPorCustomerIdComPagamentosEncontrados() {
+        Long customerId = 1L;
+
+        List<Payments> mockPaymentsList = new ArrayList<>();
+
+        Payments payments1 = new Payments();
+        payments1.setPaymentDate(OffsetDateTime.now());
+        payments1.setAmount(1001.0);
+        payments1.setCheckNumber(UUID.fromString("1a1c07e0-a04c-46ed-805f-290d573d5e40"));
+        payments1.setCustomerId(1L);
+        Payments payments2 = new Payments();
+        payments2.setPaymentDate(OffsetDateTime.now());
+        payments2.setAmount(1002.0);
+        payments2.setCheckNumber(UUID.fromString("40688a64-5125-11ee-8eaa-0242ac120002"));
+        payments2.setCustomerId(1L);
+
+        mockPaymentsList.add(payments1);
+        mockPaymentsList.add(payments2);
+
+        when(paymentsRepository.findByCustomerId(customerId)).thenReturn(mockPaymentsList);
+        when(paymentsMapper.toModel(any(Payments.class))).thenAnswer(invocation -> {
+            Payments payment = invocation.getArgument(0);
+            return new PaymentsRepModel();
+        });
+
+        ResponseEntity<List<PaymentsRepModel>> response = paymentsController.buscarPorCustomerId(customerId);
+
+        assertEquals(200, response.getStatusCodeValue());
+
+        List<PaymentsRepModel> responseBody = response.getBody();
+        assert responseBody != null;
+        assertEquals(mockPaymentsList.size(), responseBody.size());
+        verify(paymentsRepository, times(1)).findByCustomerId(customerId);
+        verify(paymentsMapper, times(mockPaymentsList.size())).toModel(any(Payments.class));
+        verifyNoMoreInteractions(paymentsRepository, paymentsMapper);
+
+    }
+
+    @Test
+    public void testBuscarPorCustomerIdSemPagamentosEncontrados() {
+        Long customerId = 1L;
+
+        when(paymentsRepository.findByCustomerId(customerId)).thenReturn(new ArrayList<>());
+
+        ResponseEntity<List<PaymentsRepModel>> response = paymentsController.buscarPorCustomerId(customerId);
+
+        assertEquals(404, response.getStatusCodeValue());
+        verify(paymentsRepository, times(1)).findByCustomerId(customerId);
+        verifyNoMoreInteractions(paymentsRepository);
+        verifyNoInteractions(paymentsMapper);
     }
 
 
