@@ -13,6 +13,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.UUID;
@@ -60,14 +61,17 @@ public class PaymentsController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public PaymentsRepModel adicionar(@Valid @RequestBody PaymentsInput paymentsInput) {
+    public ResponseEntity<PaymentsRepModel> adicionar(@Valid @RequestBody PaymentsInput paymentsInput) {
 
         customersRepository.findById(paymentsInput.getCustomerId())
-                .orElseThrow(() -> new EntityNotFoundException("There is no customer with that Id"));
+//                .orElseThrow(() -> new EntityNotFoundException("There is no customer with that Id"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "There is no customer with that Id"));
 
         Payments payments = paymentsMapper.toEntity(paymentsInput);
+        Payments savedPayment = paymentsCatalogService.salvar(payments);
+        PaymentsRepModel paymentsRepModel = paymentsMapper.toModel(savedPayment);
 
-        return paymentsMapper.toModel(paymentsCatalogService.salvar(payments));
+        return ResponseEntity.status(HttpStatus.CREATED).body(paymentsRepModel);
     }
 
     @PutMapping("/{checkNumber}")
