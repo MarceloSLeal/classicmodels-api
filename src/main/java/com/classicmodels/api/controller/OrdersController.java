@@ -5,19 +5,14 @@ import com.classicmodels.api.model.OrdersRepModel;
 import com.classicmodels.domain.exception.EntityNotFoundException;
 import com.classicmodels.domain.model.Orders;
 import com.classicmodels.domain.repository.OrdersRepository;
-import jakarta.validation.Valid;
+import com.classicmodels.domain.service.OrdersCatalogService;
 import lombok.AllArgsConstructor;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
 import java.util.List;
 
 @AllArgsConstructor
@@ -27,6 +22,7 @@ public class OrdersController {
 
     private OrdersRepository ordersRepository;
     private OrdersMapper ordersMapper;
+    private OrdersCatalogService ordersCatalogService;
 
     @GetMapping
     public List<Orders> listar() {
@@ -42,12 +38,19 @@ public class OrdersController {
     }
 
     @GetMapping("/date/{date}")
-    public ResponseEntity<OrdersRepModel> buscarPorOrderDate
-            (@PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime date) {
+    public ResponseEntity<List<OrdersRepModel>> buscarPorOrderDate(@PathVariable String date) {
 
-        return ordersRepository.findByDate(date)
-                .map(orders -> ResponseEntity.ok(ordersMapper.toModel(orders)))
-                .orElseThrow(() -> new EntityNotFoundException("There is no Order with this date " + date));
+        List<Orders> orders = ordersCatalogService.buscarPorOrderDate(date);
+
+        if (!orders.isEmpty()) {
+            List<OrdersRepModel> ordersRepModels = orders.stream()
+                    .map(ordersClass -> ordersMapper.toModel(ordersClass))
+                    .toList();
+            return ResponseEntity.ok(ordersRepModels);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+
     }
 
 }

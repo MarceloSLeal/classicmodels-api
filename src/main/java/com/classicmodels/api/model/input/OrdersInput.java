@@ -15,9 +15,9 @@ import java.time.OffsetDateTime;
 @Setter
 public class OrdersInput {
 
-    @FutureOrPresent
+//    @FutureOrPresent
     @NotNull
-    private OffsetDateTime date;
+    private String date;
 
     @FutureOrPresent
     @NotNull
