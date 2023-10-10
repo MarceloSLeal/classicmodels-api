@@ -15,6 +15,6 @@ public class OrdersRepModel {
     private OffsetDateTime shippedDate;
     private String status;
     private String comments;
-    private Integer customerId;
+    private Long customerId;
 
 }

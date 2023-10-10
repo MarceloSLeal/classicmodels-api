@@ -36,6 +36,6 @@ public class OrdersInput {
 
     @NotBlank
     @Digits(integer = 10, fraction = 0, message = "Invalid integer value")
-    private Integer customerId;
+    private Long customerId;
 
 }

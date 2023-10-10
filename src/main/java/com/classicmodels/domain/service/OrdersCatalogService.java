@@ -30,15 +30,35 @@ public class OrdersCatalogService {
 
     public List<Orders> buscarPorOrderDate(String date) {
 
+        return ordersRepository.findByDate(startOfDayFormatter(date), endOfDayFormatter(date));
+    }
+
+    public List<Orders> buscarPorOrderRequiredDate(String date) {
+
+        return ordersRepository.findByRequiredDate(startOfDayFormatter(date), endOfDayFormatter(date));
+    }
+
+    public List<Orders> buscarPorOrderShippedDate(String date) {
+
+        return ordersRepository.findByShippedDate(startOfDayFormatter(date), endOfDayFormatter(date));
+    }
+
+    static String startOfDayFormatter(String date) {
+
         LocalDate dateReceived = LocalDate.parse(date);
         LocalDateTime startOfDay = dateReceived.atStartOfDay();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
+        return startOfDay.format(formatter);
+    }
+
+    static String endOfDayFormatter(String date) {
+
+        LocalDate dateReceived = LocalDate.parse(date);
         LocalDateTime endOfDay = dateReceived.atTime(23, 59, 59);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
-        LocalDateTime formattedStartOfDay = LocalDateTime.parse(startOfDay.format(formatter));
-        LocalDateTime formattedEndOfDay = LocalDateTime.parse(endOfDay.format(formatter));
-
-        return ordersRepository.findByDate(formattedStartOfDay, formattedEndOfDay);
+        return endOfDay.format(formatter);
     }
 
 }

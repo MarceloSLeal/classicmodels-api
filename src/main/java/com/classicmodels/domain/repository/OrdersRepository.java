@@ -16,7 +16,18 @@ import java.util.Optional;
 @Repository
 public interface OrdersRepository extends JpaRepository<Orders, Long> {
 
-    @Query("select * from orders where date between :fromDate and :toDate")
-    List<Orders> findByDate(@Param("fromDate") LocalDateTime fromDate , @Param("toDate") LocalDateTime toDate);
+    @Query(value = "select * from orders where date between :fromDate and :toDate", nativeQuery = true)
+    List<Orders> findByDate(@Param("fromDate") String fromDate , @Param("toDate") String toDate);
+
+    @Query(value = "select * from orders where required_date between :fromDate and :toDate", nativeQuery = true)
+    List<Orders> findByRequiredDate(@Param("fromDate") String fromDate, @Param("toDate") String toDate);
+
+    @Query(value = "select * from orders where shipped_date between :fromDate and :toDate", nativeQuery = true)
+    List<Orders> findByShippedDate(@Param("fromDate") String fromDate, @Param("toDate") String toDate);
+
+    @Query(value = "select * from orders where status = :status", nativeQuery = true)
+    List<Orders> findByStatus(@Param("status") String status);
+
+    List<Orders> findByCustomerId(Long id);
 
 }
