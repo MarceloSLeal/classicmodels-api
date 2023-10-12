@@ -2,17 +2,17 @@ package com.classicmodels.api.controller;
 
 import com.classicmodels.api.mapper.OrdersMapper;
 import com.classicmodels.api.model.OrdersRepModel;
+import com.classicmodels.api.model.input.OrdersInput;
 import com.classicmodels.domain.exception.EntityNotFoundException;
 import com.classicmodels.domain.model.Orders;
+import com.classicmodels.domain.repository.CustomersRepository;
 import com.classicmodels.domain.repository.OrdersRepository;
 import com.classicmodels.domain.service.OrdersCatalogService;
 import jakarta.persistence.criteria.Order;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -24,6 +24,7 @@ public class OrdersController {
     private OrdersRepository ordersRepository;
     private OrdersMapper ordersMapper;
     private OrdersCatalogService ordersCatalogService;
+    private CustomersRepository customersRepository;
 
     @GetMapping
     public List<Orders> listar() {
@@ -112,6 +113,15 @@ public class OrdersController {
         } else {
             throw new EntityNotFoundException("there is no order customer_id " + id + " in the Table");
         }
+    }
+
+    @PostMapping
+    public ResponseEntity<OrdersRepModel> adicionar(@Valid @RequestBody OrdersInput ordersInput) {
+
+        customersRepository.findById(ordersInput.getCustomerId())
+                .orElseThrow(() -> new EntityNotFoundException("There is no customer with the Id " + ordersInput.getCustomerId()));
+
+        return null;
     }
 
 }
