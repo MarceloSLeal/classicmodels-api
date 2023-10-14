@@ -22,7 +22,7 @@ public class Orders {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @FutureOrPresent
+    @PastOrPresent
     @NotNull
     private OffsetDateTime date;
 
@@ -34,14 +34,15 @@ public class Orders {
     @Nullable
     private OffsetDateTime shippedDate;
 
-    @Size(max = 15)
-    @NotBlank
-    private String status;
+//    @Size(max = 15)
+//    @NotBlank
+    @Enumerated(EnumType.STRING)
+    private OrdersStatus status;
 
     @Nullable
     private String comments;
 
-    @NotBlank
+//    @NotBlank
     @Digits(integer = 10, fraction = 0, message = "Invalid integer value")
     private Long customerId;
 

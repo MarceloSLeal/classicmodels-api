@@ -11,9 +11,11 @@ import com.classicmodels.domain.service.OrdersCatalogService;
 import jakarta.persistence.criteria.Order;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 
 @AllArgsConstructor
@@ -121,7 +123,10 @@ public class OrdersController {
         customersRepository.findById(ordersInput.getCustomerId())
                 .orElseThrow(() -> new EntityNotFoundException("There is no customer with the Id " + ordersInput.getCustomerId()));
 
-        return null;
+        Orders orders = ordersMapper.toEntity(ordersInput);
+        Orders savedOrders = ordersCatalogService.salvarPost(orders);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(ordersMapper.toModel(savedOrders));
     }
 
 }

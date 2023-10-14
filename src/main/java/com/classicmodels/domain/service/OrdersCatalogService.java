@@ -1,13 +1,13 @@
 package com.classicmodels.domain.service;
 
 import com.classicmodels.domain.model.Orders;
+import com.classicmodels.domain.model.OrdersStatus;
 import com.classicmodels.domain.repository.OrdersRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
@@ -26,6 +26,16 @@ public class OrdersCatalogService {
     @Transactional
     public void excluir(Long id) {
         ordersRepository.deleteById(id);
+    }
+
+    public Orders salvarPost(Orders orders) {
+
+        orders.setDate(OffsetDateTime.now());
+        orders.setStatus(OrdersStatus.IN_PROCESS);
+
+        System.out.println(orders.getDate());
+
+        return this.salvar(orders);
     }
 
     public List<Orders> buscarPorOrderDate(String date) {
