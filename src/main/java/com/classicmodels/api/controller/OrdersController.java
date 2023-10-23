@@ -3,19 +3,21 @@ package com.classicmodels.api.controller;
 import com.classicmodels.api.mapper.OrdersMapper;
 import com.classicmodels.api.model.OrdersRepModel;
 import com.classicmodels.api.model.input.OrdersInput;
+import com.classicmodels.api.model.input.OrdersInputUpdate;
 import com.classicmodels.domain.exception.EntityNotFoundException;
 import com.classicmodels.domain.model.Orders;
+import com.classicmodels.domain.model.OrdersStatus;
 import com.classicmodels.domain.repository.CustomersRepository;
 import com.classicmodels.domain.repository.OrdersRepository;
 import com.classicmodels.domain.service.OrdersCatalogService;
-import jakarta.persistence.criteria.Order;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.OffsetDateTime;
+import java.util.Arrays;
 import java.util.List;
 
 @AllArgsConstructor
@@ -87,7 +89,7 @@ public class OrdersController {
     }
 
     @GetMapping("/status/{status}")
-    public ResponseEntity<List<OrdersRepModel>> buscarPorOrderStatus(@PathVariable String status) {
+    public ResponseEntity<List<OrdersRepModel>> buscarPorOrderStatus(@PathVariable OrdersStatus status) {
 
         List<Orders> orders = ordersRepository.findByStatus(status);
 
@@ -99,7 +101,6 @@ public class OrdersController {
         } else {
             throw new EntityNotFoundException("There is no order status " + status + " in the Table");
         }
-
     }
 
     @GetMapping("/customerid/{id}")
@@ -127,6 +128,17 @@ public class OrdersController {
         Orders savedOrders = ordersCatalogService.salvarPost(orders);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(ordersMapper.toModel(savedOrders));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<OrdersRepModel> atualizar(@PathVariable Long id, @Valid @RequestBody OrdersInputUpdate ordersInputUpdate) {
+
+        Orders orders = ordersRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("There is no order with the Id " + id));
+
+        OrdersRepModel ordersRepModel = ordersMapper.toModel(ordersCatalogService.atualizar(orders, ordersInputUpdate));
+
+        return ResponseEntity.ok(ordersRepModel);
     }
 
 }

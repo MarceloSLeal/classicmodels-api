@@ -1,5 +1,6 @@
 package com.classicmodels.api.model;
 
+import com.classicmodels.domain.model.OrdersStatus;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -13,7 +14,7 @@ public class OrdersRepModel {
     private OffsetDateTime date;
     private OffsetDateTime requiredDate;
     private OffsetDateTime shippedDate;
-    private String status;
+    private OrdersStatus status;
     private String comments;
     private Long customerId;
 

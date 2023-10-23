@@ -1,5 +1,6 @@
 package com.classicmodels.domain.service;
 
+import com.classicmodels.api.model.input.OrdersInputUpdate;
 import com.classicmodels.domain.model.Orders;
 import com.classicmodels.domain.model.OrdersStatus;
 import com.classicmodels.domain.repository.OrdersRepository;
@@ -21,6 +22,19 @@ public class OrdersCatalogService {
     public Orders salvar(Orders orders) {
 
         return ordersRepository.save(orders);
+    }
+
+    @Transactional
+    public Orders atualizar(Orders orders, OrdersInputUpdate ordersInputUpdate) {
+
+        if (orders.getShippedDate() == null) {
+            orders.setShippedDate(ordersInputUpdate.getShippedDate());
+        }
+
+        orders.setComments(ordersInputUpdate.getComments());
+        orders.setStatus(ordersInputUpdate.getStatus());
+
+        return orders;
     }
 
     @Transactional

@@ -1,6 +1,7 @@
 package com.classicmodels.domain.repository;
 
 import com.classicmodels.domain.model.Orders;
+import com.classicmodels.domain.model.OrdersStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -26,7 +27,7 @@ public interface OrdersRepository extends JpaRepository<Orders, Long> {
     List<Orders> findByShippedDate(@Param("fromDate") String fromDate, @Param("toDate") String toDate);
 
     @Query(value = "select * from orders where status = :status", nativeQuery = true)
-    List<Orders> findByStatus(@Param("status") String status);
+    List<Orders> findByStatus(@Param("status") OrdersStatus status);
 
     List<Orders> findByCustomerId(Long id);
 
