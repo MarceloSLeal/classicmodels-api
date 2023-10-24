@@ -10,6 +10,6 @@ public enum OrdersStatus {
     CANCELLED,
     ON_HOLD,
     DISPUTED,
-    IN_PROCESS;
+    IN_PROCESS
 
 }

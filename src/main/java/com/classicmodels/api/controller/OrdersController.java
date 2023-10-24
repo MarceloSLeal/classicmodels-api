@@ -4,6 +4,7 @@ import com.classicmodels.api.mapper.OrdersMapper;
 import com.classicmodels.api.model.OrdersRepModel;
 import com.classicmodels.api.model.input.OrdersInput;
 import com.classicmodels.api.model.input.OrdersInputUpdate;
+import com.classicmodels.domain.exception.BusinessException;
 import com.classicmodels.domain.exception.EntityNotFoundException;
 import com.classicmodels.domain.model.Orders;
 import com.classicmodels.domain.model.OrdersStatus;
@@ -14,10 +15,8 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Arrays;
 import java.util.List;
 
 @AllArgsConstructor
@@ -133,12 +132,31 @@ public class OrdersController {
     @PutMapping("/{id}")
     public ResponseEntity<OrdersRepModel> atualizar(@PathVariable Long id, @Valid @RequestBody OrdersInputUpdate ordersInputUpdate) {
 
+        try {
+            Orders test = new Orders();
+            test.setStatus(OrdersStatus.valueOf(ordersInputUpdate.getStatus()));
+        } catch (IllegalArgumentException e) {
+            throw new BusinessException("Valid values for status: SHIPPED, RESOLVED, CANCELLED, ON_HOLD, DISPUTED, IN_PROCESS");
+        }
+
         Orders orders = ordersRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("There is no order with the Id " + id));
 
         OrdersRepModel ordersRepModel = ordersMapper.toModel(ordersCatalogService.atualizar(orders, ordersInputUpdate));
 
         return ResponseEntity.ok(ordersRepModel);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> excluir(@PathVariable Long id) {
+
+        if (!ordersRepository.existsById(id)) {
+            return ResponseEntity.notFound().build();
+        }
+
+        ordersCatalogService.excluir(id);
+
+        return ResponseEntity.noContent().build();
     }
 
 }

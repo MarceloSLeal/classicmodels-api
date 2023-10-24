@@ -1,10 +1,12 @@
 package com.classicmodels.domain.service;
 
 import com.classicmodels.api.model.input.OrdersInputUpdate;
+import com.classicmodels.domain.exception.BusinessException;
 import com.classicmodels.domain.model.Orders;
 import com.classicmodels.domain.model.OrdersStatus;
 import com.classicmodels.domain.repository.OrdersRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,7 +34,7 @@ public class OrdersCatalogService {
         }
 
         orders.setComments(ordersInputUpdate.getComments());
-        orders.setStatus(ordersInputUpdate.getStatus());
+        orders.setStatus(OrdersStatus.valueOf(ordersInputUpdate.getStatus()));
 
         return orders;
     }
