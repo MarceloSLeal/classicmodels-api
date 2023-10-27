@@ -11,13 +11,16 @@ import com.classicmodels.domain.model.OrdersStatus;
 import com.classicmodels.domain.repository.CustomersRepository;
 import com.classicmodels.domain.repository.OrdersRepository;
 import com.classicmodels.domain.service.OrdersCatalogService;
+import jakarta.persistence.criteria.Order;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Optional;
 
 @AllArgsConstructor
 @RestController
@@ -39,7 +42,9 @@ public class OrdersController {
 
         return ordersRepository.findById(id)
                 .map(orders -> ResponseEntity.ok(ordersMapper.toModel(orders)))
-                .orElseThrow(() -> new EntityNotFoundException("There is no Order Id " + id + " in the Table"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                        "This order Id %s doesn't exist".formatted(id)));
+
     }
 
     @GetMapping("/date/{date}")
@@ -53,7 +58,8 @@ public class OrdersController {
                     .toList();
             return ResponseEntity.ok(ordersRepModels);
         } else {
-            throw new EntityNotFoundException("There is no order date " + date + " in the Table");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "This order date %s doesn't exist".formatted(date));
         }
     }
 
