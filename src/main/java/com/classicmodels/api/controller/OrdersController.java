@@ -74,7 +74,8 @@ public class OrdersController {
                     .toList();
             return ResponseEntity.ok(ordersRepModels);
         } else {
-            throw new EntityNotFoundException("There is no order required date " + date + " in the Table");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "This order required date %s doens't exist".formatted(date));
         }
     }
 
@@ -89,7 +90,8 @@ public class OrdersController {
                     .toList();
             return ResponseEntity.ok(ordersRepModels);
         } else {
-            throw new EntityNotFoundException("There is no order shipped date " + date + " in the Table");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "This order shipped date %s doesn't exist".formatted(date));
         }
     }
 
@@ -104,7 +106,9 @@ public class OrdersController {
                     .toList();
             return ResponseEntity.ok(ordersRepModels);
         } else {
-            throw new EntityNotFoundException("There is no order status " + status + " in the Table");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "This order status %s was not set in any registry".formatted(status));
+            //TODO corrigir isso
         }
     }
 

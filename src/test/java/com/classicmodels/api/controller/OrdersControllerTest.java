@@ -173,4 +173,158 @@ public class OrdersControllerTest {
         assertEquals(HttpStatus.BAD_REQUEST, exception.getStatusCode());
     }
 
+    @Test
+    public void testBuscarPorOrderRequiredDateEncontrados() {
+        String orderDate = "2023-10-14";
+
+        List<Orders> mockOrdersList = new ArrayList<>();
+
+        Orders orders1 = new Orders();
+        orders1.setId(1L);
+        orders1.setDate(OffsetDateTime.parse("2023-10-14T00:00:00-03:00"));
+        orders1.setRequiredDate(OffsetDateTime.parse("2023-12-12T00:00:00-03:00"));
+        orders1.setShippedDate(null);
+        orders1.setStatus(OrdersStatus.IN_PROCESS);
+        orders1.setComments("Orders1");
+        orders1.setCustomerId(103L);
+        Orders orders2 = new Orders();
+        orders2.setId(2L);
+        orders2.setDate(OffsetDateTime.parse("2023-10-14T00:00:00-03:00"));
+        orders2.setRequiredDate(OffsetDateTime.parse("2023-12-12T00:00:00-03:00"));
+        orders2.setShippedDate(null);
+        orders2.setStatus(OrdersStatus.IN_PROCESS);
+        orders2.setComments("Orders2");
+        orders2.setCustomerId(104L);
+
+        mockOrdersList.add(orders1);
+        mockOrdersList.add(orders2);
+
+        when(ordersCatalogService.buscarPorOrderRequiredDate(orderDate)).thenReturn(mockOrdersList);
+        when(ordersMapper.toModel(any(Orders.class))).thenAnswer(invocation -> new OrdersRepModel());
+
+        ResponseEntity<List<OrdersRepModel>> response = ordersController.buscarPorOrderRequiredDate(orderDate);
+
+        assertEquals(response.getStatusCode(), HttpStatus.OK);
+
+        List<OrdersRepModel> responseBody = response.getBody();
+        assert responseBody != null;
+        verify(ordersCatalogService, times(1)).buscarPorOrderRequiredDate(orderDate);
+        verify(ordersMapper, times(mockOrdersList.size())).toModel(any(Orders.class));
+        verifyNoMoreInteractions(ordersRepository, ordersMapper);
+    }
+
+    @Test
+    public void testBuscarPorOrderRequiredDateNaoEncontrado() {
+
+        String orderDate = "2023-10-14";
+
+        when(ordersRepository.findByRequiredDate("2023-12-12 00:00:00", "2023-12-12 59:59:59")).thenReturn(null);
+
+        ResponseStatusException exception = assertThrows(ResponseStatusException.class, () -> ordersController.buscarPorOrderRequiredDate(orderDate));
+
+        assertEquals(HttpStatus.BAD_REQUEST, exception.getStatusCode());
+    }
+
+    @Test
+    public void testBuscarPorOrderShippedDateEncontrados() {
+
+        String orderDate = "2023-10-14";
+
+        List<Orders> mockOrdersList = new ArrayList<>();
+
+        Orders orders1 = new Orders();
+        orders1.setId(1L);
+        orders1.setDate(OffsetDateTime.parse("2023-10-14T00:00:00-03:00"));
+        orders1.setRequiredDate(OffsetDateTime.parse("2023-12-12T00:00:00-03:00"));
+        orders1.setShippedDate(null);
+        orders1.setStatus(OrdersStatus.IN_PROCESS);
+        orders1.setComments("Orders1");
+        orders1.setCustomerId(103L);
+        Orders orders2 = new Orders();
+        orders2.setId(2L);
+        orders2.setDate(OffsetDateTime.parse("2023-10-14T00:00:00-03:00"));
+        orders2.setRequiredDate(OffsetDateTime.parse("2023-12-12T00:00:00-03:00"));
+        orders2.setShippedDate(null);
+        orders2.setStatus(OrdersStatus.IN_PROCESS);
+        orders2.setComments("Orders2");
+        orders2.setCustomerId(104L);
+
+        mockOrdersList.add(orders1);
+        mockOrdersList.add(orders2);
+
+        when(ordersCatalogService.buscarPorOrderShippedDate(orderDate)).thenReturn(mockOrdersList);
+        when(ordersMapper.toModel(any(Orders.class))).thenAnswer(invocation -> new OrdersRepModel());
+
+        ResponseEntity<List<OrdersRepModel>> response = ordersController.buscarPorOrderShippedDate(orderDate);
+
+        assertEquals(response.getStatusCode(), HttpStatus.OK);
+
+        List<OrdersRepModel> responseBody = response.getBody();
+        assert responseBody != null;
+        verify(ordersCatalogService, times(1)).buscarPorOrderShippedDate(orderDate);
+        verify(ordersMapper, times(mockOrdersList.size())).toModel(any(Orders.class));
+        verifyNoMoreInteractions(ordersRepository, ordersMapper);
+    }
+
+    @Test
+    public void testBuscarPorOrderShippedDateNaoEncontrado() {
+
+        String orderDate = "2023-10-14";
+
+        when(ordersRepository.findByShippedDate("2023-12-12 00:00:00", "2023-12-12 59:59:59")).thenReturn(null);
+
+        ResponseStatusException exception = assertThrows(ResponseStatusException.class, () -> ordersController.buscarPorOrderShippedDate(orderDate));
+
+        assertEquals(HttpStatus.BAD_REQUEST, exception.getStatusCode());
+    }
+
+    @Test
+    public void testBuscarPorOrderStatusEncontrados() {
+
+        List<Orders> mockOrdersList = new ArrayList<>();
+
+        Orders orders1 = new Orders();
+        orders1.setId(1L);
+        orders1.setDate(OffsetDateTime.parse("2023-10-14T00:00:00-03:00"));
+        orders1.setRequiredDate(OffsetDateTime.parse("2023-12-12T00:00:00-03:00"));
+        orders1.setShippedDate(null);
+        orders1.setStatus(OrdersStatus.IN_PROCESS);
+        orders1.setComments("Orders1");
+        orders1.setCustomerId(103L);
+        Orders orders2 = new Orders();
+        orders2.setId(2L);
+        orders2.setDate(OffsetDateTime.parse("2023-10-14T00:00:00-03:00"));
+        orders2.setRequiredDate(OffsetDateTime.parse("2023-12-12T00:00:00-03:00"));
+        orders2.setShippedDate(null);
+        orders2.setStatus(OrdersStatus.IN_PROCESS);
+        orders2.setComments("Orders2");
+        orders2.setCustomerId(104L);
+
+        mockOrdersList.add(orders1);
+        mockOrdersList.add(orders2);
+
+        when(ordersRepository.findByStatus(OrdersStatus.IN_PROCESS)).thenReturn(mockOrdersList);
+        when(ordersMapper.toModel(any(Orders.class))).thenAnswer(invocation -> new OrdersRepModel());
+
+        ResponseEntity<List<OrdersRepModel>> response = ordersController.buscarPorOrderStatus(OrdersStatus.IN_PROCESS);
+
+        assertEquals(response.getStatusCode(), HttpStatus.OK);
+
+        List<OrdersRepModel> responseBody = response.getBody();
+        assert responseBody != null;
+        verify(ordersRepository, times(1)).findByStatus(OrdersStatus.IN_PROCESS);
+        verify(ordersMapper, times(mockOrdersList.size())).toModel(any(Orders.class));
+        verifyNoMoreInteractions(ordersRepository, ordersMapper);
+    }
+
+    @Test
+    public void testBuscarPorOrderStatusNaoEncontrado() {
+
+        when(ordersRepository.findByStatus(OrdersStatus.CANCELLED)).thenReturn(null);
+
+        ResponseStatusException exception = assertThrows(ResponseStatusException.class, () -> ordersController.buscarPorOrderStatus(OrdersStatus.CANCELLED));
+
+        assertEquals(HttpStatus.BAD_REQUEST, exception.getStatusCode());
+    }
+
 }
