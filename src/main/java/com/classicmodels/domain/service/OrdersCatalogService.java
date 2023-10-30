@@ -49,8 +49,6 @@ public class OrdersCatalogService {
         orders.setDate(OffsetDateTime.now());
         orders.setStatus(OrdersStatus.IN_PROCESS);
 
-        System.out.println(orders.getDate());
-
         return this.salvar(orders);
     }
 

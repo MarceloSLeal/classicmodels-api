@@ -96,7 +96,7 @@ public class OrdersController {
     }
 
     @GetMapping("/status/{status}")
-    public ResponseEntity<List<OrdersRepModel>> buscarPorOrderStatus(@PathVariable OrdersStatus status) {
+    public ResponseEntity<List<OrdersRepModel>> buscarPorOrderStatus(@PathVariable String status) {
 
         List<Orders> orders = ordersRepository.findByStatus(status);
 
@@ -107,8 +107,8 @@ public class OrdersController {
             return ResponseEntity.ok(ordersRepModels);
         } else {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                    "This order status %s was not set in any registry".formatted(status));
-            //TODO corrigir isso
+                    ("This order status %s was not set in any registry," +
+                            " Accepted values for status, SHIPPED, RESOLVED, CANCELLED, ON_HOLD, DISPUTED, DISPUTED").formatted(status));
         }
     }
 
@@ -123,7 +123,8 @@ public class OrdersController {
                     .toList();
             return ResponseEntity.ok(ordersRepModel);
         } else {
-            throw new EntityNotFoundException("there is no order customer_id " + id + " in the Table");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "This order shipped date %s doesn't exist".formatted(id));
         }
     }
 
@@ -131,7 +132,8 @@ public class OrdersController {
     public ResponseEntity<OrdersRepModel> adicionar(@Valid @RequestBody OrdersInput ordersInput) {
 
         customersRepository.findById(ordersInput.getCustomerId())
-                .orElseThrow(() -> new EntityNotFoundException("There is no customer with the Id " + ordersInput.getCustomerId()));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                        "This customer Id %s doesn't exist".formatted(ordersInput.getCustomerId())));
 
         Orders orders = ordersMapper.toEntity(ordersInput);
         Orders savedOrders = ordersCatalogService.salvarPost(orders);
@@ -143,14 +145,16 @@ public class OrdersController {
     public ResponseEntity<OrdersRepModel> atualizar(@PathVariable Long id, @Valid @RequestBody OrdersInputUpdate ordersInputUpdate) {
 
         try {
-            Orders test = new Orders();
-            test.setStatus(OrdersStatus.valueOf(ordersInputUpdate.getStatus()));
+            Orders teste = new Orders();
+            teste.setStatus(OrdersStatus.valueOf(ordersInputUpdate.getStatus()));
         } catch (IllegalArgumentException e) {
-            throw new BusinessException("Valid values for status: SHIPPED, RESOLVED, CANCELLED, ON_HOLD, DISPUTED, IN_PROCESS");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "Accepted values for status, SHIPPED, RESOLVED, CANCELLED, ON_HOLD, DISPUTED, DISPUTED");
         }
 
         Orders orders = ordersRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("There is no order with the Id " + id));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                        "This Id %s doesn't exist".formatted(id)));
 
         OrdersRepModel ordersRepModel = ordersMapper.toModel(ordersCatalogService.atualizar(orders, ordersInputUpdate));
 
@@ -161,7 +165,8 @@ public class OrdersController {
     public ResponseEntity<Void> excluir(@PathVariable Long id) {
 
         if (!ordersRepository.existsById(id)) {
-            return ResponseEntity.notFound().build();
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "This Id %s doesn't exist".formatted(id));
         }
 
         ordersCatalogService.excluir(id);

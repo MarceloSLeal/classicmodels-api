@@ -27,7 +27,7 @@ public interface OrdersRepository extends JpaRepository<Orders, Long> {
     List<Orders> findByShippedDate(@Param("fromDate") String fromDate, @Param("toDate") String toDate);
 
     @Query(value = "select * from orders where status = :status", nativeQuery = true)
-    List<Orders> findByStatus(@Param("status") OrdersStatus status);
+    List<Orders> findByStatus(@Param("status") String status);
 
     List<Orders> findByCustomerId(Long id);
 
