@@ -15,8 +15,9 @@ public class OrderDetails {
     @EqualsAndHashCode.Include
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer orderId;
-    private String productId;
+    private Long orderId;
+    @EqualsAndHashCode.Include
+    private Long productId;
     private Integer quantityOrdered;
     private Double priceEach;
     private Integer orderLineNumber;
