@@ -1,5 +1,6 @@
 package com.classicmodels.domain.model;
 
+import com.classicmodels.domain.model.modelId.OrderDetailsId;
 import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -9,14 +10,13 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
+@IdClass(OrderDetailsId.class)
 @Table(name = "orderdetails")
 public class OrderDetails {
 
-    @EqualsAndHashCode.Include
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long orderId;
-    @EqualsAndHashCode.Include
+    @Id
     private Long productId;
     private Integer quantityOrdered;
     private Double priceEach;

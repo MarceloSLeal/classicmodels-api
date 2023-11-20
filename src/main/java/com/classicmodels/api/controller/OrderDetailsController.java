@@ -25,14 +25,10 @@ public class OrderDetailsController {
         return orderDetailsRepository.findAll();
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/orderid/{id}")
     public ResponseEntity<OrderDetailsRepModel> buscarPorOrderDetailId(@PathVariable Long id) {
 
         List<OrderDetails> orderDetails = orderDetailsRepository.findByOrderId(id);
-
-        for (int i = 0; i< orderDetails.size(); i++) {
-            System.out.println(orderDetails.get(i).getProductId());
-        }
 
         if (!orderDetails.isEmpty()) {
             OrderDetailsRepModel orderDetailsRepModel = new OrderDetailsRepModel(orderDetails);
@@ -40,8 +36,6 @@ public class OrderDetailsController {
         } else {
             return ResponseEntity.notFound().build();
         }
-
-
     }
 
 }

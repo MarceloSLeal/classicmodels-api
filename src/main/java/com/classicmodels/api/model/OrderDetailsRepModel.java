@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 @Getter
@@ -20,14 +22,16 @@ public class OrderDetailsRepModel {
         if (orderDetails != null) {
             this.orderId = orderDetails.get(0).getOrderId();
 
-            for (int i = 0; i < orderDetails.size(); i++) {
+            for (OrderDetails orderDetail : orderDetails) {
                 OrderDetailsRepModelList itemList = new OrderDetailsRepModelList();
-                itemList.setProductId(orderDetails.get(i).getProductId());
-                itemList.setQuantityOrdered(orderDetails.get(i).getQuantityOrdered());
-                itemList.setPriceEach(orderDetails.get(i).getPriceEach());
-                itemList.setOrderLineNumber(orderDetails.get(i).getOrderLineNumber());
+                itemList.setProductId(orderDetail.getProductId());
+                itemList.setQuantityOrdered(orderDetail.getQuantityOrdered());
+                itemList.setPriceEach(orderDetail.getPriceEach());
+                itemList.setOrderLineNumber(orderDetail.getOrderLineNumber());
                 this.orderList.add(itemList);
             }
+
+            this.orderList.sort(Comparator.comparingInt(OrderDetailsRepModelList::getOrderLineNumber));
         }
     }
 }
