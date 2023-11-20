@@ -1,5 +1,6 @@
 package com.classicmodels.api.model;
 
+import com.classicmodels.api.model.lists.OrderDetailsRepModelListProductId;
 import com.classicmodels.domain.model.OrderDetails;
 import lombok.Getter;
 import lombok.Setter;
@@ -13,7 +14,7 @@ import java.util.List;
 public class OrderDetailsRepModelProductId {
 
     private Long productId;
-    private List<OrderDetailsRepModelList> orderList;
+    private List<OrderDetailsRepModelListProductId> orderList;
 
     public OrderDetailsRepModelProductId(List<OrderDetails> orderDetails) {
         this.orderList = new ArrayList<>();
@@ -22,7 +23,7 @@ public class OrderDetailsRepModelProductId {
             this.productId = orderDetails.get(0).getProductId();
 
             for (OrderDetails orderDetail : orderDetails) {
-                OrderDetailsRepModelList itemList = new OrderDetailsRepModelList();
+                OrderDetailsRepModelListProductId itemList = new OrderDetailsRepModelListProductId();
                 itemList.setOrderId(orderDetail.getOrderId());
                 itemList.setQuantityOrdered(orderDetail.getQuantityOrdered());
                 itemList.setPriceEach(orderDetail.getPriceEach());
@@ -30,7 +31,7 @@ public class OrderDetailsRepModelProductId {
                 this.orderList.add(itemList);
             }
 
-            this.orderList.sort(Comparator.comparingLong(OrderDetailsRepModelList::getOrderId));
+            this.orderList.sort(Comparator.comparingLong(OrderDetailsRepModelListProductId::getOrderId));
         }
     }
 

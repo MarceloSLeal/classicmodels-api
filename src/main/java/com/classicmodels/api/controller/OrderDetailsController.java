@@ -1,6 +1,6 @@
 package com.classicmodels.api.controller;
 
-import com.classicmodels.api.model.OrderDetailsRepModel;
+import com.classicmodels.api.model.OrderDetailsRepModelOrderId;
 import com.classicmodels.api.model.OrderDetailsRepModelProductId;
 import com.classicmodels.domain.model.OrderDetails;
 import com.classicmodels.domain.repository.OrderDetailsRepository;
@@ -26,13 +26,13 @@ public class OrderDetailsController {
     }
 
     @GetMapping("/orderid/{id}")
-    public ResponseEntity<OrderDetailsRepModel> buscarPorOrderDetailId(@PathVariable Long id) {
+    public ResponseEntity<OrderDetailsRepModelOrderId> buscarPorOrderDetailId(@PathVariable Long id) {
 
         List<OrderDetails> orderDetails = orderDetailsRepository.findByOrderId(id);
 
         if (!orderDetails.isEmpty()) {
-            OrderDetailsRepModel orderDetailsRepModel = new OrderDetailsRepModel(orderDetails);
-            return ResponseEntity.ok(orderDetailsRepModel);
+            OrderDetailsRepModelOrderId orderDetailsRepModelOrderId = new OrderDetailsRepModelOrderId(orderDetails);
+            return ResponseEntity.ok(orderDetailsRepModelOrderId);
         } else {
             return ResponseEntity.notFound().build();
         }

@@ -1,13 +1,12 @@
-package com.classicmodels.api.model;
+package com.classicmodels.api.model.lists;
 
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-public class OrderDetailsRepModelList {
+public class OrderDetailsRepModelListOrderId {
 
-    private Long orderId;
     private Long productId;
     private Integer quantityOrdered;
     private Double priceEach;

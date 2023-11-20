@@ -1,29 +1,29 @@
 package com.classicmodels.api.model;
 
+import com.classicmodels.api.model.lists.OrderDetailsRepModelListOrderId;
 import com.classicmodels.domain.model.OrderDetails;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
 @Getter
 @Setter
-public class OrderDetailsRepModel {
+public class OrderDetailsRepModelOrderId {
 
     private Long orderId;
-    private List<OrderDetailsRepModelList> orderList;
+    private List<OrderDetailsRepModelListOrderId> orderList;
 
-    public OrderDetailsRepModel(List<OrderDetails> orderDetails) {
+    public OrderDetailsRepModelOrderId(List<OrderDetails> orderDetails) {
         this.orderList = new ArrayList<>();
 
         if (orderDetails != null) {
             this.orderId = orderDetails.get(0).getOrderId();
 
             for (OrderDetails orderDetail : orderDetails) {
-                OrderDetailsRepModelList itemList = new OrderDetailsRepModelList();
+                OrderDetailsRepModelListOrderId itemList = new OrderDetailsRepModelListOrderId();
                 itemList.setProductId(orderDetail.getProductId());
                 itemList.setQuantityOrdered(orderDetail.getQuantityOrdered());
                 itemList.setPriceEach(orderDetail.getPriceEach());
@@ -31,7 +31,7 @@ public class OrderDetailsRepModel {
                 this.orderList.add(itemList);
             }
 
-            this.orderList.sort(Comparator.comparingInt(OrderDetailsRepModelList::getOrderLineNumber));
+            this.orderList.sort(Comparator.comparingInt(OrderDetailsRepModelListOrderId::getOrderLineNumber));
         }
     }
 }
