@@ -7,6 +7,7 @@ import lombok.Setter;
 @Setter
 public class OrderDetailsRepModelList {
 
+    private Long orderId;
     private Long productId;
     private Integer quantityOrdered;
     private Double priceEach;
