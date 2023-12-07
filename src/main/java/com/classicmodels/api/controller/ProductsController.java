@@ -2,15 +2,16 @@ package com.classicmodels.api.controller;
 
 import com.classicmodels.api.mapper.ProductsMapper;
 import com.classicmodels.api.model.ProductsRepModel;
+import com.classicmodels.api.model.input.ProductsInput;
+import com.classicmodels.domain.exception.EntityNotFoundException;
 import com.classicmodels.domain.model.Products;
 import com.classicmodels.domain.repository.ProductsRepository;
+import com.classicmodels.domain.service.ProductsCatalogService;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
@@ -23,6 +24,7 @@ public class ProductsController {
 
     private ProductsRepository productsRepository;
     private ProductsMapper productsMapper;
+    private ProductsCatalogService productsCatalogService;
 
     @GetMapping
     public List<Products> listar() {
@@ -51,7 +53,7 @@ public class ProductsController {
     @GetMapping("/productline/{productLine}")
     public ResponseEntity<List<ProductsRepModel>> buscarPorProductLine(@PathVariable String productLine) {
 
-        List<Products>  products = productsRepository.findByProductLine(productLine);
+        List<Products> products = productsRepository.findByProductLine(productLine);
 
         if (!products.isEmpty()) {
             List<ProductsRepModel> productsRepModels = products.stream()
@@ -96,5 +98,45 @@ public class ProductsController {
         }
     }
 
+    @PostMapping
+    public ResponseEntity<ProductsRepModel> adicionar(@Valid @RequestBody ProductsInput productsInput) {
+
+        productsRepository.findByName(productsInput.getName())
+                .ifPresent(product -> {
+                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                            "This product name %s already exists".formatted(productsInput.getName()));
+                });
+
+        Products products = productsMapper.toEntity(productsInput);
+        Products savedProduct = productsCatalogService.salvar(products);
+        ProductsRepModel productsRepModel = productsMapper.toModel(savedProduct);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(productsRepModel);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<ProductsRepModel> atualizar(@PathVariable Long id, @Valid @RequestBody ProductsInput productsInput) {
+
+        productsRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("This product id %s doesn't exit".formatted(id)));
+
+        Products products = productsMapper.toEntity(productsInput);
+        products.setId(id);
+
+        return ResponseEntity.ok(productsMapper
+                .toModel(productsCatalogService.salvar(products)));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> excluir(@PathVariable Long id) {
+
+        if (!productsRepository.existsById(id)) {
+            return ResponseEntity.notFound().build();
+        }
+
+        productsCatalogService.excluir(id);
+
+        return ResponseEntity.noContent().build();
+    }
 
 }
