@@ -12,9 +12,4 @@ services:
       MYSQL_DATABASE: ${MYSQL_DATABASE}
       MYSQL_USER: ${MYSQL_USER}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
-      
-    adminer:
-        image: mysql_classicmodels_api
-        restart: always 
-        ports:
-          - "3306:3306"
+      ports: "3306:3306"
