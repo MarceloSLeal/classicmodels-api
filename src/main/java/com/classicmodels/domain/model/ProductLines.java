@@ -1,9 +1,15 @@
 package com.classicmodels.domain.model;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.validator.constraints.UniqueElements;
+import org.springframework.lang.Nullable;
 
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Getter
@@ -14,10 +20,15 @@ public class ProductLines {
 
     @EqualsAndHashCode.Include
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @UniqueElements
+    @Size(max = 50)
     private String productLine;
+
+    @Size(max = 4000)
     private String textDescription;
+
     private String htmlDescription;
+
     private byte[] image;
 
 }
