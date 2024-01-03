@@ -1,5 +1,6 @@
 package com.classicmodels.domain.model;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
@@ -18,10 +19,9 @@ import org.springframework.lang.Nullable;
 @Table(name = "productlines")
 public class ProductLines {
 
-    @EqualsAndHashCode.Include
     @Id
-    @UniqueElements
     @Size(max = 50)
+    @Column(name = "product_line")
     private String productLine;
 
     @Size(max = 4000)

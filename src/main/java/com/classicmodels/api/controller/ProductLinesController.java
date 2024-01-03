@@ -3,6 +3,7 @@ package com.classicmodels.api.controller;
 import com.classicmodels.api.mapper.ProductLinesMapper;
 import com.classicmodels.api.model.ProductLinesRepModel;
 import com.classicmodels.api.model.input.ProductLinesInput;
+import com.classicmodels.domain.exception.EntityNotFoundException;
 import com.classicmodels.domain.model.ProductLines;
 import com.classicmodels.domain.repository.ProductLinesRepository;
 import com.classicmodels.domain.service.ProductLinesCatalogService;
@@ -52,6 +53,33 @@ public class ProductLinesController {
         ProductLinesRepModel productLinesRepModel = productLinesMapper.toModel(savedProductLine);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(productLinesRepModel);
+    }
+
+    @PutMapping("/{productLine}")
+    public ResponseEntity<ProductLinesRepModel> atualizar(@PathVariable String productLine, @Valid @RequestBody ProductLinesInput productLinesInput) {
+
+        ProductLines existingProductLines = productLinesRepository.findByProductLine(productLine)
+                .orElseThrow(() -> new EntityNotFoundException("This product line %s doesn't exist".formatted(productLine)));
+
+        existingProductLines.setTextDescription(productLinesInput.getTextDescription());
+        existingProductLines.setHtmlDescription(productLinesInput.getHtmlDescription());
+        existingProductLines.setImage(productLinesInput.getImage());
+
+        ProductLines savedProductLines = productLinesRepository.save(existingProductLines);
+
+        return ResponseEntity.ok(productLinesMapper.toModel(savedProductLines));
+    }
+
+    @DeleteMapping("/{productLine}")
+    public ResponseEntity<Void> excluir(@PathVariable String productLine) {
+
+        if (!productLinesRepository.existsById(productLine)) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        productLinesCatalogService.excluir(productLine);
+
+        return ResponseEntity.noContent().build();
     }
 
 }
