@@ -19,6 +19,7 @@ import java.util.List;
 @AllArgsConstructor
 @RestController
 @RequestMapping("/customers")
+@CrossOrigin
 public class CustomersController {
 
     private CustomersRepository customersRepository;
