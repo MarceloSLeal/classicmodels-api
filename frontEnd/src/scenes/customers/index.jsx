@@ -3,14 +3,11 @@ import { DataGrid } from "@mui/x-data-grid";
 import { tokens } from "../../theme";
 import { mockDataCustomers } from "../../data/mockDataCustomers";
 import Header from "../../components/Header";
-import { Urls } from "../../api/Paths";
 
 const Customers = () => {
     const theme = useTheme();
     const colors = tokens(theme.palette.mode);
-    const url = Urls("oi");
 
-    console.log(url.customers.findAll);
 
 
     const columns = [
