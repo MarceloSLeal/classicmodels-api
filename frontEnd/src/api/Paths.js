@@ -1,5 +1,5 @@
 
-const prefix = "http://localhost:8080/";
+const prefix = import.meta.env.VITE_URL_PREFIX;
 
 export const Urls = (param) => ({
     ...(
