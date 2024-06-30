@@ -1,14 +1,15 @@
 import { Box, useTheme } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import { tokens } from "../../theme";
-import { mockDataCustomers } from "../../data/mockDataCustomers";
 import Header from "../../components/Header";
+import { Urls } from "../../api/Paths";
+import useFetchData from "../../api/getData";
 
 const Customers = () => {
     const theme = useTheme();
     const colors = tokens(theme.palette.mode);
-
-
+    const url = Urls();
+    const { data, loading, error } = useFetchData(url.customers.findAll_Post);
 
     const columns = [
         { field: "id", headerName: "ID", flex: 0.5 },
@@ -26,6 +27,26 @@ const Customers = () => {
         { field: "creditLimit", headerName: "CREDIT", flex: 1 },
         { field: "employeeId", headerName: "EMP.ID", flex: 1 },
     ];
+
+    if (loading) {
+        return (
+            <Box m="20px">
+                <Header title="CUSTOMERS" subtitle="Managing Customers" />
+                <Box
+                    sx={{ fontSize: "2rem" }} >
+                    Loading...
+                </Box>
+            </Box>)
+    }
+
+    if (error) {
+        return (
+            <Box m="20px">
+                <Header title="CUSTOMERS" subtitle="Managing Customers" />
+                <Box>Error: {error.message}{}</Box>
+            </Box>
+        );
+    }
 
     return (
         <Box m="20px">
@@ -45,8 +66,7 @@ const Customers = () => {
                     },
                     "& .MuiDataGrid-columnHeader": {
                         backgroundColor: colors.blueAccent[700],
-                        borderBottom: "none",
-                        fontSize: 14
+                        borderBottom: "none", fontSize: 14
                     },
                     "& .MuiDataGrid-virtualScroller": {
                         backgroundColor: colors.primary[400],
@@ -58,7 +78,7 @@ const Customers = () => {
                 }}
             >
                 <DataGrid
-                    rows={mockDataCustomers}
+                    rows={data}
                     columns={columns}
                 />
             </Box>
