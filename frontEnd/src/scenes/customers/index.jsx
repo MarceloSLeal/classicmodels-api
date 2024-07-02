@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useState, useEffect } from 'react';
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/DeleteOutlined';
@@ -10,6 +10,8 @@ import {
     GridToolbarContainer,
     GridActionsCellItem,
     GridRowEditStopReasons,
+    GridToolbarColumnsButton,
+    GridToolbar
 } from "@mui/x-data-grid";
 import Button from '@mui/material/Button';
 import { Box, useTheme } from "@mui/material";
@@ -19,26 +21,26 @@ import { Urls } from "../../api/Paths";
 import useFetchData from "../../api/getData";
 
 
-function EditToolbar(props) {
-    const { setRows, setRowModesModel } = props;
-
-    const handleClick = () => {
-        const id = randomId();
-        setRows((oldRows) => [...oldRows, { id, name: '', age: '', isNew: true }]);
-        setRowModesModel((oldModel) => ({
-            ...oldModel,
-            [id]: { mode: GridRowModes.Edit, fieldToFocus: 'name' },
-        }));
-    };
-
-    return (
-        <GridToolbarContainer>
-            <Button color="primary" startIcon={<AddIcon />} onClick={handleClick}>
-                Add record
-            </Button>
-        </GridToolbarContainer>
-    );
-}
+// function EditToolbar(props) {
+//     const { setRows, setRowModesModel } = props;
+//
+//     const handleClick = () => {
+//         const id = randomId();
+//         setRows((oldRows) => [...oldRows, { id, name: '', age: '', isNew: true }]);
+//         setRowModesModel((oldModel) => ({
+//             ...oldModel,
+//             [id]: { mode: GridRowModes.Edit, fieldToFocus: 'name' },
+//         }));
+//     };
+//
+//     return (
+//         <GridToolbarContainer>
+//             <Button color="primary" startIcon={<AddIcon />} onClick={handleClick}>
+//                 Add record
+//             </Button>
+//         </GridToolbarContainer>
+//     );
+// }
 
 const Customers = () => {
     const theme = useTheme();
@@ -47,14 +49,42 @@ const Customers = () => {
     const { data, loading, error } = useFetchData(url.customers.findAll_Post);
     ////////
     const [rowModesModel, setRowModesModel] = React.useState({});
-    const [rows, setRows] = React.useState(data);
+    const [rows, setRows] = useState([]);
+    useEffect(() => {
+        if (data) {
+            setRows(data);
+        }
+    }, [data]);
+
+
+    const EditToolbar = (props) => {
+        const { setRows, setRowModesModel } = props;
+
+        const handleClick = () => {
+            const id = Math.random().toString(36).substring(2, 9);
+            //-TODO rever esse código randomico
+            setRows((oldRows) => [...oldRows, { id, name: '', age: '', isNew: true }]);
+            //TODO ajustar os nomes dessas propriedades com os nomes dos campos na tabela
+            setRowModesModel((oldModel) => ({
+                ...oldModel,
+                [id]: { mode: GridRowModes.Edit, fieldToFocus: 'name' },
+            }));
+        };
+
+        return (
+            <GridToolbarContainer>
+                <Button startIcon={<AddIcon />} onClick={handleClick}>
+                    Add record
+                </Button>
+            </GridToolbarContainer>
+        );
+    }
 
     const handleRowEditStop = (params, event) => {
         if (params.reason === GridRowEditStopReasons.rowFocusOut) {
             event.defaultMuiPrevented = true;
         }
     };
-
     const handleEditClick = (id) => () => {
         setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.Edit } });
     };
@@ -80,7 +110,6 @@ const Customers = () => {
         setRows(rows.map((row) => (row.id === newRow.id ? updatedRow : row)));
         return updatedRow;
     };
-
     const handleRowModesModelChange = (newRowModesModel) => {
         setRowModesModel(newRowModesModel);
     };
@@ -187,6 +216,7 @@ const Customers = () => {
         );
     }
 
+
     return (
         <Box m="20px">
             <Header title="CUSTOMERS" subtitle="Managing Customers" />
@@ -225,12 +255,12 @@ const Customers = () => {
                     onRowEditStop={handleRowEditStop}
                     processRowUpdate={processRowUpdate}
                     slots={{
-                        toolbar: EditToolbar,
+                        toolbar: EditToolbar, //GridToolbar
                     }}
                     slotProps={{
                         toolbar: { setRows, setRowModesModel },
                     }}
-                    onProcessRowUpdateError={handleRowModesModelChange}
+                //onProcessRowUpdateError={handleRowModesModelChange}
                 />
             </Box>
         </Box>
