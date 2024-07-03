@@ -7,11 +7,10 @@ import CancelIcon from '@mui/icons-material/Close';
 import {
     GridRowModes,
     DataGrid,
+    useGridApiRef,
     GridToolbarContainer,
     GridActionsCellItem,
     GridRowEditStopReasons,
-    GridToolbarColumnsButton,
-    GridToolbar
 } from "@mui/x-data-grid";
 import Button from '@mui/material/Button';
 import { Box, useTheme } from "@mui/material";
@@ -19,28 +18,6 @@ import { tokens } from "../../theme";
 import Header from "../../components/Header";
 import { Urls } from "../../api/Paths";
 import useFetchData from "../../api/getData";
-
-
-// function EditToolbar(props) {
-//     const { setRows, setRowModesModel } = props;
-//
-//     const handleClick = () => {
-//         const id = randomId();
-//         setRows((oldRows) => [...oldRows, { id, name: '', age: '', isNew: true }]);
-//         setRowModesModel((oldModel) => ({
-//             ...oldModel,
-//             [id]: { mode: GridRowModes.Edit, fieldToFocus: 'name' },
-//         }));
-//     };
-//
-//     return (
-//         <GridToolbarContainer>
-//             <Button color="primary" startIcon={<AddIcon />} onClick={handleClick}>
-//                 Add record
-//             </Button>
-//         </GridToolbarContainer>
-//     );
-// }
 
 const Customers = () => {
     const theme = useTheme();
@@ -57,23 +34,90 @@ const Customers = () => {
     }, [data]);
 
 
-    const EditToolbar = (props) => {
-        const { setRows, setRowModesModel } = props;
+    // const EditToolbar = (props) => {
+    //     const { setRows, setRowModesModel } = props;
+    //
+    //     const handleClick = () => {
+    //         const id = 103;
+    //         setRows((oldRows) => [...oldRows, {
+    //             id,
+    //             name: '',
+    //             email: '',
+    //             contactLastName: '',
+    //             contactFirstName: '',
+    //             phone: '',
+    //             addressLine1: '',
+    //             addressLine2: '',
+    //             city: '',
+    //             state: '',
+    //             postalCode: '',
+    //             country: '',
+    //             creditLimit: '',
+    //             employeeId: '',
+    //         }]);
+    //         setRowModesModel((oldModel) => ({
+    //             ...oldModel,
+    //             [id]: { mode: GridRowModes.Edit, fieldToFocus: 'id' },
+    //         }));
+    //     };
+    //
+    //     return (
+    //         <GridToolbarContainer>
+    //             <Button
+    //                 sx={{
+    //                     backgroundColor: colors.blueAccent[700],
+    //                     color: colors.primary[100],
+    //                     paddingTop: '10px', paddingRight: '10px',
+    //                     paddingBottom: '10px', paddingLeft: '10px',
+    //                 }}
+    //                 startIcon={<AddIcon />} onClick={handleClick}>
+    //                 Add record
+    //             </Button>
+    //         </GridToolbarContainer>
+    //     );
+    // }
+
+    const apiRef = useGridApiRef();
+
+    const EditToolbar = () => {
 
         const handleClick = () => {
-            const id = Math.random().toString(36).substring(2, 9);
-            //-TODO rever esse código randomico
-            setRows((oldRows) => [...oldRows, { id, name: '', age: '', isNew: true }]);
-            //TODO ajustar os nomes dessas propriedades com os nomes dos campos na tabela
-            setRowModesModel((oldModel) => ({
-                ...oldModel,
-                [id]: { mode: GridRowModes.Edit, fieldToFocus: 'name' },
-            }));
+
+            let idCounter = 0;
+            const createRow = () => {
+                idCounter += 1;
+                return {
+                    id: idCounter,
+                    name: '',
+                    email: '',
+                    contactLastName: '',
+                    contactFirstName: '',
+                    phone: '',
+                    addressLine1: '',
+                    addressLine2: '',
+                    city: '',
+                    state: '',
+                    postalCode: '',
+                    country: '',
+                    creditLimit: '',
+                    employeeId: '',
+                }
+            }
+
+            apiRef.current.updateRows([createRow()]);
+
         };
 
         return (
             <GridToolbarContainer>
-                <Button startIcon={<AddIcon />} onClick={handleClick}>
+                <Button
+                    sx={{
+                        backgroundColor: colors.blueAccent[700],
+                        color: colors.primary[100],
+                        paddingTop: '10px', paddingRight: '10px',
+                        paddingBottom: '10px', paddingLeft: '10px',
+                    }}
+                    startIcon={<AddIcon />} onClick={handleClick}>
                     Add record
                 </Button>
             </GridToolbarContainer>
@@ -113,7 +157,6 @@ const Customers = () => {
     const handleRowModesModelChange = (newRowModesModel) => {
         setRowModesModel(newRowModesModel);
     };
-    /////////
 
     const columns = [
         { field: "id", headerName: "ID", flex: 0.5, editable: true, },
@@ -146,7 +189,6 @@ const Customers = () => {
         { field: "creditLimit", headerName: "CREDIT", flex: 1, editable: true },
         { field: "employeeId", headerName: "EMP.ID", flex: 1, editable: true },
 
-        /////////
         {
             field: 'actions',
             type: 'actions',
@@ -193,7 +235,6 @@ const Customers = () => {
                 ];
             },
         },
-        ////////
     ];
 
     if (loading) {
@@ -247,6 +288,7 @@ const Customers = () => {
                 }}
             >
                 <DataGrid
+                    apiRef={apiRef}
                     rows={data}
                     columns={columns}
                     editMode="row"
@@ -255,12 +297,11 @@ const Customers = () => {
                     onRowEditStop={handleRowEditStop}
                     processRowUpdate={processRowUpdate}
                     slots={{
-                        toolbar: EditToolbar, //GridToolbar
+                        toolbar: EditToolbar,
                     }}
                     slotProps={{
                         toolbar: { setRows, setRowModesModel },
                     }}
-                //onProcessRowUpdateError={handleRowModesModelChange}
                 />
             </Box>
         </Box>
