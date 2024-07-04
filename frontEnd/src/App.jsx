@@ -13,6 +13,7 @@ import Employees from "./scenes/employees";
 // import Payments from "./scenes/payments";
 // import ProductLines from "./scenes/productlines";
 // import Products from "./scenes/products";
+import FormAddCustomer from './scenesFormsAdd/customers';
 
 import Form from './scenes/form';
 import Calendar from "./scenes/calendar";
@@ -22,41 +23,43 @@ import Line from "./scenes/line";
 import Geography from "./scenes/geography";
 
 function App() {
-    const [theme, colorMode] = useMode();
+  const [theme, colorMode] = useMode();
 
-    return (
-        <ColorModeContext.Provider value={colorMode}>
-            <ThemeProvider theme={theme}>
-                <CssBaseline />
-                <div className="app">
-                    <Sidebar />
-                    <main className="content">
-                        <Topbar />
-                        <Routes>
-                            <Route path="/" element={<Dashboard />} />
+  return (
+    <ColorModeContext.Provider value={colorMode}>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <div className="app">
+          <Sidebar />
+          <main className="content">
+            <Topbar />
+            <Routes>
+              <Route path="/" element={<Dashboard />} />
 
-                            <Route path="/customers" element={<Customers />} />
-                            <Route path="/employees" element={<Employees />} />
-                            {/* <Route path="/offices" element={<Offices />} /> */}
-                            {/* <Route path="/orderdetails" element={<OrderDetails />} /> */}
-                            {/* <Route path="/orders" element={<Orders />} /> */}
-                            {/* <Route path="/payments" element={<Payments />} /> */}
-                            {/* <Route path="/productlines" element={<ProductLines />} /> */}
-                            {/* <Route path="/products" element={<Products />} /> */}
-                            {/**/}
-                            <Route path="/form" element={<Form />} />
-                            <Route path="/calendar" element={<Calendar />} />
-                            <Route path="/bar" element={<Bar />} />
-                            <Route path="/pie" element={<Pie />} />
-                            <Route path="/line" element={<Line />} />
-                            <Route path="/geography" element={<Geography />} />
+              <Route path="/customers" element={<Customers />} />
+              <Route path="/employees" element={<Employees />} />
+              {/* <Route path="/offices" element={<Offices />} /> */}
+              {/* <Route path="/orderdetails" element={<OrderDetails />} /> */}
+              {/* <Route path="/orders" element={<Orders />} /> */}
+              {/* <Route path="/payments" element={<Payments />} /> */}
+              {/* <Route path="/productlines" element={<ProductLines />} /> */}
+              {/* <Route path="/products" element={<Products />} /> */}
+              {/**/}
+              <Route path="/formaddcustomer" element={<FormAddCustomer />} />
 
-                        </Routes>
-                    </main>
-                </div>
-            </ThemeProvider>
-        </ColorModeContext.Provider>
-    )
+              <Route path="/form" element={<Form />} />
+              <Route path="/calendar" element={<Calendar />} />
+              <Route path="/bar" element={<Bar />} />
+              <Route path="/pie" element={<Pie />} />
+              <Route path="/line" element={<Line />} />
+              <Route path="/geography" element={<Geography />} />
+
+            </Routes>
+          </main>
+        </div>
+      </ThemeProvider>
+    </ColorModeContext.Provider>
+  )
 }
 
 export default App
