@@ -28,19 +28,19 @@ const customersSchema = yup.object().shape({
   name: yup.string().max(50).required(),
   email: yup.string().email().max(50).required(),
   contactLastName: yup.string().max(50).required(),
-  // contactFirstName: yup.string().max(50, "Max 50 characters").required(),
-  // phone: yup
-  //   .string()
-  //   .matches(phoneRegExp, "Phone number is not valid")
-  //   .required(),
-  // address1: yup.string().max(50, "Max 50 characters").required(),
-  // address2: yup.string().max(50, "Max 50 characters"),
-  // city: yup.string().max(50, "Max 50 characters").required(),
-  // state: yup.string().max(50, "Max 50 characters"),
-  // postalCode: yup.string().max(15, "Max 15 characters"),
-  // country: yup.string().max(50, "Max 50 characters").required(),
-  // creditLimit: yup.number().positive().max(9999.99, "Exceeded max limit").required,
-  // employeeId: yup.number().positive(),
+  contactFirstName: yup.string().max(50).required(),
+  phone: yup
+    .string()
+    .matches(phoneRegExp, "Phone number is not valid")
+    .required(),
+  addressLine1: yup.string().max(50).required(),
+  addressLine2: yup.string().max(50),
+  city: yup.string().max(50).required(),
+  state: yup.string().max(50),
+  postalCode: yup.string().max(15),
+  country: yup.string().max(50).required(),
+  creditLimit: yup.number().positive().max(10000.00).required(),
+  employeeId: yup.number().positive(),
 })
 
 const FormAddCustomer = () => {
@@ -62,7 +62,7 @@ const FormAddCustomer = () => {
         <form onSubmit={handleSubmit}>
           <Box
             display="grid"
-            gap="30px"
+            gap="20px"
             gridTemplateColumns="repeat(4, minmax(0, 1fr))"
             sx={{
               "& > div": { gridColumn: isNonMobile ? undefined : "span 4" },
@@ -92,7 +92,7 @@ const FormAddCustomer = () => {
               name="email"
               error={!!touched.email && !!errors.email}
               helperText={touched.email && errors.email}
-              sx={{ gridColumn: "span 4" }}
+              sx={{ gridColumn: "span 2" }}
             />
             <TextField
               fullWidth
@@ -118,7 +118,7 @@ const FormAddCustomer = () => {
               name="contactFirstName"
               error={!!touched.contactFirstName && !!errors.contactFirstName}
               helperText={touched.contactFirstName && errors.contactFirstName}
-              sx={{ gridColumn: "span 4" }}
+              sx={{ gridColumn: "span 2" }}
             />
             <TextField
               fullWidth
@@ -131,7 +131,7 @@ const FormAddCustomer = () => {
               name="phone"
               error={!!touched.phone && !!errors.phone}
               helperText={touched.phone && errors.phone}
-              sx={{ gridColumn: "span 4" }}
+              sx={{ gridColumn: "span 2" }}
             />
             <TextField
               fullWidth
@@ -144,7 +144,7 @@ const FormAddCustomer = () => {
               name="addressLine1"
               error={!!touched.addressLine1 && !!errors.addressLine1}
               helperText={touched.addressLine1 && errors.addressLine1}
-              sx={{ gridColumn: "span 4" }}
+              sx={{ gridColumn: "span 2" }}
             />
             <TextField
               fullWidth
@@ -157,7 +157,85 @@ const FormAddCustomer = () => {
               name="addressLine2"
               error={!!touched.addressLine2 && !!errors.addressLine2}
               helperText={touched.addressLine2 && errors.addressLine2}
-              sx={{ gridColumn: "span 4" }}
+              sx={{ gridColumn: "span 2" }}
+            />
+            <TextField
+              fullWidth
+              variant="filled"
+              type="text"
+              label="City"
+              onBlur={handleBlur}
+              onChange={handleChange}
+              value={values.city}
+              name="city"
+              error={!!touched.city && !!errors.city}
+              helperText={touched.city && errors.city}
+              sx={{ gridColumn: "span 2" }}
+            />
+            <TextField
+              fullWidth
+              variant="filled"
+              type="text"
+              label="State"
+              onBlur={handleBlur}
+              onChange={handleChange}
+              value={values.state}
+              name="state"
+              error={!!touched.state && !!errors.state}
+              helperText={touched.state && errors.state}
+              sx={{ gridColumn: "span 2" }}
+            />
+            <TextField
+              fullWidth
+              variant="filled"
+              type="text"
+              label="Postal Code"
+              onBlur={handleBlur}
+              onChange={handleChange}
+              value={values.postalCode}
+              name="postalCode"
+              error={!!touched.postalCode && !!errors.postalCode}
+              helperText={touched.postalCode && errors.postalCode}
+              sx={{ gridColumn: "span 2" }}
+            />
+            <TextField
+              fullWidth
+              variant="filled"
+              type="text"
+              label="Country"
+              onBlur={handleBlur}
+              onChange={handleChange}
+              value={values.country}
+              name="country"
+              error={!!touched.country && !!errors.country}
+              helperText={touched.country && errors.country}
+              sx={{ gridColumn: "span 2" }}
+            />
+            <TextField
+              fullWidth
+              variant="filled"
+              type="text"
+              label="Credit Limit"
+              onBlur={handleBlur}
+              onChange={handleChange}
+              value={values.creditLimit}
+              name="creditLimit"
+              error={!!touched.creditLimit && !!errors.creditLimit}
+              helperText={touched.creditLimit && errors.creditLimit}
+              sx={{ gridColumn: "span 2" }}
+            />
+            <TextField
+              fullWidth
+              variant="filled"
+              type="text"
+              label="Employee Id"
+              onBlur={handleBlur}
+              onChange={handleChange}
+              value={values.employeeId}
+              name="employeeId"
+              error={!!touched.employeeId && !!errors.employeeId}
+              helperText={touched.employeeId && errors.employeeId}
+              sx={{ gridColumn: "span 2" }}
             />
           </Box>
           <Box display="flex" justifyContent="end" mt="20px">
