@@ -1,10 +1,15 @@
-import React from "react";
-import { Box, Button, TextField, Select, MenuItem, FormControl, InputLabel, Menu } from "@mui/material";
+import React, { useState } from "react";
+import {
+  Box, Button, TextField, Select, MenuItem, FormControl, InputLabel,
+  Menu, Typography, Dialog, DialogActions, DialogContent, DialogContentText,
+  DialogTitle
+} from "@mui/material";
 import { Formik } from "formik";
 import * as yup from "yup";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import Header from "../../components/Header";
-import { useLocation } from "react-router-dom";
+import { json, useLocation } from "react-router-dom";
+import { Urls } from "../../api/Paths";
 
 const initialValues = {
   name: "", email: "", contactLastName: "", contactFirstName: "", phone: "",
@@ -29,7 +34,7 @@ const customersSchema = yup.object().shape({
   state: yup.string().max(50),
   postalCode: yup.string().max(15),
   country: yup.string().max(50).required(),
-  creditLimit: yup.number().positive().max(10000.0).required(),
+  creditLimit: yup.number().positive().max(999999.99).required(),
   employeeId: yup.number().positive(),
 });
 
@@ -37,13 +42,43 @@ const FormAddCustomer = () => {
   const isNonMobile = useMediaQuery("(min-width:600px)");
   const location = useLocation();
   const { data } = location.state || {};
-
   const employeeIds = [...new Set(data.map(item => item.employeeId).filter(id => id !== null))];
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [status, setStatus] = useState('');
+  const [responseCode, setResponseCode] = useState(null);
+  const url = Urls();
 
-  const handleFormSubmit = (values) => {
-    //--TODO enviar o formulário para o endpoint POST de customers
-    console.log(values);
-  };
+
+  const handleFormSubmit = async (values, { setSubmitting }) => {
+    setStatus('');
+    setResponseCode(null);
+    try {
+      const response = await fetch(url.customers.findAll_Post, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(values),
+      });
+      const data = await response.json();
+
+      setResponseCode(response.status);
+
+      if (response.ok) {
+        setStatus('Customer created successfully!');
+      } else {
+        setStatus(`Error: ${data.message || 'Failed to create Customer'}`);
+      }
+    } catch (error) {
+      setStatus(`Error: ${error.message || 'Failed to create Customer'}`);
+    }
+    setSubmitting(false);
+    setDialogOpen(true);
+  }
+
+  const handleClose = () => {
+    setDialogOpen(false);
+  }
 
   return (
     <Box m="20px">
@@ -238,6 +273,22 @@ const FormAddCustomer = () => {
                 Create New Customer
               </Button>
             </Box>
+
+            <Dialog open={dialogOpen} onClose={handleClose}>
+              <DialogTitle>Operation Status</DialogTitle>
+              <DialogContent>
+                <DialogContentText>
+                  {status}
+                  {responseCode !== null && <br />}
+                  Response Code: {responseCode}
+                </DialogContentText>
+                <DialogActions>
+                  <Button onClick={handleClose} color="primary">
+                    OK
+                  </Button>
+                </DialogActions>
+              </DialogContent>
+            </Dialog>
           </form>
         )}
       </Formik>
