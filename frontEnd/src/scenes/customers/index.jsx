@@ -27,9 +27,8 @@ const Customers = () => {
 
   const EditToolbar = () => {
     const navigate = useNavigate();
-
     const handleClick = () => {
-      navigate("/formaddcustomer");
+      navigate("/formaddcustomer", { state: { data } });
     }
 
     return (
