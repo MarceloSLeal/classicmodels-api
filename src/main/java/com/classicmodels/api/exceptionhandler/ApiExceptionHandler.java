@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+import com.classicmodels.domain.exception.BusinessException;
 
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
@@ -45,16 +46,28 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         return handleExceptionInternal(ex, problem, headers, status, request);
     }
 
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<Object> handleAll(Exception ex, WebRequest request) {
+    // @ExceptionHandler(Exception.class)
+    // public ResponseEntity<Object> handleAll(Exception ex, WebRequest request) {
+    //
+    //     Problem problem = new Problem();
+    //
+    //     problem.setStatus(HttpStatus.BAD_REQUEST.value());
+    //     problem.setDateTime(OffsetDateTime.now());
+    //     problem.setTitle(ex.getLocalizedMessage());
+    //
+    //     return new ResponseEntity<Object>(problem, new HttpHeaders(), problem.getStatus());
+    // }
 
-        Problem problem = new Problem();
-
-        problem.setStatus(HttpStatus.BAD_REQUEST.value());
-        problem.setDateTime(OffsetDateTime.now());
-        problem.setTitle(ex.getLocalizedMessage());
-
-        return new ResponseEntity<Object>(problem, new HttpHeaders(), problem.getStatus());
-    }
+  //Verificar se consigo alterar de BusinessException para Exception 
+  @ExceptionHandler(BusinessException.class)
+  public ResponseEntity<Object> handleBusinessException(BusinessException ex, WebRequest request) {
+  
+      Problem problem = new Problem();
+      problem.setStatus(HttpStatus.BAD_REQUEST.value());
+      problem.setDateTime(OffsetDateTime.now());
+      problem.setTitle(ex.getMessage());
+  
+     return new ResponseEntity<>(problem, new HttpHeaders(), HttpStatus.BAD_REQUEST);
+   }
 
 }

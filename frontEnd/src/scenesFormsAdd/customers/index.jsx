@@ -1,14 +1,13 @@
 import React, { useState } from "react";
 import {
   Box, Button, TextField, Select, MenuItem, FormControl, InputLabel,
-  Menu, Typography, Dialog, DialogActions, DialogContent, DialogContentText,
-  DialogTitle
+  Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle
 } from "@mui/material";
 import { Formik } from "formik";
 import * as yup from "yup";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import Header from "../../components/Header";
-import { json, useLocation } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { Urls } from "../../api/Paths";
 
 const initialValues = {
@@ -67,7 +66,7 @@ const FormAddCustomer = () => {
       if (response.ok) {
         setStatus('Customer created successfully!');
       } else {
-        setStatus(`Error: ${data.message || 'Failed to create Customer'}`);
+        setStatus(`Error: ${data.title || 'Failed to create Customer'}`);
       }
     } catch (error) {
       setStatus(`Error: ${error.message || 'Failed to create Customer'}`);
