@@ -45,10 +45,10 @@ const FormAddCustomer = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [status, setStatus] = useState('');
   const [responseCode, setResponseCode] = useState(null);
+  const [resetFormFn, setResetFormFn] = useState(null);
   const url = Urls();
 
-
-  const handleFormSubmit = async (values, { setSubmitting }) => {
+  const handleFormSubmit = async (values, { setSubmitting, resetForm }) => {
     setStatus('');
     setResponseCode(null);
     try {
@@ -65,6 +65,7 @@ const FormAddCustomer = () => {
 
       if (response.ok) {
         setStatus('Customer created successfully!');
+        setResetFormFn(() => resetForm);
       } else {
         setStatus(`Error: ${data.title || 'Failed to create Customer'}`);
       }
@@ -77,6 +78,9 @@ const FormAddCustomer = () => {
 
   const handleClose = () => {
     setDialogOpen(false);
+    if (responseCode === 201 && resetFormFn) {
+      resetFormFn();
+    }
   }
 
   return (
