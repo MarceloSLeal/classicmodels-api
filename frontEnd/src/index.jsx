@@ -1,22 +1,23 @@
-import React from "react";
-import ReactDom from "react-dom/client";
-import ReactDOM from "react-dom";
+import React, { StrictMode } from "react";
+import ReactDOM from "react-dom/client";
 import "./index.css";
 import App from "./App.jsx";
 import { BrowserRouter } from "react-router-dom";
 
-// configuração para embiente de desenvolvimento
-// ReactDom.createRoot(document.getElementById("root")).render(
-//     <React.StrictMode>
-//         <BrowserRouter>
-//             <App />
-//         </BrowserRouter>
-//     </React.StrictMode>
-// )
-
-ReactDOM.render(
+//Modo de desenvolvimento
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(
   <BrowserRouter>
-    <App />
-  </BrowserRouter>,
-  document.getElementById("root")
+    <StrictMode>
+      <App />
+    </StrictMode>
+  </BrowserRouter>
 );
+
+//Mode de produção
+// const root = ReactDOM.createRoot(document.getElementById('root'));
+// root.render(
+//   <BrowserRouter>
+//     <App />
+//   </BrowserRouter>
+// );

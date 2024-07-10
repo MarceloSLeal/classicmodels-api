@@ -14,6 +14,7 @@ import Employees from "./scenes/employees";
 // import ProductLines from "./scenes/productlines";
 // import Products from "./scenes/products";
 import FormAddCustomer from './scenesFormsAdd/customers';
+import FormEditCustomer from './scenesFormsEdit/customers';
 
 import Form from './scenes/form';
 import Calendar from "./scenes/calendar";
@@ -22,7 +23,7 @@ import Pie from "./scenes/pie";
 import Line from "./scenes/line";
 import Geography from "./scenes/geography";
 
-function App() {
+const App = () => {
   const [theme, colorMode] = useMode();
 
   return (
@@ -46,6 +47,7 @@ function App() {
               {/* <Route path="/products" element={<Products />} /> */}
               {/**/}
               <Route path="/formaddcustomer" element={<FormAddCustomer />} />
+              <Route path="/formeditcustomer" element={<FormEditCustomer />} />
 
               <Route path="/form" element={<Form />} />
               <Route path="/calendar" element={<Calendar />} />
@@ -62,4 +64,4 @@ function App() {
   )
 }
 
-export default App
+export default App;

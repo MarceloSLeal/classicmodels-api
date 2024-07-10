@@ -19,6 +19,8 @@ const Customers = () => {
   const { data, loading, error } = useFetchData(url.customers.findAll_Post);
   const [rowModesModel, setRowModesModel] = React.useState({});
   const [rows, setRows] = useState([]);
+  const navigate = useNavigate();
+  const navigateEdit = useNavigate();
   useEffect(() => {
     if (data) {
       setRows(data);
@@ -26,7 +28,6 @@ const Customers = () => {
   }, [data]);
 
   const EditToolbar = () => {
-    const navigate = useNavigate();
     const handleClick = () => {
       navigate("/formaddcustomer", { state: { data } });
     }
@@ -49,8 +50,10 @@ const Customers = () => {
 
   {/*--TODO Editar os eventos dos botoes de editar e deletar para encaminhar para
    as respectivas paginas e enviar os valores das linhas por parametro */}
-  const handleEditClick = (id) => () => {
-    setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.Edit } });
+  const handleEditClick = (params) => () => {
+    const rowData = params.row;
+    // console.log(data);
+    navigateEdit("/formeditcustomer", { state: { rowData, data } });
   };
   const handleDeleteClick = (id) => () => {
     setRows(rows.filter((row) => row.id !== id));
@@ -79,20 +82,20 @@ const Customers = () => {
       width: 100,
       cellClassName: 'actions',
       //--TODO adicionar ao parametro as variáveis da linha do datagrid
-      getActions: ({ id }) => {
+      getActions: (params) => {
 
         return [
           <GridActionsCellItem
             icon={<EditIcon />}
             label="Edit"
             className="textPrimary"
-            onClick={handleEditClick(id)}
+            onClick={handleEditClick(params)}
             color="inherit"
           />,
           <GridActionsCellItem
             icon={<DeleteIcon />}
             label="Delete"
-            onClick={handleDeleteClick(id)}
+            onClick={handleDeleteClick(params)}
             color="inherit"
           />,
         ];

@@ -1,23 +1,17 @@
 import React, { useState } from "react";
+import { useLocation } from "react-router-dom";
+import * as yup from "yup";
+import Header from "../../components/Header";
 import {
   Box, Button, TextField, Select, MenuItem, FormControl, InputLabel,
   Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle
 } from "@mui/material";
 import { Formik } from "formik";
-import * as yup from "yup";
 import useMediaQuery from "@mui/material/useMediaQuery";
-import Header from "../../components/Header";
-import { useLocation } from "react-router-dom";
 import { Urls } from "../../api/Paths";
-
-const initialValues = {
-  name: "", email: "", contactLastName: "", contactFirstName: "", phone: "",
-  addressLine1: "", addressLine2: "", city: "", state: "", postalCode: "",
-  country: "", creditLimit: "", employeeId: "",
-};
+import { useNavigate } from "react-router-dom";
 
 const phoneRegExp = /^((\+[1-9]{1,4}[ -]?)|(\([0-9]{2,3}\)[ -]?)|([0-9]{2,4})[ -]?)*?[0-9]{3,4}[ -]?[0-9]{3,4}$/;
-
 const customersSchema = yup.object().shape({
   name: yup.string().max(50).required(),
   email: yup.string().email().max(50).required(),
@@ -37,23 +31,32 @@ const customersSchema = yup.object().shape({
   employeeId: yup.number().positive(),
 });
 
-const FormAddCustomer = () => {
+const FormEditCustomer = () => {
   const isNonMobile = useMediaQuery("(min-width:600px)");
   const location = useLocation();
-  const { data } = location.state || {};
+  const { rowData, data } = location.state || {};
   const employeeIds = [...new Set(data.map(item => item.employeeId).filter(id => id !== null))];
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [status, setStatus] = useState('');
   const [responseCode, setResponseCode] = useState(null);
-  const [resetFormFn, setResetFormFn] = useState(null);
-  const url = Urls();
+  const [status, setStatus] = useState('');
+  const navigate = useNavigate();
 
-  const handleFormSubmit = async (values, { setSubmitting, resetForm }) => {
+  const initialValues = {
+    id: rowData.id, name: rowData.name, email: rowData.email, contactLastName:
+      rowData.contactLastName, contactFirstName: rowData.contactFirstName,
+    phone: rowData.phone, addressLine1: rowData.addressLine1, addressLine2:
+      rowData.addressLine2, city: rowData.city, state: rowData.state,
+    postalCode: rowData.postalCode, country: rowData.country, creditLimit:
+      rowData.creditLimit, employeeId: rowData.employeeId
+  };
+
+  const handleFormSubmit = async (values, { setSubmitting }) => {
+    const url = Urls(rowData.id);
     setStatus('');
     setResponseCode(null);
     try {
-      const response = await fetch(url.customers.findAll_Post, {
-        method: 'POST',
+      const response = await fetch(url.customers.findById_Put_Delete, {
+        method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
@@ -64,13 +67,12 @@ const FormAddCustomer = () => {
       setResponseCode(response.status);
 
       if (response.ok) {
-        setStatus('Customer created successfully!');
-        setResetFormFn(() => resetForm);
+        setStatus('Customer updated successfully!');
       } else {
-        setStatus(`Error: ${data.title || 'Failed to create Customer'}`);
+        setStatus(`Error: ${data.title || 'Failed to update Customer'}`);
       }
     } catch (error) {
-      setStatus(`Error: ${error.message || 'Failed to create Customer'}`);
+      setStatus(`Error: ${error.message || 'Failed to update Customer'}`);
     }
     setSubmitting(false);
     setDialogOpen(true);
@@ -78,14 +80,14 @@ const FormAddCustomer = () => {
 
   const handleClose = () => {
     setDialogOpen(false);
-    if (responseCode === 200 && resetFormFn) {
-      resetFormFn();
+    if (responseCode === 200) {
+      navigate("/customers");
     }
   }
 
   return (
     <Box m="20px">
-      <Header title="CREATE CUSTOMER" subtitle="Create a new Customer" />
+      <Header title="EDIT CUSTOMER" subtitle="Edit this Customer" />
 
       <Formik
         onSubmit={handleFormSubmit}
@@ -102,6 +104,15 @@ const FormAddCustomer = () => {
                 "& > div": { gridColumn: isNonMobile ? undefined : "span 4" },
               }}
             >
+              <TextField
+                disabled
+                variant="filled"
+                type="text"
+                label="Id"
+                value={rowData.id}
+                name="id"
+                sx={{ gridColumn: "span 2" }}
+              />
               <TextField
                 variant="filled"
                 type="text"
@@ -273,7 +284,7 @@ const FormAddCustomer = () => {
             </Box>
             <Box display="flex" justifyContent="end" mt="20px">
               <Button type="submit" color="secondary" variant="contained">
-                Create New Customer
+                Save
               </Button>
             </Box>
 
@@ -297,6 +308,6 @@ const FormAddCustomer = () => {
       </Formik>
     </Box>
   );
-};
+}
 
-export default FormAddCustomer;
+export default FormEditCustomer;
