@@ -3,8 +3,9 @@ import { useLocation } from "react-router-dom";
 import * as yup from "yup";
 import Header from "../../components/Header";
 import {
-  Box, Button, TextField, Select, MenuItem, FormControl, InputLabel,
-  Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle
+  Box, Button, Select, MenuItem, FormControl, InputLabel,
+  Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle,
+  TextField
 } from "@mui/material";
 import { Formik } from "formik";
 import useMediaQuery from "@mui/material/useMediaQuery";
@@ -39,11 +40,8 @@ const FormEditCustomer = () => {
 
   const employeeIds = [...new Set(data.map(item => item.employeeId).filter(id => id !== null))];
 
-  //const employeeIds = [...new Set(data.map(item => item.employeeId).filter(id => id !== null).map(id => id.toString()))];
-
   const [dialogOpen, setDialogOpen] = useState(false);
   const [responseCode, setResponseCode] = useState(null);
-  //const [resetFormFn, setResetFormFn] = useState(null);
   const [status, setStatus] = useState('');
   const navigate = useNavigate();
 
@@ -51,9 +49,9 @@ const FormEditCustomer = () => {
     id: rowData.id, name: rowData.name, email: rowData.email, contactLastName:
       rowData.contactLastName, contactFirstName: rowData.contactFirstName,
     phone: rowData.phone, addressLine1: rowData.addressLine1, addressLine2:
-      rowData.addressLine2 && 'undefined', city: rowData.city, state: rowData.state && 'undefined',
-    postalCode: rowData.postalCode && 'undefined', country: rowData.country, creditLimit:
-      rowData.creditLimit, employeeId: rowData.employeeId && ""
+      rowData.addressLine2, city: rowData.city, state: rowData.state,
+    postalCode: rowData.postalCode, country: rowData.country, creditLimit:
+      rowData.creditLimit, employeeId: rowData.employeeId
   };
 
   const handleFormSubmit = async (values, { setSubmitting, resetForm }) => {
@@ -124,7 +122,8 @@ const FormEditCustomer = () => {
                   labelId="employee-select-label"
                   id="employee-select"
                   name="employeeId"
-                  value={values.employeeId !== null ? rowData.employeeId : ""}
+                  //value={values.employeeId !== null ? rowData.employeeId : ""}
+                  value={values.employeeId ?? ""}
                   onChange={(event) => setFieldValue('employeeId', event.target.value)}
                   onBlur={handleBlur}
                   label="Employee Id"
@@ -155,7 +154,7 @@ const FormEditCustomer = () => {
                   Response Code: {responseCode}
                 </DialogContentText>
                 <DialogActions>
-                  <Button onClick={handleClose} color="primary">
+                  <Button onClick={handleClose} color="inherit">
                     OK
                   </Button>
                 </DialogActions>

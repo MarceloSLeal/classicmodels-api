@@ -90,7 +90,8 @@ const CustomersFormEditInputs = ({ rowData, handleBlur, handleChange, values, to
         label="Address Line 2"
         onBlur={handleBlur}
         onChange={handleChange}
-        value={values.addressLine2 == ! null ? rowData.addressLine2 : ""}
+        //value={values.addressLine2 == ! null ? rowData.addressLine2 : ""}
+        value={values.addressLine2 ?? ""}
         name="addressLine2"
         error={!!touched.addressLine2 && !!errors.addressLine2}
         helperText={touched.addressLine2 && errors.addressLine2}
@@ -114,7 +115,8 @@ const CustomersFormEditInputs = ({ rowData, handleBlur, handleChange, values, to
         label="State"
         onBlur={handleBlur}
         onChange={handleChange}
-        value={values.state == ! null ? rowData.state : ""}
+        //value={values.state == ! null ? rowData.state : ""}
+        value={values.state ?? ""}
         name="state"
         error={!!touched.state && !!errors.state}
         helperText={touched.state && errors.state}
@@ -126,7 +128,8 @@ const CustomersFormEditInputs = ({ rowData, handleBlur, handleChange, values, to
         label="Postal Code"
         onBlur={handleBlur}
         onChange={handleChange}
-        value={values.postalCode == ! null ? rowData.postalCode : ""}
+        //value={values.postalCode == ! null ? rowData.postalCode : ""}
+        value={values.postalCode ?? ""}
         name="postalCode"
         error={!!touched.postalCode && !!errors.postalCode}
         helperText={touched.postalCode && errors.postalCode}

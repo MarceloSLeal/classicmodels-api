@@ -2,10 +2,13 @@ import React, { useState, useEffect } from 'react';
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/DeleteOutlined';
-import { GridRowModes, DataGrid, GridToolbarContainer, GridActionsCellItem }
+import { DataGrid, GridToolbarContainer, GridActionsCellItem }
   from "@mui/x-data-grid";
 import Button from '@mui/material/Button';
-import { Box, useTheme } from "@mui/material";
+import {
+  Box, useTheme, Dialog, DialogActions, DialogContent, DialogTitle,
+  DialogContentText
+} from "@mui/material";
 import { tokens } from "../../theme";
 import Header from "../../components/Header";
 import { Urls } from "../../api/Paths";
@@ -21,6 +24,11 @@ const Customers = () => {
   const [rows, setRows] = useState([]);
   const navigate = useNavigate();
   const navigateEdit = useNavigate();
+  const [dialogConfirmOpen, setDialogConfirmOpen] = useState(false);
+  const [dialogDeleteOpen, setDialogDeleteOpen] = useState(false);
+  const [status, setStatus] = useState('');
+  const [idDelete, setIdDelete] = useState(null);
+
   useEffect(() => {
     if (data) {
       setRows(data);
@@ -52,12 +60,34 @@ const Customers = () => {
    as respectivas paginas e enviar os valores das linhas por parametro */}
   const handleEditClick = (params) => () => {
     const rowData = params.row;
-    // console.log(data);
     navigateEdit("/formeditcustomer", { state: { rowData, data } });
   };
-  const handleDeleteClick = (id) => () => {
-    setRows(rows.filter((row) => row.id !== id));
-  };
+  const handleDeleteClick = (param) => () => {
+    setIdDelete(param.id);
+
+    console.log(param.id);
+    setDialogConfirmOpen(true);
+  }
+
+  //Confirm Form
+  const handleCloseConfirm = () => {
+    setDialogConfirmOpen(false);
+    if (idDelete === 200) {
+
+    }
+  }
+
+  const handleDeleteConfirm = () => {
+    setDialogConfirmOpen(false);
+
+    //TODO colocar o código para enviar a requisicao DELETE para a API
+    //colocar o status da resposta no formulario
+    setDialogDeleteOpen(true);
+  }
+
+  const handleCloseDelete = () => {
+    setDialogDeleteOpen(false);
+  }
 
   const columns = [
     { field: "id", headerName: "ID", flex: 0.5 },
@@ -118,7 +148,7 @@ const Customers = () => {
     return (
       <Box m="20px">
         <Header title="CUSTOMERS" subtitle="Managing Customers" />
-        <Box>Error: {error.message}{}</Box>
+        <Box>Error: {error.message}{ }</Box>
       </Box>
     );
   }
@@ -161,6 +191,38 @@ const Customers = () => {
           }}
         />
       </Box>
+
+      <Dialog open={dialogConfirmOpen} onClose={handleCloseConfirm}>
+        <DialogTitle>CONFIRM DELETE?</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            ID: {idDelete}
+          </DialogContentText>
+          <DialogActions>
+            <Button onClick={handleDeleteConfirm} color="error">
+              DELETE
+            </Button>
+            <Button onClick={handleCloseConfirm} color="inherit">
+              CANCEL
+            </Button>
+          </DialogActions>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={dialogDeleteOpen} onClose={handleCloseDelete}>
+        <DialogTitle>CUSTOMER DELETED</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            ID: {idDelete}
+          </DialogContentText>
+          <DialogActions>
+            <Button onClick={handleCloseDelete} color="inherit">
+              OK
+            </Button>
+          </DialogActions>
+        </DialogContent>
+      </Dialog>
+
     </Box>
   )
 }
