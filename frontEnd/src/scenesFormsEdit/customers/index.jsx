@@ -1,17 +1,19 @@
-import React, { useState } from "react";
 import { useLocation } from "react-router-dom";
-import * as yup from "yup";
-import Header from "../../components/Header";
+import React, { useState } from "react";
+
 import {
-  Box, Button, Select, MenuItem, FormControl, InputLabel,
-  Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle,
-  TextField
+  Box, Button, Select, MenuItem, FormControl, InputLabel, Dialog,
+  DialogActions, DialogContent, DialogContentText, DialogTitle,
 } from "@mui/material";
-import { Formik } from "formik";
 import useMediaQuery from "@mui/material/useMediaQuery";
-import { Urls } from "../../api/Paths";
-import { useNavigate } from "react-router-dom";
+
+import { Formik } from "formik";
+import * as yup from "yup";
+
 import CustomersFormEditInputs from "../../components/formEditInputs/Customers";
+import { useNavigate } from "react-router-dom";
+import Header from "../../components/Header";
+import { Urls } from "../../api/Paths";
 
 const phoneRegExp = /^((\+[1-9]{1,4}[ -]?)|(\([0-9]{2,3}\)[ -]?)|([0-9]{2,4})[ -]?)*?[0-9]{3,4}[ -]?[0-9]{3,4}$/;
 const customersSchema = yup.object().shape({
@@ -34,14 +36,12 @@ const customersSchema = yup.object().shape({
 });
 
 const FormEditCustomer = () => {
-  const isNonMobile = useMediaQuery("(min-width:600px)");
   const location = useLocation();
   const { rowData, data } = location.state || {};
-
   const employeeIds = [...new Set(data.map(item => item.employeeId).filter(id => id !== null))];
-
-  const [dialogOpen, setDialogOpen] = useState(false);
+  const isNonMobile = useMediaQuery("(min-width:600px)");
   const [responseCode, setResponseCode] = useState(null);
+  const [dialogOpen, setDialogOpen] = useState(false);
   const [status, setStatus] = useState('');
   const navigate = useNavigate();
 
@@ -54,7 +54,7 @@ const FormEditCustomer = () => {
       rowData.creditLimit, employeeId: rowData.employeeId
   };
 
-  const handleFormSubmit = async (values, { setSubmitting, resetForm }) => {
+  const handleFormSubmit = async (values, { setSubmitting }) => {
     const url = Urls(rowData.id);
     setStatus('');
     setResponseCode(null);

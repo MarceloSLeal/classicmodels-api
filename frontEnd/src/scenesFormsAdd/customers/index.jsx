@@ -1,15 +1,18 @@
 import React, { useState } from "react";
+
 import {
-  Box, Button, TextField, Select, MenuItem, FormControl, InputLabel,
-  Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle
+  Box, Button, Select, MenuItem, FormControl, InputLabel, Dialog, DialogActions,
+  DialogContent, DialogContentText, DialogTitle
 } from "@mui/material";
+import useMediaQuery from "@mui/material/useMediaQuery";
+
 import { Formik } from "formik";
 import * as yup from "yup";
-import useMediaQuery from "@mui/material/useMediaQuery";
-import Header from "../../components/Header";
-import { useLocation } from "react-router-dom";
-import { Urls } from "../../api/Paths";
+
 import CustomersFormAddInputs from "../../components/formAddInputs/Customers";
+import { useLocation } from "react-router-dom";
+import Header from "../../components/Header";
+import { Urls } from "../../api/Paths";
 
 const initialValues = {
   name: "", email: "", contactLastName: "", contactFirstName: "", phone: "",
@@ -39,15 +42,15 @@ const customersSchema = yup.object().shape({
 });
 
 const FormAddCustomer = () => {
-  const isNonMobile = useMediaQuery("(min-width:600px)");
   const location = useLocation();
   const { data } = location.state || {};
+  const url = Urls();
   const employeeIds = [...new Set(data.map(item => item.employeeId).filter(id => id !== null))];
-  const [dialogOpen, setDialogOpen] = useState(false);
-  const [status, setStatus] = useState('');
+  const isNonMobile = useMediaQuery("(min-width:600px)");
   const [responseCode, setResponseCode] = useState(null);
   const [resetFormFn, setResetFormFn] = useState(null);
-  const url = Urls();
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [status, setStatus] = useState('');
 
   const handleFormSubmit = async (values, { setSubmitting, resetForm }) => {
     setStatus('');

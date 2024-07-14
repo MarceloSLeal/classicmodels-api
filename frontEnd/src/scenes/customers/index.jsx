@@ -1,34 +1,33 @@
 import React, { useState, useEffect } from 'react';
-import AddIcon from '@mui/icons-material/Add';
-import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/DeleteOutlined';
-import { DataGrid, GridToolbarContainer, GridActionsCellItem }
-  from "@mui/x-data-grid";
-import Button from '@mui/material/Button';
+import { useNavigate } from "react-router-dom";
+
+import { DataGrid, GridToolbarContainer, GridActionsCellItem } from "@mui/x-data-grid";
 import {
   Box, useTheme, Dialog, DialogActions, DialogContent, DialogTitle,
   DialogContentText
 } from "@mui/material";
-import { tokens } from "../../theme";
+import DeleteIcon from '@mui/icons-material/DeleteOutlined';
+import AddIcon from '@mui/icons-material/Add';
+import EditIcon from '@mui/icons-material/Edit';
+import Button from '@mui/material/Button';
+
 import Header from "../../components/Header";
-import { Urls } from "../../api/Paths";
 import useFetchData from "../../api/getData";
-import { useNavigate } from "react-router-dom";
+import { Urls } from "../../api/Paths";
+import { tokens } from "../../theme";
 
 const Customers = () => {
-  const theme = useTheme();
-  const colors = tokens(theme.palette.mode);
   const urlData = Urls();
+  const theme = useTheme();
   const { data, loading, error } = useFetchData(urlData.customers.findAll_Post);
-  const [rowModesModel, setRowModesModel] = React.useState({});
-  const [rows, setRows] = useState([]);
-  const navigate = useNavigate();
-  const navigateEdit = useNavigate();
   const [dialogConfirmOpen, setDialogConfirmOpen] = useState(false);
   const [dialogDeleteOpen, setDialogDeleteOpen] = useState(false);
-  const [status, setStatus] = useState('');
   const [idDelete, setIdDelete] = useState(null);
-  const [responseCode, setResponseCode] = useState(null);
+  const colors = tokens(theme.palette.mode);
+  const [status, setStatus] = useState('');
+  const [rows, setRows] = useState([]);
+  const navigateEdit = useNavigate();
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (data) {
@@ -67,12 +66,8 @@ const Customers = () => {
     setDialogConfirmOpen(true);
   }
 
-  //Confirm Form
   const handleCloseConfirm = () => {
     setDialogConfirmOpen(false);
-    if (idDelete === 200) {
-
-    }
   }
 
   const handleDeleteConfirm = async () => {
@@ -80,7 +75,6 @@ const Customers = () => {
     const urlDelete = Urls(idDelete);
 
     setStatus('');
-    setResponseCode(null);
 
     try {
       const response = await fetch(urlDelete.customers.findById_Put_Delete, {
@@ -91,12 +85,9 @@ const Customers = () => {
       });
 
       setStatus(response.status);
-      setResponseCode(response.title);
-      console.log("response status ", response.status);
 
       if (response.status === 204) {
         setStatus(`${response.status} Customer Deleted Succesfully!`);
-        console.log('DELETOU');
 
         setRows((prevData) => prevData.filter((item) => item.id !== idDelete));
       } else {
@@ -135,7 +126,6 @@ const Customers = () => {
       headerName: 'Actions',
       width: 100,
       cellClassName: 'actions',
-      //--TODO adicionar ao parametro as variáveis da linha do datagrid
       getActions: (params) => {
 
         return [
@@ -209,7 +199,6 @@ const Customers = () => {
         <DataGrid
           rows={rows}
           columns={columns}
-          rowModesModel={rowModesModel}
           slots={{
             toolbar: EditToolbar,
           }}
