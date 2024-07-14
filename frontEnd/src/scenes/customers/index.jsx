@@ -18,8 +18,8 @@ import { useNavigate } from "react-router-dom";
 const Customers = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
-  const url = Urls();
-  const { data, loading, error } = useFetchData(url.customers.findAll_Post);
+  const urlData = Urls();
+  const { data, loading, error } = useFetchData(urlData.customers.findAll_Post);
   const [rowModesModel, setRowModesModel] = React.useState({});
   const [rows, setRows] = useState([]);
   const navigate = useNavigate();
@@ -28,6 +28,7 @@ const Customers = () => {
   const [dialogDeleteOpen, setDialogDeleteOpen] = useState(false);
   const [status, setStatus] = useState('');
   const [idDelete, setIdDelete] = useState(null);
+  const [responseCode, setResponseCode] = useState(null);
 
   useEffect(() => {
     if (data) {
@@ -56,16 +57,13 @@ const Customers = () => {
     );
   }
 
-  {/*--TODO Editar os eventos dos botoes de editar e deletar para encaminhar para
-   as respectivas paginas e enviar os valores das linhas por parametro */}
-  const handleEditClick = (params) => () => {
+  const handleEditDatagridButton = (params) => () => {
     const rowData = params.row;
     navigateEdit("/formeditcustomer", { state: { rowData, data } });
   };
-  const handleDeleteClick = (param) => () => {
-    setIdDelete(param.id);
+  const handleDeleteDatagridButton = (params) => () => {
+    setIdDelete(params.id);
 
-    console.log(param.id);
     setDialogConfirmOpen(true);
   }
 
@@ -77,11 +75,37 @@ const Customers = () => {
     }
   }
 
-  const handleDeleteConfirm = () => {
+  const handleDeleteConfirm = async () => {
     setDialogConfirmOpen(false);
+    const urlDelete = Urls(idDelete);
 
-    //TODO colocar o código para enviar a requisicao DELETE para a API
-    //colocar o status da resposta no formulario
+    setStatus('');
+    setResponseCode(null);
+
+    try {
+      const response = await fetch(urlDelete.customers.findById_Put_Delete, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      setStatus(response.status);
+      setResponseCode(response.title);
+      console.log("response status ", response.status);
+
+      if (response.status === 204) {
+        setStatus(`${response.status} Customer Deleted Succesfully!`);
+        console.log('DELETOU');
+
+        setRows((prevData) => prevData.filter((item) => item.id !== idDelete));
+      } else {
+        setStatus(`Error: ${response.status} Failed to delete Customer`);
+      }
+    } catch (error) {
+      setStatus(`Error: ${error.message} Failed to delete Customer`);
+    }
+
     setDialogDeleteOpen(true);
   }
 
@@ -119,13 +143,13 @@ const Customers = () => {
             icon={<EditIcon />}
             label="Edit"
             className="textPrimary"
-            onClick={handleEditClick(params)}
+            onClick={handleEditDatagridButton(params)}
             color="inherit"
           />,
           <GridActionsCellItem
             icon={<DeleteIcon />}
             label="Delete"
-            onClick={handleDeleteClick(params)}
+            onClick={handleDeleteDatagridButton(params)}
             color="inherit"
           />,
         ];
@@ -183,7 +207,7 @@ const Customers = () => {
         }}
       >
         <DataGrid
-          rows={data}
+          rows={rows}
           columns={columns}
           rowModesModel={rowModesModel}
           slots={{
@@ -214,6 +238,8 @@ const Customers = () => {
         <DialogContent>
           <DialogContentText>
             ID: {idDelete}
+            <br />
+            Status: {status}
           </DialogContentText>
           <DialogActions>
             <Button onClick={handleCloseDelete} color="inherit">

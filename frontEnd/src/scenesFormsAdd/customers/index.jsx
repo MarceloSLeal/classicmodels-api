@@ -79,7 +79,7 @@ const FormAddCustomer = () => {
 
   const handleClose = () => {
     setDialogOpen(false);
-    if (responseCode === 200 && resetFormFn) {
+    if (responseCode === 201 && resetFormFn) {
       resetFormFn();
     }
   }
