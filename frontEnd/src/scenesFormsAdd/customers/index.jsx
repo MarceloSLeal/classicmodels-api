@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import {
   Box, Button, Select, MenuItem, FormControl, InputLabel, Dialog, DialogActions,
-  DialogContent, DialogContentText, DialogTitle
+  DialogContent, DialogContentText, DialogTitle,
 } from "@mui/material";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
@@ -10,9 +10,9 @@ import { Formik } from "formik";
 import * as yup from "yup";
 
 import CustomersFormAddInputs from "../../components/formAddInputs/Customers";
-import { useLocation } from "react-router-dom";
 import Header from "../../components/Header";
 import { Urls } from "../../api/Paths";
+import useFetchData from "../../api/getData";
 
 const initialValues = {
   name: "", email: "", contactLastName: "", contactFirstName: "", phone: "",
@@ -42,10 +42,17 @@ const customersSchema = yup.object().shape({
 });
 
 const FormAddCustomer = () => {
-  const location = useLocation();
-  const { data } = location.state || {};
   const url = Urls();
-  const employeeIds = [...new Set(data.map(item => item.employeeId).filter(id => id !== null))];
+  const urlList = Urls();
+
+  const [dataList, setDataList] = useState(null);
+  const { data: dataNew, loading: loadingNew, error: errorNew } = useFetchData(urlList.employee.findByEmployeesIds);
+  useEffect(() => {
+    if (dataNew) {
+      setDataList(dataNew);
+    }
+  }, [dataNew]);
+
   const isNonMobile = useMediaQuery("(min-width:600px)");
   const [responseCode, setResponseCode] = useState(null);
   const [resetFormFn, setResetFormFn] = useState(null);
@@ -127,7 +134,8 @@ const FormAddCustomer = () => {
                   <MenuItem value="">
                     <em>None</em>
                   </MenuItem>
-                  {employeeIds.map((id) => (
+                  {/* {employeeIds.map((id) => ( */}
+                  {dataList && dataList.map((id) => (
                     <MenuItem key={id} value={id}>
                       {id}
                     </MenuItem>

@@ -20,6 +20,7 @@ import java.util.List;
 @AllArgsConstructor
 @RestController
 @RequestMapping("/employees")
+@CrossOrigin(origins = "http://localhost:5173")
 public class EmployeesController {
 
     private EmployeesRepository employeesRepository;
@@ -31,6 +32,16 @@ public class EmployeesController {
     public List<EmployeeRepModel> listar() {
 
         return employeeMapper.toCollectionModel(employeesRepository.findAll());
+    }
+
+    @GetMapping("/employeeslist")
+    public ResponseEntity<List<Long>> buscarPorEmployeesIds() {
+
+        List<Long> employeeIds = employeesRepository.findIdsByJobTitleSalesRep();
+        if (employeeIds.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(employeeIds);
     }
 
     @GetMapping("/{id}")
