@@ -11,13 +11,10 @@ import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import Button from '@mui/material/Button';
 
-
 import Header from "../../components/Header";
 import useFetchData from "../../api/getData";
 import { Urls } from "../../api/Paths";
 import { tokens } from "../../theme";
-//remover mockDataEmployees
-import { mockDataEmployees } from "../../data/mockDataEmployees";
 
 const Employees = () => {
 
@@ -25,7 +22,7 @@ const Employees = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const { data, loading, error } = useFetchData(urlData.employee.findAll_Post);
-  const [dialogConfirmOpen, setDialogConfirOpen] = useState(false);
+  const [dialogConfirmOpen, setDialogConfirmOpen] = useState(false);
   const [dialogDeleteOpen, setDialogDeleteOpen] = useState(false);
   const [idDelete, setIdDelete] = useState(null);
   const [status, setStatus] = useState('');
@@ -41,8 +38,70 @@ const Employees = () => {
 
   const EditToolBar = () => {
     const handleClick = () => {
-      navigate("/formaddemployee", { state: { data } })
+      navigate("/formaddemployee")
     }
+
+    return (
+      <GridToolbarContainer>
+        <Button
+          sx={{
+            backgroundColor: colors.blueAccent[700],
+            color: colors.primary[100],
+            paddingTop: '10px', paddingRight: '10px',
+            paddingBottom: '10px', paddingLeft: '10px',
+          }}
+          startIcon={<AddIcon />} onClick={handleClick}>
+          Add record
+        </Button>
+      </GridToolbarContainer>
+    );
+  }
+
+  const handleEditDatagridButton = (params) => () => {
+    const rowData = params.row;
+    navigateEdit("/formeditcustomer", { state: { rowData, data } });
+  };
+  const handleDeleteDatagridButton = (params) => () => {
+    setIdDelete(params.id);
+
+    setDialogConfirmOpen(true);
+  }
+  const handleCloseConfirm = () => {
+    setDialogConfirmOpen(false);
+  }
+
+  const handleDeleteConfirm = async () => {
+    setDialogConfirmOpen(false);
+    const urlDelete = Urls(idDelete);
+
+    setStatus('');
+
+    try {
+      const response = await fetch(urlDelete.employee.findById_Put_Delete, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      setStatus(response.status);
+
+      if (response.status === 204) {
+        setStatus(`${response.status} Employee Deleted Succesfully!`);
+
+        setRows((prevData) => prevData.filter((item) => item.id !== idDelete));
+      } else {
+        setStatus(`Error: ${response.status} Failed to delete Employee`);
+      }
+    } catch (error) {
+      setStatus(`Error: ${error.message} Failed to delete Employee`);
+    }
+
+    setDialogDeleteOpen(true);
+  }
+
+  const handleCloseDelete = () => {
+    setDialogDeleteOpen(false);
   }
 
   const columns = [
@@ -56,11 +115,56 @@ const Employees = () => {
     { field: "officesId", headerName: "OFFICE ID", flex: 1 },
     { field: "customersId", headerName: "CUSTOMERS ID", flex: 1 },
 
+    {
+      field: 'actions',
+      type: 'actions',
+      headerName: 'Actions',
+      width: 100,
+      cellClassName: 'actions',
+      getActions: (params) => {
+
+        return [
+          <GridActionsCellItem
+            icon={<EditIcon />}
+            label="Edit"
+            className="textPrimary"
+            onClick={handleEditDatagridButton(params)}
+            color="inherit"
+          />,
+          <GridActionsCellItem
+            icon={<DeleteIcon />}
+            label="Delete"
+            onClick={handleDeleteDatagridButton(params)}
+            color="inherit"
+          />,
+        ];
+      },
+    },
   ];
+
+  if (loading) {
+    return (
+      <Box m="20px">
+        <Header title="EMPLOYEES" subtitle="Managing Employees" />
+        <Box
+          sx={{ fontSize: "2rem" }} >
+          Loading...
+        </Box>
+      </Box>)
+  }
+
+  if (error) {
+    return (
+      <Box m="20px">
+        <Header title="CUSTOMERS" subtitle="Managing Employees" />
+        <Box>Error: {error.message}{ }</Box>
+      </Box>
+    );
+  }
 
   return (
     <Box m="20px">
-      <Header title="EMPLOYEES" subtitle="List of Employees" />
+      <Header title="EMPLOYEES" subtitle="Manage Employees" />
       <Box
         m="40px 0 0 0"
         height="75vh"
@@ -92,10 +196,47 @@ const Employees = () => {
         }}
       >
         <DataGrid
-          rows={mockDataEmployees}
+          rows={rows}
           columns={columns}
+          slots={{
+            toolbar: EditToolBar,
+          }}
         />
       </Box>
+
+      <Dialog open={dialogConfirmOpen} onClose={handleCloseConfirm}>
+        <DialogTitle>CONFIRM DELETE?</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            ID: {idDelete}
+          </DialogContentText>
+          <DialogActions>
+            <Button onClick={handleDeleteConfirm} color="error">
+              DELETE
+            </Button>
+            <Button onClick={handleCloseConfirm} color="inherit">
+              CANCEL
+            </Button>
+          </DialogActions>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={dialogDeleteOpen} onClose={handleCloseDelete}>
+        <DialogTitle>CUSTOMER DELETED</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            ID: {idDelete}
+            <br />
+            Status: {status}
+          </DialogContentText>
+          <DialogActions>
+            <Button onClick={handleCloseDelete} color="inherit">
+              OK
+            </Button>
+          </DialogActions>
+        </DialogContent>
+      </Dialog>
+
     </Box>
   )
 }
