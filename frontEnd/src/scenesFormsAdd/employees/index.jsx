@@ -1,17 +1,19 @@
 import React, { useEffect, useState } from "react";
 
 import {
-  Box, Button, Select, MenuItem, FormControl, InputLabel, Dialog, DialogActions,
+  Box, Button, Select, MenuItem, FormControl, FormHelperText, InputLabel,
+  Dialog, DialogActions,
   DialogContent, DialogContentText, DialogTitle,
 } from "@mui/material";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
-import { Formik } from "formik";
+import { Formik, Field } from "formik";
 import * as yup from "yup";
 
 import FormEmployeeAddInputs from "../../components/formAddInputs/Employees";
 import Header from "../../components/Header";
 import { Urls } from "../../api/Paths";
+import { Constants } from "../../data/constants";
 import useFetchData from "../../api/getData";
 
 const initialValues = {
@@ -24,7 +26,7 @@ const employeesSchema = yup.object().shape({
   firstName: yup.string().max(50).required(),
   email: yup.string().email().max(50).required(),
   reportsTo: yup.number().required(),
-  jobTitle: yup.string().max(50),
+  jobTitle: yup.string().max(50).required(),
   extension: yup.string().max(10).required(),
   officeId: yup.number().positive().required(),
 });
@@ -32,9 +34,11 @@ const employeesSchema = yup.object().shape({
 const FormAddEmployee = () => {
   const url = Urls();
   const urlList = Urls();
+  const jobTitleList = Constants().employees.jobTitle;
 
   const [dataList, setDataList] = useState(null);
-  const { data: dataNew, loading: loadingNew, error: errorNew } = useFetchData(urlList.employee.findByEmployeesIds);
+  const { data: dataNew, loading: loadingNew, error: errorNew } = useFetchData(
+    urlList.offices.findByOfficeIds);
   useEffect(() => {
     if (dataNew) {
       setDataList(dataNew);
@@ -49,6 +53,7 @@ const FormAddEmployee = () => {
 
   const handleFormSubmit = () => {
     //adicionar codigo
+    console.log(jobTitleList);
   }
 
   return (
@@ -61,7 +66,8 @@ const FormAddEmployee = () => {
         validationSchema={employeesSchema}
       >
 
-        {({ values, errors, touched, handleBlur, handleChange, handleSubmit, setFieldValue }) => (
+        {({ values, errors, touched, handleBlur, handleChange, handleSubmit,
+          setFieldValue }) => (
           <form onSubmit={handleSubmit}>
             <Box
               display="grid"
@@ -72,10 +78,74 @@ const FormAddEmployee = () => {
               }}
             >
 
-              <FormEmployeeAddInputs handleBlur={handleBlur} handleChange={handleChange}
+              <FormEmployeeAddInputs
+                handleBlur={handleBlur} handleChange={handleChange}
                 values={values} touched={touched} errors={errors} />
 
+              {/* TODO tentar colocar esses dois inputs no componente de inputs */}
+              {/* TODO adicionar mais um input desse tipo para pegar o reportsTo de um novo endpoint */}
+              <FormControl
+                variant="filled"
+                sx={{ gridColumn: "span 2" }}
+                validationschema={employeesSchema}
+                error={!!touched.officeId && !!errors.officeId}
+              >
+                <InputLabel id="office-select-label">Office Id</InputLabel>
+                <Select
+                  labelId="office-select-label"
+                  id="office-select-error"
+                  name="officeId"
+                  value={values.officeId}
+                  onChange={(event) => setFieldValue('officeId',
+                    event.target.value)}
+                  onBlur={handleBlur}
+                  label="Office Id"
+                >
+                  {dataList && dataList.map((id) => (
+                    <MenuItem key={id} value={id}>
+                      {id}
+                    </MenuItem>
+                  ))}
+                </Select>
+                <FormHelperText error={!!touched.officeId && !!errors.officeId}>
+                  {touched.officeId && errors.officeId}</FormHelperText>
+              </FormControl>
+
+              <FormControl
+                variant="filled"
+                sx={{ gridColumn: "span 2" }}
+                validationschema={employeesSchema}
+                error={!!touched.jobTitle && !!errors.jobTitle}
+              >
+                <InputLabel id="job-select-label">Job Title</InputLabel>
+                <Select
+                  labelId="job-select-label"
+                  id="job-select-error"
+                  name="jobTitle"
+                  value={values.jobTitle}
+                  onChange={(event) => setFieldValue('jobTitle',
+                    event.target.value)}
+                  onBlur={handleBlur}
+                  label="Job Title"
+                >
+                  {jobTitleList && jobTitleList.map((id) => (
+                    <MenuItem key={id} value={id}>
+                      {id}
+                    </MenuItem>
+                  ))}
+                </Select>
+                <FormHelperText error={!!touched.jobTitle && !!errors.jobTitle}>
+                  {touched.jobTitle && errors.jobTitle}</FormHelperText>
+              </FormControl>
+
             </Box>
+
+            <Box display="flex" justifyContent="end" mt="20px">
+              <Button type="submit" color="secondary" variant="contained">
+                Create New Employee
+              </Button>
+            </Box>
+
           </form>
         )}
       </Formik>

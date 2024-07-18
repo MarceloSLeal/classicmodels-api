@@ -18,6 +18,7 @@ import java.util.List;
 @AllArgsConstructor
 @RestController
 @RequestMapping("/offices")
+@CrossOrigin(origins = "${CONTROLLERS_CROSS_ORIGIN}")
 public class OfficesController {
 
     private OfficesRepository officesRepository;
@@ -45,6 +46,16 @@ public class OfficesController {
 
         Offices savedOffices = officesCatalogService.salvar(newOffices);
         return officesMapper.toModel(savedOffices);
+    }
+
+    @GetMapping("/officeslist")
+    public ResponseEntity<List<Long>> buscarPorOfficeIds() {
+
+        List<Long> officeIds = officesRepository.findIds();
+        if (officeIds.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(officeIds);
     }
 
     @PutMapping("/{id}")

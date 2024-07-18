@@ -19,7 +19,7 @@ import java.util.List;
 @AllArgsConstructor
 @RestController
 @RequestMapping("/customers")
-@CrossOrigin
+@CrossOrigin(origins = "${CONTROLLERS_CROSS_ORIGIN}")
 public class CustomersController {
 
     private CustomersRepository customersRepository;

@@ -56,18 +56,6 @@ const FormEmployeeAddInputs = ({ handleBlur, handleChange, values, touched,
       <TextField
         variant="filled"
         type="text"
-        label="Job Title"
-        onBlur={handleBlur}
-        onChange={handleChange}
-        value={values.jobTitle}
-        name="jobTitle"
-        error={!!touched.jobTitle && !!errors.jobTitle}
-        helperText={touched.jobTitle && errors.jobTitle}
-        sx={{ gridColumn: "span 2" }}
-      />
-      <TextField
-        variant="filled"
-        type="text"
         label="Extension"
         onBlur={handleBlur}
         onChange={handleChange}
@@ -75,18 +63,6 @@ const FormEmployeeAddInputs = ({ handleBlur, handleChange, values, touched,
         name="extension"
         error={!!touched.extension && !!errors.extension}
         helperText={touched.extension && errors.extension}
-        sx={{ gridColumn: "span 2" }}
-      />
-      <TextField
-        variant="filled"
-        type="text"
-        label="Office Id"
-        onBlur={handleBlur}
-        onChange={handleChange}
-        value={values.officeId}
-        name="officeId"
-        error={!!touched.officeId && !!errors.officeId}
-        helperText={touched.officeId && errors.officeId}
         sx={{ gridColumn: "span 2" }}
       />
     </>

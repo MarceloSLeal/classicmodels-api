@@ -20,7 +20,7 @@ import java.util.List;
 @AllArgsConstructor
 @RestController
 @RequestMapping("/employees")
-@CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin(origins = "${CONTROLLERS_CROSS_ORIGIN}")
 public class EmployeesController {
 
     private EmployeesRepository employeesRepository;
@@ -43,6 +43,8 @@ public class EmployeesController {
         }
         return ResponseEntity.ok(employeeIds);
     }
+
+    //TODO adicionar mais um endpoint para retornar uma lista de reportsTO
 
     @GetMapping("/{id}")
     public ResponseEntity<EmployeeRepModel> buscarPorId(@PathVariable Long id) {
