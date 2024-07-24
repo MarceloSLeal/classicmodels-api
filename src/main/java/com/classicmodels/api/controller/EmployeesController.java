@@ -3,6 +3,8 @@ package com.classicmodels.api.controller;
 import com.classicmodels.api.mapper.EmployeeMapper;
 import com.classicmodels.api.model.EmployeeRepModel;
 import com.classicmodels.api.model.input.EmployeeInput;
+import com.classicmodels.api.model.lists.EmployeeRepModelIdNameList;
+import com.classicmodels.api.model.lists.interfaces.EmployeeIdNameProjection;
 import com.classicmodels.domain.exception.BusinessException;
 import com.classicmodels.domain.exception.EntityNotFoundException;
 import com.classicmodels.domain.model.Employee;
@@ -11,11 +13,13 @@ import com.classicmodels.domain.repository.OfficesRepository;
 import com.classicmodels.domain.service.EmployeesCatalogService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @RestController
@@ -45,6 +49,26 @@ public class EmployeesController {
     }
 
     //TODO adicionar mais um endpoint para retornar uma lista de reportsTO
+    @GetMapping("/idname")
+    public ResponseEntity<List<EmployeeRepModelIdNameList>> buscarPorIdName() {
+
+        List<EmployeeIdNameProjection> projections = employeesRepository.findIdName();
+        if (projections.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+
+        List<EmployeeRepModelIdNameList> employeeIds = projections.stream()
+                .map(projection -> {
+                    EmployeeRepModelIdNameList dto = new EmployeeRepModelIdNameList();
+                    dto.setId(projection.getId());
+                    dto.setLastName(projection.getLastName());
+                    dto.setFirstName(projection.getFirstName());
+                    dto.setJobTitle(projection.getJobTitle());
+                    return dto;
+                })
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(employeeIds);
+    }
 
     @GetMapping("/{id}")
     public ResponseEntity<EmployeeRepModel> buscarPorId(@PathVariable Long id) {

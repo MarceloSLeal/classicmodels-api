@@ -1,5 +1,7 @@
 package com.classicmodels.domain.repository;
 
+import com.classicmodels.api.model.lists.EmployeeRepModelIdNameList;
+import com.classicmodels.api.model.lists.interfaces.EmployeeIdNameProjection;
 import com.classicmodels.domain.model.Employee;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -18,5 +20,8 @@ public interface EmployeesRepository extends JpaRepository<Employee, Long> {
 
     @Query(value = "SELECT id FROM classicmodels_api.employees WHERE job_title = 'Sales Rep'", nativeQuery = true)
     List<Long> findIdsByJobTitleSalesRep();
+
+    @Query(value = "SELECT id, last_name as lastName, first_name as firstName, job_title as jobTitle from classicmodels_api.employees", nativeQuery = true)
+    List<EmployeeIdNameProjection> findIdName();
 
 }

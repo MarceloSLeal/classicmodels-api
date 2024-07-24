@@ -14,6 +14,7 @@ export const Urls = (param) => ({
         findById_Put_Delete: `${prefix}employees/${param}`,
         findByEmail: `${prefix}employees/findbyemail/${param}`,
         findByEmployeesIds: `${prefix}employees/employeeslist`,
+        findByIdNames: `${prefix}employees/idname`,
       },
       offices: {
         findAll_Post: `${prefix}offices`,

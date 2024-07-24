@@ -34,7 +34,19 @@ const employeesSchema = yup.object().shape({
 const FormAddEmployee = () => {
   const url = Urls();
   const urlList = Urls();
+  const urlIdNames = Urls();
   const jobTitleList = Constants().employees.jobTitle;
+
+  const [dataIdName, setDataIdName] = useState(null);
+  const { data: dataId, loading: loadingId, error: errorId } = useFetchData(
+    urlIdNames.employee.findByIdNames);
+  useEffect(() => {
+    if (dataId) {
+      setDataIdName(dataId);
+      console.log(dataIdName);
+    }
+  }, [dataId]);
+
 
   const [dataList, setDataList] = useState(null);
   const { data: dataNew, loading: loadingNew, error: errorNew } = useFetchData(
