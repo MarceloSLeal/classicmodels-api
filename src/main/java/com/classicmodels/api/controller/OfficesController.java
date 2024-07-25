@@ -3,6 +3,8 @@ package com.classicmodels.api.controller;
 import com.classicmodels.api.mapper.OfficesMapper;
 import com.classicmodels.api.model.OfficesRepModel;
 import com.classicmodels.api.model.input.OfficesInput;
+import com.classicmodels.api.model.lists.OfficesRepModelIdCityList;
+import com.classicmodels.api.model.lists.interfaces.OfficesIdCityProjection;
 import com.classicmodels.domain.exception.EntityNotFoundException;
 import com.classicmodels.domain.model.Offices;
 import com.classicmodels.domain.repository.OfficesRepository;
@@ -14,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @RestController
@@ -48,6 +51,7 @@ public class OfficesController {
         return officesMapper.toModel(savedOffices);
     }
 
+    //deletar esse método depois
     @GetMapping("/officeslist")
     public ResponseEntity<List<Long>> buscarPorOfficeIds() {
 
@@ -56,6 +60,25 @@ public class OfficesController {
             return ResponseEntity.noContent().build();
         }
         return ResponseEntity.ok(officeIds);
+    }
+
+    @GetMapping("/idcity")
+    public ResponseEntity<List<OfficesRepModelIdCityList>> buscarPorIdCity() {
+
+        List<OfficesIdCityProjection> projections = officesRepository.findIdCity();
+        if (projections.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+
+        List<OfficesRepModelIdCityList> officesIdCity = projections.stream()
+                .map(projection -> {
+                    OfficesRepModelIdCityList dto = new OfficesRepModelIdCityList();
+                    dto.setId(projection.getId());
+                    dto.setCity(projection.getCity());
+                    return dto;
+                })
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(officesIdCity);
     }
 
     @PutMapping("/{id}")

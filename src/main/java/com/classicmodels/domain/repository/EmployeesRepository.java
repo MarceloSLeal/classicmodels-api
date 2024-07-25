@@ -1,11 +1,7 @@
 package com.classicmodels.domain.repository;
 
-import com.classicmodels.api.model.lists.EmployeeRepModelIdNameList;
 import com.classicmodels.api.model.lists.interfaces.EmployeeIdNameProjection;
 import com.classicmodels.domain.model.Employee;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
-import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;

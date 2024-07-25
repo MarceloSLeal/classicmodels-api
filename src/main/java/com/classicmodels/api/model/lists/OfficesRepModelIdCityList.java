@@ -5,11 +5,9 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class EmployeeRepModelIdNameList {
+public class OfficesRepModelIdCityList {
 
     private Long id;
-    private String lastName;
-    private String firstName;
-    private String jobTitle;
+    private String city;
 
 }

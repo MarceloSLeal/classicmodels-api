@@ -25,7 +25,7 @@ const employeesSchema = yup.object().shape({
   lastName: yup.string().max(50).required(),
   firstName: yup.string().max(50).required(),
   email: yup.string().email().max(50).required(),
-  reportsTo: yup.number().required(),
+  reportsTo: yup.number(),
   jobTitle: yup.string().max(50).required(),
   extension: yup.string().max(10).required(),
   officeId: yup.number().positive().required(),
@@ -37,23 +37,22 @@ const FormAddEmployee = () => {
   const urlIdNames = Urls();
   const jobTitleList = Constants().employees.jobTitle;
 
+  // TODO achar uma forma de componentizar essas chamadas
   const [dataIdName, setDataIdName] = useState(null);
   const { data: dataId, loading: loadingId, error: errorId } = useFetchData(
     urlIdNames.employee.findByIdNames);
   useEffect(() => {
     if (dataId) {
       setDataIdName(dataId);
-      console.log(dataIdName);
     }
   }, [dataId]);
 
-
-  const [dataList, setDataList] = useState(null);
+  const [dataOfficeIdName, setDataOfficeIdName] = useState(null);
   const { data: dataNew, loading: loadingNew, error: errorNew } = useFetchData(
     urlList.offices.findByOfficeIds);
   useEffect(() => {
     if (dataNew) {
-      setDataList(dataNew);
+      setDataOfficeIdName(dataNew);
     }
   }, [dataNew]);
 
@@ -63,9 +62,9 @@ const FormAddEmployee = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [status, setStatus] = useState('');
 
-  const handleFormSubmit = () => {
+  const handleFormSubmit = async (values) => {
     //adicionar codigo
-    console.log(jobTitleList);
+    console.log(values);
   }
 
   return (
@@ -95,7 +94,34 @@ const FormAddEmployee = () => {
                 values={values} touched={touched} errors={errors} />
 
               {/* TODO tentar colocar esses dois inputs no componente de inputs */}
-              {/* TODO adicionar mais um input desse tipo para pegar o reportsTo de um novo endpoint */}
+
+              <FormControl
+                variant="filled"
+                sx={{ gridColumn: "span 2" }}
+              >
+                <InputLabel id="reportsTo-select-label">Reports To</InputLabel>
+                <Select
+                  labelId="reportsTo-select-label"
+                  id="reportsTo-select-error"
+                  name="reportsTo"
+                  value={values.reportsTo}
+                  onChange={(event) => setFieldValue('reportsTo',
+                    event.target.value)}
+                  onBlur={handleBlur}
+                  label="Reports To"
+                >
+                  <MenuItem value="">
+                    <em>None</em>
+                  </MenuItem>
+                  {dataIdName && dataIdName.map((employee) => (
+                    <MenuItem key={employee.id} value={employee.id}>
+                      {employee.id} {" "}
+                      {employee.lastName} {employee.firstName} - {employee.jobTitle}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+
               <FormControl
                 variant="filled"
                 sx={{ gridColumn: "span 2" }}
@@ -113,9 +139,9 @@ const FormAddEmployee = () => {
                   onBlur={handleBlur}
                   label="Office Id"
                 >
-                  {dataList && dataList.map((id) => (
-                    <MenuItem key={id} value={id}>
-                      {id}
+                  {dataOfficeIdName && dataOfficeIdName.map((office) => (
+                    <MenuItem key={office.id} value={office.id}>
+                      {office.id} {office.city}
                     </MenuItem>
                   ))}
                 </Select>

@@ -44,18 +44,6 @@ const FormEmployeeAddInputs = ({ handleBlur, handleChange, values, touched,
       <TextField
         variant="filled"
         type="text"
-        label="Reports To"
-        onBlur={handleBlur}
-        onChange={handleChange}
-        value={values.reportsTo}
-        name="reportsTo"
-        error={!!touched.reportsTo && !!errors.reportsTo}
-        helperText={touched.reportsTo && errors.reportsTo}
-        sx={{ gridColumn: "span 2" }}
-      />
-      <TextField
-        variant="filled"
-        type="text"
         label="Extension"
         onBlur={handleBlur}
         onChange={handleChange}
