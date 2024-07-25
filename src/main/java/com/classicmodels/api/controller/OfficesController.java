@@ -51,17 +51,6 @@ public class OfficesController {
         return officesMapper.toModel(savedOffices);
     }
 
-    //deletar esse método depois
-    @GetMapping("/officeslist")
-    public ResponseEntity<List<Long>> buscarPorOfficeIds() {
-
-        List<Long> officeIds = officesRepository.findIds();
-        if (officeIds.isEmpty()) {
-            return ResponseEntity.noContent().build();
-        }
-        return ResponseEntity.ok(officeIds);
-    }
-
     @GetMapping("/idcity")
     public ResponseEntity<List<OfficesRepModelIdCityList>> buscarPorIdCity() {
 
