@@ -22,10 +22,9 @@ const useFetchData = (apiUrl) => {
     };
 
     fetchData();
-  }, []);
+  }, [apiUrl]);
 
   return { data, loading, error };
 };
 
 export default useFetchData;
-
