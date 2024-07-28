@@ -15,6 +15,7 @@ import Header from "../../components/Header";
 import { Urls } from "../../api/Paths";
 import { Constants } from "../../data/constants";
 import useFetchData from "../../api/getData";
+import FormListCalls from "../../components/FormsListCalls";
 
 const initialValues = {
   lastName: "", firstName: "", email: "", reportsTo: "", jobTitle: "",
@@ -37,24 +38,11 @@ const FormAddEmployee = () => {
   const urlIdNames = Urls();
   const jobTitleList = Constants().employees.jobTitle;
 
-  // TODO achar uma forma de componentizar essas chamadas
   const [dataIdName, setDataIdName] = useState(null);
-  const { data: dataId, loading: loadingId, error: errorId } = useFetchData(
-    urlIdNames.employee.findByIdNames);
-  useEffect(() => {
-    if (dataId) {
-      setDataIdName(dataId);
-    }
-  }, [dataId]);
+  FormListCalls(urlIdNames.employee.findByIdNames, setDataIdName);
 
   const [dataOfficeIdName, setDataOfficeIdName] = useState(null);
-  const { data: dataNew, loading: loadingNew, error: errorNew } = useFetchData(
-    urlList.offices.findByOfficeIds);
-  useEffect(() => {
-    if (dataNew) {
-      setDataOfficeIdName(dataNew);
-    }
-  }, [dataNew]);
+  FormListCalls(urlList.offices.findByOfficeIds, setDataOfficeIdName);
 
   const isNonMobile = useMediaQuery("(min-width:600px)");
   const [responseCode, setResponseCode] = useState(null);
@@ -65,6 +53,7 @@ const FormAddEmployee = () => {
   const handleFormSubmit = async (values) => {
     //adicionar codigo
     console.log(values);
+    console.log(dataTeste);
   }
 
   return (
