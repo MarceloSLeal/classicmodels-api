@@ -87,7 +87,7 @@ public class EmployeesControllerTest {
         mockEmployee.setJobTitle("SalesRep");
 
         mockEmployeeInput = new EmployeeInput();
-        mockEmployeeInput.setOfficesId(1L);
+        mockEmployeeInput.setOfficeId(1L);
         mockEmployeeInput.setLastName("Leal");
         mockEmployeeInput.setFirstName("Marcelo");
         mockEmployeeInput.setExtension("123");

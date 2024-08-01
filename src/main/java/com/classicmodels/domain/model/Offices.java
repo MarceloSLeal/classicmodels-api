@@ -19,7 +19,7 @@ import java.util.List;
 @Table(name = "offices")
 public class Offices {
 
-    @OneToMany(mappedBy = "offices")
+    @OneToMany(mappedBy = "officeId")
     private List<Employee> employee;
 
     @Formula("(SELECT GROUP_CONCAT(e.id SEPARATOR ',') FROM employees e WHERE e.office_id = id)")

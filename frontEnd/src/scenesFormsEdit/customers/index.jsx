@@ -38,6 +38,7 @@ const customersSchema = yup.object().shape({
 const FormEditCustomer = () => {
   const location = useLocation();
   const { rowData, data } = location.state || {};
+  //TODO criar um novo endpoint para pegar o código apenas dos employees vendedores
   const employeeIds = [...new Set(data.map(item => item.employeeId).filter(id => id !== null))];
   const isNonMobile = useMediaQuery("(min-width:600px)");
   const [responseCode, setResponseCode] = useState(null);
@@ -131,6 +132,8 @@ const FormEditCustomer = () => {
                   <MenuItem value="">
                     <em>None</em>
                   </MenuItem>
+
+                  {/* TODO passar a lista de vendedores */}
                   {employeeIds.map((id) => (
                     <MenuItem key={id} value={id}>
                       {id}

@@ -13,18 +13,20 @@ import com.classicmodels.domain.repository.OfficesRepository;
 import com.classicmodels.domain.service.EmployeesCatalogService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import org.apache.coyote.Response;
+import java.lang.String;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.swing.plaf.basic.BasicInternalFrameTitlePane;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @RestController
 @RequestMapping("/employees")
-@CrossOrigin(origins = "${CONTROLLERS_CROSS_ORIGIN}")
+//@CrossOrigin(origins = "${CONTROLLERS_CROSS_ORIGIN}")
+//@CrossOrigin(origins =  "http://localhost:5173", allowedHeaders = "/**")
 public class EmployeesController {
 
     private EmployeesRepository employeesRepository;
@@ -94,11 +96,13 @@ public class EmployeesController {
 
         Employee newEmployee = employeeMapper.toEntity(employeeInput);
 
+        EmployeeRepModel employeeRepModel = employeeMapper.toModel(newEmployee);
+
         boolean employeeEmail = employeesRepository.findByEmail(newEmployee.getEmail())
                 .stream()
                 .anyMatch(employeeExists -> !employeeExists.equals(newEmployee));
 
-        officesRepository.findById(employeeInput.getOfficesId())
+        officesRepository.findById(employeeInput.getOfficeId())
                 .orElseThrow(() -> new EntityNotFoundException("There is no office with that Id"));
 
         if (employeeEmail) {
@@ -110,8 +114,8 @@ public class EmployeesController {
                     .orElseThrow(() -> new EntityNotFoundException("There is no employee with that id " + employeeInput.getReportsTo()));
         }
 
-        Employee savedEmployee = employeesCatalogService.salvar(newEmployee);
-        return employeeMapper.toModel(savedEmployee);
+        employeesCatalogService.salvar(newEmployee);
+        return employeeRepModel;
     }
 
     @PutMapping("/{id}")
@@ -121,9 +125,9 @@ public class EmployeesController {
                 .orElseThrow(() -> new EntityNotFoundException("Employee not exists"));
         Employee employeeEdit = employeeMapper.toEntity(employeeInput);
         employeeEdit.setId(id);
-        employeeEdit.setOfficeId(employeeInput.getOfficesId());
+        //employeeEdit.setOfficeId(employeeInput.getOfficeId());
 
-        officesRepository.findById(employeeInput.getOfficesId())
+        officesRepository.findById(employeeInput.getOfficeId())
                 .orElseThrow(() -> new EntityNotFoundException("Office not exists"));
 
         boolean emailEmployeeIgualEmployeeEdit = employee.getEmail().equals(employeeEdit.getEmail());

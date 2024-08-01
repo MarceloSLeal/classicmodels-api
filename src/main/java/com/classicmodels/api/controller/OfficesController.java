@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @RestController
 @RequestMapping("/offices")
-@CrossOrigin(origins = "${CONTROLLERS_CROSS_ORIGIN}")
+//@CrossOrigin(origins =  "http://localhost:5173", allowedHeaders = "*")
 public class OfficesController {
 
     private OfficesRepository officesRepository;

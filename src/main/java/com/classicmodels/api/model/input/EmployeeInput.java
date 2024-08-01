@@ -10,7 +10,7 @@ public class EmployeeInput {
 
     @NotNull
     @Digits(integer = 19, fraction = 0, message = "Invalid Long value")
-    private Long officesId;
+    private Long officeId;
 
     @NotBlank
     @Size(max = 50)

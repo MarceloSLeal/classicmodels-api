@@ -14,7 +14,6 @@ import FormEmployeeAddInputs from "../../components/formAddInputs/Employees";
 import Header from "../../components/Header";
 import { Urls } from "../../api/Paths";
 import { Constants } from "../../data/constants";
-import useFetchData from "../../api/getData";
 import FormListCalls from "../../components/FormsListCalls";
 
 const initialValues = {
@@ -29,7 +28,7 @@ const employeesSchema = yup.object().shape({
   reportsTo: yup.number(),
   jobTitle: yup.string().max(50).required(),
   extension: yup.string().max(10).required(),
-  officeId: yup.number().positive().required(),
+  officeId: yup.number().required(),
 });
 
 const FormAddEmployee = () => {
@@ -50,10 +49,41 @@ const FormAddEmployee = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [status, setStatus] = useState('');
 
-  const handleFormSubmit = async (values) => {
-    //adicionar codigo
-    console.log(values);
-    console.log(dataTeste);
+  const handleFormSubmit = async (values, { setSubmitting, resetForm }) => {
+
+    setStatus('');
+    setResponseCode(null);
+    try {
+      const response = await fetch(url.employee.findAll_Post, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(values),
+      });
+      const data = await response.json();
+
+      setResponseCode(response.status);
+
+      if (response.ok) {
+        setStatus('Employee created successfully!');
+        setResetFormFn(() => resetForm);
+      } else {
+        setStatus(`Error: ${data.title || 'Failed to create Employee'}`);
+      }
+    } catch (error) {
+      setStatus(`Error: ${error.message || 'Failed to create Employee'}`);
+    }
+
+    setSubmitting(false);
+    setDialogOpen(true);
+  }
+
+  const handleClose = () => {
+    setDialogOpen(false);
+    if (responseCode === 201 && resetFormFn) {
+      resetFormFn();
+    }
   }
 
   return (
@@ -128,9 +158,9 @@ const FormAddEmployee = () => {
                   onBlur={handleBlur}
                   label="Office Id"
                 >
-                  {dataOfficeIdName && dataOfficeIdName.map((office) => (
-                    <MenuItem key={office.id} value={office.id}>
-                      {office.id} {office.city}
+                  {dataOfficeIdName && dataOfficeIdName.map((officeIdName) => (
+                    <MenuItem key={officeIdName.id} value={officeIdName.id}>
+                      {officeIdName.id} {officeIdName.city}
                     </MenuItem>
                   ))}
                 </Select>
@@ -166,21 +196,33 @@ const FormAddEmployee = () => {
               </FormControl>
 
             </Box>
-
             <Box display="flex" justifyContent="end" mt="20px">
               <Button type="submit" color="secondary" variant="contained">
                 Create New Employee
               </Button>
             </Box>
 
+            <Dialog open={dialogOpen} onClose={handleClose}>
+              <DialogTitle>Operation Status</DialogTitle>
+              <DialogContent>
+                <DialogContentText>
+                  {status}
+                  {responseCode !== null && <br />}
+                  Response Code: {responseCode}
+                </DialogContentText>
+                <DialogActions>
+                  <Button onClick={handleClose} color="primary">
+                    OK
+                  </Button>
+                </DialogActions>
+              </DialogContent>
+            </Dialog>
           </form>
         )}
       </Formik>
 
     </Box>
   )
-
-
 
 }
 

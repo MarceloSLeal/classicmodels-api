@@ -112,7 +112,7 @@ const Employees = () => {
     { field: "reportsTo", headerName: "REPORTS TO", flex: 1 },
     { field: "jobTitle", headerName: "JOB TITLE", flex: 1 },
     { field: "extension", headerName: "EXTENSION", flex: 1 },
-    { field: "officesId", headerName: "OFFICE ID", flex: 1 },
+    { field: "officeId", headerName: "OFFICE ID", flex: 1 },
     { field: "customersId", headerName: "CUSTOMERS ID", flex: 1 },
 
     {
