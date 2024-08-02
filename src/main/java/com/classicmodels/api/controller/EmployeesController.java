@@ -13,20 +13,16 @@ import com.classicmodels.domain.repository.OfficesRepository;
 import com.classicmodels.domain.service.EmployeesCatalogService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import java.lang.String;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.swing.plaf.basic.BasicInternalFrameTitlePane;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @RestController
 @RequestMapping("/employees")
-//@CrossOrigin(origins = "${CONTROLLERS_CROSS_ORIGIN}")
-//@CrossOrigin(origins =  "http://localhost:5173", allowedHeaders = "/**")
 public class EmployeesController {
 
     private EmployeesRepository employeesRepository;
@@ -50,7 +46,6 @@ public class EmployeesController {
         return ResponseEntity.ok(employeeIds);
     }
 
-    //TODO adicionar mais um endpoint para retornar uma lista de reportsTO
     @GetMapping("/idname")
     public ResponseEntity<List<EmployeeRepModelIdNameList>> buscarPorIdName() {
 
