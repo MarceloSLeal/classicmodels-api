@@ -17,7 +17,10 @@ public interface EmployeesRepository extends JpaRepository<Employee, Long> {
     @Query(value = "SELECT id FROM classicmodels_api.employees WHERE job_title = 'Sales Rep'", nativeQuery = true)
     List<Long> findIdsByJobTitleSalesRep();
 
-    @Query(value = "SELECT id, last_name as lastName, first_name as firstName, job_title as jobTitle from classicmodels_api.employees", nativeQuery = true)
+    @Query(value =
+    "SELECT id, last_name AS lastName, first_name AS firstName, job_title AS jobTitle FROM classicmodels_api.employees " +
+    "WHERE job_title = 'President' OR job_title = 'VP SALES' OR job_title = 'VP Marketing' OR job_title = 'Sales Manager (APAC)' " +
+    "OR job_title = 'Sales Manager (EMEA)' OR job_title = 'Sales Manager (NA)'", nativeQuery = true)
     List<EmployeeIdNameProjection> findIdName();
 
 }
