@@ -12,7 +12,6 @@ import * as yup from "yup";
 import CustomersFormAddInputs from "../../components/formAddInputs/Customers";
 import Header from "../../components/Header";
 import { Urls } from "../../api/Paths";
-import useFetchData from "../../api/getData";
 import FormListCalls from "../../components/FormsListCalls";
 
 const initialValues = {
