@@ -13,6 +13,7 @@ import CustomersFormAddInputs from "../../components/formAddInputs/Customers";
 import Header from "../../components/Header";
 import { Urls } from "../../api/Paths";
 import useFetchData from "../../api/getData";
+import FormListCalls from "../../components/FormsListCalls";
 
 const initialValues = {
   name: "", email: "", contactLastName: "", contactFirstName: "", phone: "",
@@ -43,15 +44,9 @@ const customersSchema = yup.object().shape({
 
 const FormAddCustomer = () => {
   const url = Urls();
-  const urlList = Urls();
 
-  const [dataList, setDataList] = useState(null);
-  const { data: dataNew, loading: loadingNew, error: errorNew } = useFetchData(urlList.employee.findByEmployeesIds);
-  useEffect(() => {
-    if (dataNew) {
-      setDataList(dataNew);
-    }
-  }, [dataNew]);
+  const [dataEmployeeIdNameList, setDataEmployeeIdNameList] = useState(null);
+  FormListCalls(url.employee.findByEmployeesIds, setDataEmployeeIdNameList);
 
   const isNonMobile = useMediaQuery("(min-width:600px)");
   const [responseCode, setResponseCode] = useState(null);
@@ -135,9 +130,10 @@ const FormAddCustomer = () => {
                     <em>None</em>
                   </MenuItem>
                   {/* {employeeIds.map((id) => ( */}
-                  {dataList && dataList.map((id) => (
-                    <MenuItem key={id} value={id}>
-                      {id}
+                  {dataEmployeeIdNameList && dataEmployeeIdNameList.map((employee) => (
+                    <MenuItem key={employee.id} value={employee.id}>
+                      {employee.id} {" "} {employee.lastName} {employee.firstName}
+                      {" "} - {employee.jobTitle}
                     </MenuItem>
                   ))}
                 </Select>

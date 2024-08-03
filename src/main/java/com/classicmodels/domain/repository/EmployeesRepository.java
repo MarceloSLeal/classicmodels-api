@@ -14,8 +14,9 @@ public interface EmployeesRepository extends JpaRepository<Employee, Long> {
 
     Optional<Employee> findByEmail(String email);
 
-    @Query(value = "SELECT id FROM classicmodels_api.employees WHERE job_title = 'Sales Rep'", nativeQuery = true)
-    List<Long> findIdsByJobTitleSalesRep();
+    @Query(value = "SELECT id, last_name AS lastName, first_name AS firstName, job_title AS jobTitle FROM classicmodels_api.employees " +
+            "WHERE job_title = 'Sales Rep'", nativeQuery = true)
+    List<EmployeeIdNameProjection> findIdsByJobTitleSalesRep();
 
     @Query(value =
     "SELECT id, last_name AS lastName, first_name AS firstName, job_title AS jobTitle FROM classicmodels_api.employees " +

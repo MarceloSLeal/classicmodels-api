@@ -59,7 +59,8 @@ const Employees = () => {
 
   const handleEditDatagridButton = (params) => () => {
     const rowData = params.row;
-    navigateEdit("/formeditcustomer", { state: { rowData, data } });
+    // TODO criar uma página para editar 
+    navigateEdit("/formeditEmployee", { state: { rowData, data } });
   };
   const handleDeleteDatagridButton = (params) => () => {
     setIdDelete(params.id);

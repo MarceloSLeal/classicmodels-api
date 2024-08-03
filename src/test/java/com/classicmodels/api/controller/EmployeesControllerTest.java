@@ -65,7 +65,8 @@ public class EmployeesControllerTest {
         employee1.setExtension("123");
         employee1.setEmail("marcelo@hotmail.com");
         employee1.setJobTitle("President");
-        employee1.setOfficeId(1L);
+        //employee1.setOfficeId(1L);
+        employee1.setOfficeId(mockOffices);
         mockEmployeeList.add(employee1);
 
         Employee employee2 = new Employee();
@@ -75,7 +76,8 @@ public class EmployeesControllerTest {
         employee2.setExtension("123");
         employee2.setEmail("rose@hotmail.com");
         employee2.setJobTitle("Manager");
-        employee2.setOfficeId(2L);
+        //employee2.setOfficeId(2L);
+        employee2.setOfficeId(mockOffices);
         mockEmployeeList.add(employee2);
 
         mockEmployee = new Employee();

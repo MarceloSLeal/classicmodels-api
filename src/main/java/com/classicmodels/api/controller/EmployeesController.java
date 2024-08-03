@@ -37,12 +37,23 @@ public class EmployeesController {
     }
 
     @GetMapping("/employeeslist")
-    public ResponseEntity<List<Long>> buscarPorEmployeesIds() {
+    public ResponseEntity<List<EmployeeRepModelIdNameList>> buscarPorEmployeesIds() {
 
-        List<Long> employeeIds = employeesRepository.findIdsByJobTitleSalesRep();
-        if (employeeIds.isEmpty()) {
+        List<EmployeeIdNameProjection> projections = employeesRepository.findIdsByJobTitleSalesRep();
+        if (projections.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
+
+        List<EmployeeRepModelIdNameList> employeeIds = projections.stream()
+                .map(projection -> {
+                    EmployeeRepModelIdNameList dto = new EmployeeRepModelIdNameList();
+                    dto.setId(projection.getId());
+                    dto.setLastName(projection.getLastName());
+                    dto.setFirstName(projection.getFirstName());
+                    dto.setJobTitle(projection.getJobTitle());
+                    return dto;
+                })
+                .collect(Collectors.toList());
         return ResponseEntity.ok(employeeIds);
     }
 
