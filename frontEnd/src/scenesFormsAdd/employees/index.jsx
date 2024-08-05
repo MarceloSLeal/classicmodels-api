@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 
 import {
   Box, Button, Select, MenuItem, FormControl, FormHelperText, InputLabel,
@@ -33,16 +33,13 @@ const employeesSchema = yup.object().shape({
 
 const FormAddEmployee = () => {
   const url = Urls();
-  // TODO - usar uma única instancia de Urls
-  const urlList = Urls();
-  const urlIdNames = Urls();
   const jobTitleList = Constants().employees.jobTitle;
 
   const [dataIdName, setDataIdName] = useState(null);
-  FormListCalls(urlIdNames.employee.findByIdNames, setDataIdName);
+  FormListCalls(url.employee.findByIdNames, setDataIdName);
 
   const [dataOfficeIdName, setDataOfficeIdName] = useState(null);
-  FormListCalls(urlList.offices.findByOfficeIds, setDataOfficeIdName);
+  FormListCalls(url.offices.findByOfficeIds, setDataOfficeIdName);
 
   const isNonMobile = useMediaQuery("(min-width:600px)");
   const [responseCode, setResponseCode] = useState(null);

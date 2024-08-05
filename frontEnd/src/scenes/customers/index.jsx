@@ -58,7 +58,7 @@ const Customers = () => {
 
   const handleEditDatagridButton = (params) => () => {
     const rowData = params.row;
-    navigateEdit("/formeditcustomer", { state: { rowData, data } });
+    navigateEdit("/formeditcustomer", { state: { rowData } });
   };
   const handleDeleteDatagridButton = (params) => () => {
     setIdDelete(params.id);

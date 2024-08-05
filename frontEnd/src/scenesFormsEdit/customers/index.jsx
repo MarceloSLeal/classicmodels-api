@@ -1,5 +1,5 @@
 import { useLocation } from "react-router-dom";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 import {
   Box, Button, Select, MenuItem, FormControl, InputLabel, Dialog,
@@ -14,6 +14,7 @@ import CustomersFormEditInputs from "../../components/formEditInputs/Customers";
 import { useNavigate } from "react-router-dom";
 import Header from "../../components/Header";
 import { Urls } from "../../api/Paths";
+import FormListCalls from "../../components/FormsListCalls";
 
 const phoneRegExp = /^((\+[1-9]{1,4}[ -]?)|(\([0-9]{2,3}\)[ -]?)|([0-9]{2,4})[ -]?)*?[0-9]{3,4}[ -]?[0-9]{3,4}$/;
 const customersSchema = yup.object().shape({
@@ -37,14 +38,22 @@ const customersSchema = yup.object().shape({
 
 const FormEditCustomer = () => {
   const location = useLocation();
-  const { rowData, data } = location.state || {};
-  //TODO criar um novo endpoint para pegar o código apenas dos employees vendedores
-  const employeeIds = [...new Set(data.map(item => item.employeeId).filter(id => id !== null))];
+  const { rowData } = location.state || {};
+  const url = Urls(rowData.id);
   const isNonMobile = useMediaQuery("(min-width:600px)");
   const [responseCode, setResponseCode] = useState(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [status, setStatus] = useState('');
   const navigate = useNavigate();
+
+  const [dataEmployeeIdNameList, setDataEmployeeIdNameList] = useState(null);
+  FormListCalls(url.employee.findByEmployeesIds, setDataEmployeeIdNameList);
+
+  useEffect(() => {
+    if (rowData) {
+      console.log(rowData);
+    }
+  }, [rowData]);
 
   const initialValues = {
     id: rowData.id, name: rowData.name, email: rowData.email, contactLastName:
@@ -56,7 +65,6 @@ const FormEditCustomer = () => {
   };
 
   const handleFormSubmit = async (values, { setSubmitting }) => {
-    const url = Urls(rowData.id);
     setStatus('');
     setResponseCode(null);
     try {
@@ -123,7 +131,6 @@ const FormEditCustomer = () => {
                   labelId="employee-select-label"
                   id="employee-select"
                   name="employeeId"
-                  //value={values.employeeId !== null ? rowData.employeeId : ""}
                   value={values.employeeId ?? ""}
                   onChange={(event) => setFieldValue('employeeId', event.target.value)}
                   onBlur={handleBlur}
@@ -133,10 +140,10 @@ const FormEditCustomer = () => {
                     <em>None</em>
                   </MenuItem>
 
-                  {/* TODO passar a lista de vendedores */}
-                  {employeeIds.map((id) => (
-                    <MenuItem key={id} value={id}>
-                      {id}
+                  {dataEmployeeIdNameList && dataEmployeeIdNameList.map((employee) => (
+                    <MenuItem key={employee.id} value={employee.id}>
+                      {employee.id} {" "} {employee.lastName} {employee.firstName}
+                      {" "} - {employee.jobTitle}
                     </MenuItem>
                   ))}
                 </Select>
