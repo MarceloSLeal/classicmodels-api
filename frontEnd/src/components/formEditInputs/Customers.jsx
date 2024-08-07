@@ -1,6 +1,12 @@
-import { TextField } from "@mui/material";
+import { TextField, FormControl, InputLabel, Select, MenuItem } from "@mui/material";
 
-const CustomersFormEditInputs = ({ rowData, handleBlur, handleChange, values, touched, errors }) => {
+const CustomersFormEditInputs = ({ rowData, handleBlur, handleChange, values,
+  touched, errors, setFieldValue, dataEmployeeIdNameList }) => {
+
+  const isEmployeeIdValid = dataEmployeeIdNameList
+    ? dataEmployeeIdNameList.some((employee) => employee.id === values.employeeId)
+    : false;
+
   return (
     <>
       <TextField
@@ -159,6 +165,36 @@ const CustomersFormEditInputs = ({ rowData, handleBlur, handleChange, values, to
         helperText={touched.creditLimit && errors.creditLimit}
         sx={{ gridColumn: "span 2" }}
       />
+
+      <FormControl
+        variant="filled"
+        sx={{ gridColumn: "span 2" }}
+      >
+        <InputLabel id="employee-select-label">Employee Id</InputLabel>
+        <Select
+          labelId="employee-select-label"
+          id="employee-select"
+          name="employeeId"
+          //value={values.employeeId ?? ""}
+          value={isEmployeeIdValid ? values.employeeId : ""}
+          onChange={(event) => setFieldValue('employeeId', event.target.value)}
+          onBlur={handleBlur}
+          label="Employee Id"
+        >
+          <MenuItem value="">
+            <em>None</em>
+          </MenuItem>
+
+          {dataEmployeeIdNameList && dataEmployeeIdNameList.map((employee) => (
+            <MenuItem key={employee.id} value={employee.id}>
+              {employee.id}
+              {" "} {employee.lastName} {employee.firstName}
+              {" "} - {employee.jobTitle}
+            </MenuItem>
+          ))}
+        </Select>
+      </FormControl>
+
     </>
   );
 }

@@ -1,5 +1,5 @@
 import { useLocation } from "react-router-dom";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 
 import {
   Box, Button, Select, MenuItem, FormControl, InputLabel, Dialog,
@@ -31,7 +31,7 @@ const customersSchema = yup.object().shape({
   city: yup.string().max(50).required(),
   state: yup.string().max(50),
   postalCode: yup.string().max(15),
-  country: yup.string().max(50).required(),
+  country: yup.string().max(51).required(),
   creditLimit: yup.number().positive().max(999999.99).required(),
   employeeId: yup.number().positive(),
 });
@@ -49,12 +49,6 @@ const FormEditCustomer = () => {
   const [dataEmployeeIdNameList, setDataEmployeeIdNameList] = useState(null);
   FormListCalls(url.employee.findByEmployeesIds, setDataEmployeeIdNameList);
 
-  useEffect(() => {
-    if (rowData) {
-      console.log(rowData);
-    }
-  }, [rowData]);
-
   const initialValues = {
     id: rowData.id, name: rowData.name, email: rowData.email, contactLastName:
       rowData.contactLastName, contactFirstName: rowData.contactFirstName,
@@ -63,6 +57,7 @@ const FormEditCustomer = () => {
     postalCode: rowData.postalCode, country: rowData.country, creditLimit:
       rowData.creditLimit, employeeId: rowData.employeeId
   };
+
 
   const handleFormSubmit = async (values, { setSubmitting }) => {
     setStatus('');
@@ -120,34 +115,11 @@ const FormEditCustomer = () => {
 
               <CustomersFormEditInputs rowData={rowData} handleBlur={handleBlur}
                 handleChange={handleChange} values={values} touched={touched}
-                errors={errors} />
+                errors={errors} setFieldValue={setFieldValue}
+                dataEmployeeIdNameList={dataEmployeeIdNameList} />
 
-              <FormControl
-                variant="filled"
-                sx={{ gridColumn: "span 2" }}
-              >
-                <InputLabel id="employee-select-label">Employee Id</InputLabel>
-                <Select
-                  labelId="employee-select-label"
-                  id="employee-select"
-                  name="employeeId"
-                  value={values.employeeId ?? ""}
-                  onChange={(event) => setFieldValue('employeeId', event.target.value)}
-                  onBlur={handleBlur}
-                  label="Employee Id"
-                >
-                  <MenuItem value="">
-                    <em>None</em>
-                  </MenuItem>
 
-                  {dataEmployeeIdNameList && dataEmployeeIdNameList.map((employee) => (
-                    <MenuItem key={employee.id} value={employee.id}>
-                      {employee.id} {" "} {employee.lastName} {employee.firstName}
-                      {" "} - {employee.jobTitle}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
+
             </Box>
             <Box display="flex" justifyContent="end" mt="20px">
               <Button type="submit" color="secondary" variant="contained">
