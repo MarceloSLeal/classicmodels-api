@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 
 import {
-  Box, Button, Select, MenuItem, FormControl, InputLabel, Dialog, DialogActions,
+  Box, Button, Dialog, DialogActions,
   DialogContent, DialogContentText, DialogTitle,
 } from "@mui/material";
 import useMediaQuery from "@mui/material/useMediaQuery";
@@ -109,34 +109,9 @@ const FormAddCustomer = () => {
             >
 
               <CustomersFormAddInputs handleBlur={handleBlur} handleChange={handleChange}
-                values={values} touched={touched} errors={errors} />
+                values={values} touched={touched} errors={errors}
+                dataEmployeeIdNameList={dataEmployeeIdNameList} setFieldValue={setFieldValue} />
 
-              <FormControl
-                variant="filled"
-                sx={{ gridColumn: "span 2" }}
-              >
-                <InputLabel id="employee-select-label">Employee Id</InputLabel>
-                <Select
-                  labelId="employee-select-label"
-                  id="employee-select"
-                  name="employeeId"
-                  value={values.employeeId}
-                  onChange={(event) => setFieldValue('employeeId', event.target.value)}
-                  onBlur={handleBlur}
-                  label="Employee Id"
-                >
-                  <MenuItem value="">
-                    <em>None</em>
-                  </MenuItem>
-                  {/* {employeeIds.map((id) => ( */}
-                  {dataEmployeeIdNameList && dataEmployeeIdNameList.map((employee) => (
-                    <MenuItem key={employee.id} value={employee.id}>
-                      {employee.id} {" "} {employee.lastName} {employee.firstName}
-                      {" "} - {employee.jobTitle}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
             </Box>
             <Box display="flex" justifyContent="end" mt="20px">
               <Button type="submit" color="secondary" variant="contained">

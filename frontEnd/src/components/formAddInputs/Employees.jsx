@@ -1,7 +1,10 @@
-import { TextField } from "@mui/material";
+import {
+  TextField, FormControl, InputLabel, Select, MenuItem, FormHelperText
+} from "@mui/material";
 
 const FormEmployeeAddInputs = ({ handleBlur, handleChange, values, touched,
-  errors }) => {
+  errors, dataIdName, dataOfficeIdName, jobTitleList, setFieldValue,
+  employeesSchema }) => {
 
   return (
     <>
@@ -53,6 +56,87 @@ const FormEmployeeAddInputs = ({ handleBlur, handleChange, values, touched,
         helperText={touched.extension && errors.extension}
         sx={{ gridColumn: "span 2" }}
       />
+
+      <FormControl
+        variant="filled"
+        sx={{ gridColumn: "span 2" }}
+      >
+        <InputLabel id="reportsTo-select-label">Reports To</InputLabel>
+        <Select
+          labelId="reportsTo-select-label"
+          id="reportsTo-select-error"
+          name="reportsTo"
+          value={values.reportsTo}
+          onChange={(event) => setFieldValue('reportsTo',
+            event.target.value)}
+          onBlur={handleBlur}
+          label="Reports To"
+        >
+          <MenuItem value="">
+            <em>None</em>
+          </MenuItem>
+          {dataIdName && dataIdName.map((employee) => (
+            <MenuItem key={employee.id} value={employee.id}>
+              {employee.id} {" "}
+              {employee.lastName} {employee.firstName} - {employee.jobTitle}
+            </MenuItem>
+          ))}
+        </Select>
+      </FormControl>
+
+      <FormControl
+        variant="filled"
+        sx={{ gridColumn: "span 2" }}
+        validationschema={employeesSchema}
+        error={!!touched.officeId && !!errors.officeId}
+      >
+        <InputLabel id="office-select-label">Office Id</InputLabel>
+        <Select
+          labelId="office-select-label"
+          id="office-select-error"
+          name="officeId"
+          value={values.officeId}
+          onChange={(event) => setFieldValue('officeId',
+            event.target.value)}
+          onBlur={handleBlur}
+          label="Office Id"
+        >
+          {dataOfficeIdName && dataOfficeIdName.map((officeIdName) => (
+            <MenuItem key={officeIdName.id} value={officeIdName.id}>
+              {officeIdName.id} {officeIdName.city}
+            </MenuItem>
+          ))}
+        </Select>
+        <FormHelperText error={!!touched.officeId && !!errors.officeId}>
+          {touched.officeId && errors.officeId}</FormHelperText>
+      </FormControl>
+
+      <FormControl
+        variant="filled"
+        sx={{ gridColumn: "span 2" }}
+        validationschema={employeesSchema}
+        error={!!touched.jobTitle && !!errors.jobTitle}
+      >
+        <InputLabel id="job-select-label">Job Title</InputLabel>
+        <Select
+          labelId="job-select-label"
+          id="job-select-error"
+          name="jobTitle"
+          value={values.jobTitle}
+          onChange={(event) => setFieldValue('jobTitle',
+            event.target.value)}
+          onBlur={handleBlur}
+          label="Job Title"
+        >
+          {jobTitleList && jobTitleList.map((id) => (
+            <MenuItem key={id} value={id}>
+              {id}
+            </MenuItem>
+          ))}
+        </Select>
+        <FormHelperText error={!!touched.jobTitle && !!errors.jobTitle}>
+          {touched.jobTitle && errors.jobTitle}</FormHelperText>
+      </FormControl>
     </>
   );
 }

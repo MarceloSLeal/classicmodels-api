@@ -1,7 +1,7 @@
-import { TextField } from "@mui/material";
+import { TextField, FormControl, InputLabel, Select, MenuItem } from "@mui/material";
 
 const CustomersFormAddInputs = ({ handleBlur, handleChange, values, touched,
-  errors }) => {
+  errors, dataEmployeeIdNameList, setFieldValue }) => {
 
   return (
     <>
@@ -149,6 +149,31 @@ const CustomersFormAddInputs = ({ handleBlur, handleChange, values, touched,
         helperText={touched.creditLimit && errors.creditLimit}
         sx={{ gridColumn: "span 2" }}
       />
+      <FormControl
+        variant="filled"
+        sx={{ gridColumn: "span 2" }}
+      >
+        <InputLabel id="employee-select-label">Employee Id</InputLabel>
+        <Select
+          labelId="employee-select-label"
+          id="employee-select"
+          name="employeeId"
+          value={values.employeeId}
+          onChange={(event) => setFieldValue('employeeId', event.target.value)}
+          onBlur={handleBlur}
+          label="Employee Id"
+        >
+          <MenuItem value="">
+            <em>None</em>
+          </MenuItem>
+          {dataEmployeeIdNameList && dataEmployeeIdNameList.map((employee) => (
+            <MenuItem key={employee.id} value={employee.id}>
+              {employee.id} {" "} {employee.lastName} {employee.firstName}
+              {" "} - {employee.jobTitle}
+            </MenuItem>
+          ))}
+        </Select>
+      </FormControl>
     </>
   );
 }

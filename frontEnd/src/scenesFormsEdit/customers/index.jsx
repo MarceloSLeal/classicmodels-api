@@ -2,7 +2,7 @@ import { useLocation } from "react-router-dom";
 import React, { useState } from "react";
 
 import {
-  Box, Button, Select, MenuItem, FormControl, InputLabel, Dialog,
+  Box, Button, Dialog,
   DialogActions, DialogContent, DialogContentText, DialogTitle,
 } from "@mui/material";
 import useMediaQuery from "@mui/material/useMediaQuery";
@@ -58,7 +58,6 @@ const FormEditCustomer = () => {
       rowData.creditLimit, employeeId: rowData.employeeId
   };
 
-
   const handleFormSubmit = async (values, { setSubmitting }) => {
     setStatus('');
     setResponseCode(null);
@@ -102,7 +101,8 @@ const FormEditCustomer = () => {
         initialValues={initialValues}
         validationSchema={customersSchema}
       >
-        {({ values, errors, touched, handleBlur, handleChange, handleSubmit, setFieldValue }) => (
+        {({ values, errors, touched, handleBlur, handleChange, handleSubmit,
+          setFieldValue }) => (
           <form onSubmit={handleSubmit}>
             <Box
               display="grid"
@@ -117,8 +117,6 @@ const FormEditCustomer = () => {
                 handleChange={handleChange} values={values} touched={touched}
                 errors={errors} setFieldValue={setFieldValue}
                 dataEmployeeIdNameList={dataEmployeeIdNameList} />
-
-
 
             </Box>
             <Box display="flex" justifyContent="end" mt="20px">
