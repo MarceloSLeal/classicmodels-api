@@ -2,8 +2,8 @@ import { useLocation } from "react-router-dom";
 import React, { useState } from "react";
 
 import {
-  Box, Button, Dialog,
-  DialogActions, DialogContent, DialogContentText, DialogTitle,
+  Box, Button, Dialog, DialogActions, DialogContent, DialogContentText,
+  DialogTitle
 } from "@mui/material";
 import useMediaQuery from "@mui/material/useMediaQuery";
 

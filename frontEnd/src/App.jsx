@@ -16,6 +16,7 @@ import Employees from "./scenes/employees";
 import FormAddCustomer from './scenesFormsAdd/customers';
 import FormEditCustomer from './scenesFormsEdit/customers';
 import FormAddEmployee from './scenesFormsAdd/employees';
+import FormEditEmployee from './scenesFormsEdit/employees';
 
 import Form from './scenes/form';
 import Calendar from "./scenes/calendar";
@@ -50,6 +51,7 @@ const App = () => {
               <Route path="/formaddcustomer" element={<FormAddCustomer />} />
               <Route path="/formeditcustomer" element={<FormEditCustomer />} />
               <Route path="/formaddemployee" element={<FormAddEmployee />} />
+              <Route path="/formeditemployee" element={<FormEditEmployee />} />
 
               <Route path="/form" element={<Form />} />
               <Route path="/calendar" element={<Calendar />} />
