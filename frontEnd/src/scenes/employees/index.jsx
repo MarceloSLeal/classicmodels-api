@@ -59,7 +59,7 @@ const Employees = () => {
 
   const handleEditDatagridButton = (params) => () => {
     const rowData = params.row;
-    navigateEdit("/formeditEmployee", { state: { rowData, data } });
+    navigateEdit("/formeditemployee", { state: { rowData, data } });
   };
   const handleDeleteDatagridButton = (params) => () => {
     setIdDelete(params.id);

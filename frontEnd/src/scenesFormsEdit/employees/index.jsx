@@ -10,7 +10,7 @@ import {
 import { Formik } from "formik";
 import * as yup from "yup";
 
-import EmployeesFormEditInputs from "../../components/formEditInputs/Employees";
+import FormEmployeeEditInputs from "../../components/formEditInputs/Employees";
 import { useNavigate } from "react-router-dom";
 import Header from "../../components/Header";
 import { Urls } from "../../api/Paths";
@@ -31,7 +31,7 @@ const FormEditEmployee = () => {
   const location = useLocation();
   const { rowData } = location.state || {};
   const url = Urls(rowData.id);
-  const jobTitleList = Constants().employee.jobTitle;
+  const jobTitleList = Constants().employees.jobTitle;
 
   const [dataIdName, setDataIdName] = useState(null);
   FormListCalls(url.employee.findByIdNames, setDataIdName);
@@ -46,10 +46,61 @@ const FormEditEmployee = () => {
   const navigate = useNavigate();
 
   const initialValues = {
-    lastName: rowData.lastName, firstName: rowData.firstName,
+    id: rowData.id, lastName: rowData.lastName, firstName: rowData.firstName,
     email: rowData.email, reportsTo: rowData.reportsTo, jobTitle:
       rowData.jobTitle, extension: rowData.extension, officeId: rowData.officeId
   };
+
+  const handleFormSubmit = () => {
+
+  }
+
+  const handleClose = () => {
+
+  }
+
+  return (
+    <Box m="20px">
+      <Header title="EDIT EMPLOYEE" subtitle="Edit this Employee" />
+
+      <Formik
+        onSubmit={handleFormSubmit}
+        initialValues={initialValues}
+        validationSchema={employeeSchema}
+      >
+        {({ values, errors, touched, handleBlur, handleChange, handleSubmit,
+          setFieldValue }) => (
+          <form onSubmit={handleSubmit}>
+            <Box
+              display="grid"
+              gap="20px"
+              gridTemplateColumns="repeat(4, minmax(0, 1fr))"
+              sx={{
+                "& > div": { gridColumn: isNonMobile ? undefined : "span 4" },
+              }}
+            >
+
+              <FormEmployeeEditInputs
+                handleBlur={handleBlur} handleChange={handleChange}
+                values={values} touched={touched} errors={errors}
+                dataIdName={dataIdName} dataOfficeIdName={dataOfficeIdName}
+                jobTitleList={jobTitleList} setFieldValue={setFieldValue}
+                employeeSchema={employeeSchema} />
+
+            </Box>
+            <Box display="flex" justifyContent="end" mt="20px">
+              <Button type="submit" color="secondary" variant="contained">
+                Save
+              </Button>
+            </Box>
+
+            {/* TODO -- adicionar os DialogBox */}
+
+          </form>
+        )}
+      </Formik>
+    </Box>
+  )
 
 
 }
