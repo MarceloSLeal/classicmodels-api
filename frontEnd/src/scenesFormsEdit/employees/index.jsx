@@ -34,7 +34,7 @@ const FormEditEmployee = () => {
   const jobTitleList = Constants().employees.jobTitle;
 
   const [dataIdName, setDataIdName] = useState(null);
-  FormListCalls(url.employee.findByIdNames, setDataIdName);
+  FormListCalls(url.employees.findByIdNames, setDataIdName);
 
   const [dataOfficeIdName, setDataOfficeIdName] = useState(null);
   FormListCalls(url.offices.findByOfficeIds, setDataOfficeIdName);
@@ -51,12 +51,38 @@ const FormEditEmployee = () => {
       rowData.jobTitle, extension: rowData.extension, officeId: rowData.officeId
   };
 
-  const handleFormSubmit = () => {
+  const handleFormSubmit = async (values, { setSubmitting }) => {
+    setStatus('');
+    setResponseCode(null);
+    try {
+      const response = await fetch(url.employees.findById_Put_Delete, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(values),
+      });
+      const data = await response.json();
 
+      setResponseCode(response.status);
+
+      if (response.ok) {
+        setStatus('Employee updated successfully!');
+      } else {
+        setStatus(`Error: ${data.title || 'Failed to update Employee'}`);
+      }
+    } catch (error) {
+      setStatus(`Error: ${error.message || 'Failed to update Employee'}`);
+    }
+    setSubmitting(false);
+    setDialogOpen(true);
   }
 
   const handleClose = () => {
-
+    setDialogOpen(false);
+    if (responseCode === 200) {
+      navigate("/employees");
+    }
   }
 
   return (
@@ -95,6 +121,21 @@ const FormEditEmployee = () => {
             </Box>
 
             {/* TODO -- adicionar os DialogBox */}
+            <Dialog open={dialogOpen} onClose={handleClose}>
+              <DialogTitle>Operation Status</DialogTitle>
+              <DialogContent>
+                <DialogContentText>
+                  {status}
+                  {responseCode !== null && <br />}
+                  Response Code: {responseCode}
+                </DialogContentText>
+                <DialogActions>
+                  <Button onClick={handleClose} color="inherit">
+                    OK
+                  </Button>
+                </DialogActions>
+              </DialogContent>
+            </Dialog>
 
           </form>
         )}
