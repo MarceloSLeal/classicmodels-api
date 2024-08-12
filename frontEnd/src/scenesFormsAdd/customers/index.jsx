@@ -45,7 +45,7 @@ const FormAddCustomer = () => {
   const url = Urls();
 
   const [dataEmployeeIdNameList, setDataEmployeeIdNameList] = useState(null);
-  FormListCalls(url.employee.findByEmployeesIds, setDataEmployeeIdNameList);
+  FormListCalls(url.employees.findByEmployeesIds, setDataEmployeeIdNameList);
 
   const isNonMobile = useMediaQuery("(min-width:600px)");
   const [responseCode, setResponseCode] = useState(null);

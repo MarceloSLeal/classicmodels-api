@@ -9,7 +9,7 @@ export const Urls = (param) => ({
         findById_Put_Delete: `${prefix}customers/${param}`,
         findByEmail: `${prefix}customers/findbyemail/${param}`,
       },
-      employee: {
+      employees: {
         findAll_Post: `${prefix}employees`,
         findById_Put_Delete: `${prefix}employees/${param}`,
         findByEmail: `${prefix}employees/findbyemail/${param}`,

@@ -21,7 +21,7 @@ const Employees = () => {
   const urlData = Urls();
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
-  const { data, loading, error } = useFetchData(urlData.employee.findAll_Post);
+  const { data, loading, error } = useFetchData(urlData.employees.findAll_Post);
   const [dialogConfirmOpen, setDialogConfirmOpen] = useState(false);
   const [dialogDeleteOpen, setDialogDeleteOpen] = useState(false);
   const [idDelete, setIdDelete] = useState(null);
@@ -77,7 +77,7 @@ const Employees = () => {
     setStatus('');
 
     try {
-      const response = await fetch(urlDelete.employee.findById_Put_Delete, {
+      const response = await fetch(urlDelete.employees.findById_Put_Delete, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',

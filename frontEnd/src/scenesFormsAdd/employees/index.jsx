@@ -34,7 +34,7 @@ const FormAddEmployee = () => {
   const jobTitleList = Constants().employees.jobTitle;
 
   const [dataIdName, setDataIdName] = useState(null);
-  FormListCalls(url.employee.findByIdNames, setDataIdName);
+  FormListCalls(url.employees.findByIdNames, setDataIdName);
 
   const [dataOfficeIdName, setDataOfficeIdName] = useState(null);
   FormListCalls(url.offices.findByOfficeIds, setDataOfficeIdName);
@@ -49,7 +49,7 @@ const FormAddEmployee = () => {
     setStatus('');
     setResponseCode(null);
     try {
-      const response = await fetch(url.employee.findAll_Post, {
+      const response = await fetch(url.employees.findAll_Post, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

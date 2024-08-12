@@ -47,7 +47,7 @@ const FormEditCustomer = () => {
   const navigate = useNavigate();
 
   const [dataEmployeeIdNameList, setDataEmployeeIdNameList] = useState(null);
-  FormListCalls(url.employee.findByEmployeesIds, setDataEmployeeIdNameList);
+  FormListCalls(url.employees.findByEmployeesIds, setDataEmployeeIdNameList);
 
   const initialValues = {
     id: rowData.id, name: rowData.name, email: rowData.email, contactLastName:
