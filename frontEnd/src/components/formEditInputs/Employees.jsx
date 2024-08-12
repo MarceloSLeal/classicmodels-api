@@ -2,7 +2,7 @@ import {
   TextField, FormControl, InputLabel, Select, MenuItem, FormHelperText
 } from "@mui/material";
 
-const FormEmployeeEditInputs = ({ handleBlur, handleChange, values, touched,
+const EmployeesFormEditInputs = ({ handleBlur, handleChange, values, touched,
   errors, dataIdName, dataOfficeIdName, jobTitleList, setFieldValue,
   employeesSchema }) => {
 
@@ -160,4 +160,4 @@ const FormEmployeeEditInputs = ({ handleBlur, handleChange, values, touched,
   );
 }
 
-export default FormEmployeeEditInputs;
+export default EmployeesFormEditInputs;

@@ -10,7 +10,7 @@ import {
 import { Formik } from "formik";
 import * as yup from "yup";
 
-import FormEmployeeEditInputs from "../../components/formEditInputs/Employees";
+import EmployeesFormEditInputs from "../../components/formEditInputs/Employees";
 import { useNavigate } from "react-router-dom";
 import Header from "../../components/Header";
 import { Urls } from "../../api/Paths";
@@ -106,7 +106,7 @@ const FormEditEmployee = () => {
               }}
             >
 
-              <FormEmployeeEditInputs
+              <EmployeesFormEditInputs
                 handleBlur={handleBlur} handleChange={handleChange}
                 values={values} touched={touched} errors={errors}
                 dataIdName={dataIdName} dataOfficeIdName={dataOfficeIdName}
@@ -120,7 +120,6 @@ const FormEditEmployee = () => {
               </Button>
             </Box>
 
-            {/* TODO -- adicionar os DialogBox */}
             <Dialog open={dialogOpen} onClose={handleClose}>
               <DialogTitle>Operation Status</DialogTitle>
               <DialogContent>
