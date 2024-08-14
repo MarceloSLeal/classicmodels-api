@@ -7,7 +7,7 @@ import Dashboard from "./scenes/dashboard";
 
 import Customers from "./scenes/customers";
 import Employees from "./scenes/employees";
-// import Offices from "./scenes/offices";
+import Offices from './scenes/offices';
 // import OrderDetails from "./scenes/orderdetails";
 // import Orders from "./scenes/orders";
 // import Payments from "./scenes/payments";
@@ -41,7 +41,7 @@ const App = () => {
 
               <Route path="/customers" element={<Customers />} />
               <Route path="/employees" element={<Employees />} />
-              {/* <Route path="/offices" element={<Offices />} /> */}
+              <Route path="/offices" element={<Offices />} />
               {/* <Route path="/orderdetails" element={<OrderDetails />} /> */}
               {/* <Route path="/orders" element={<Orders />} /> */}
               {/* <Route path="/payments" element={<Payments />} /> */}
