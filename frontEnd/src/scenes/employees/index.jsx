@@ -59,7 +59,7 @@ const Employees = () => {
 
   const handleEditDatagridButton = (params) => () => {
     const rowData = params.row;
-    navigateEdit("/formeditemployee", { state: { rowData, data } });
+    navigateEdit("/formeditemployee", { state: { rowData } });
   };
   const handleDeleteDatagridButton = (params) => () => {
     setIdDelete(params.id);
@@ -118,7 +118,7 @@ const Employees = () => {
     {
       field: 'actions',
       type: 'actions',
-      headerName: 'Actions',
+      headerName: 'ACTIONS',
       width: 100,
       cellClassName: 'actions',
       getActions: (params) => {

@@ -123,7 +123,7 @@ const Customers = () => {
     {
       field: 'actions',
       type: 'actions',
-      headerName: 'Actions',
+      headerName: 'ACTIONS',
       width: 100,
       cellClassName: 'actions',
       getActions: (params) => {
@@ -150,7 +150,7 @@ const Customers = () => {
   if (loading) {
     return (
       <Box m="20px">
-        <Header title="CUSTOMERS" subtitle="Managing Customers" />
+        <Header title="CUSTOMERS" subtitle="Manage Customers" />
         <Box
           sx={{ fontSize: "2rem" }} >
           Loading...
@@ -161,7 +161,7 @@ const Customers = () => {
   if (error) {
     return (
       <Box m="20px">
-        <Header title="CUSTOMERS" subtitle="Managing Customers" />
+        <Header title="CUSTOMERS" subtitle="Manage Customers" />
         <Box>Error: {error.message}{ }</Box>
       </Box>
     );
@@ -169,7 +169,7 @@ const Customers = () => {
 
   return (
     <Box m="20px">
-      <Header title="CUSTOMERS" subtitle="Managing Customers" />
+      <Header title="CUSTOMERS" subtitle="Manage Customers" />
       <Box
         m="40px 0 0 0"
         height="75vh"
