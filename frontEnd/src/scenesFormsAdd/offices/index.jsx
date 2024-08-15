@@ -8,7 +8,7 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import { Formik } from "formik";
 import * as yup from "yup";
 
-import OfficesFormAddInputs from "../../components/formAddInputs/Offices";
+import OfficesFormInputs from "../../components/formInputs/Offices";
 import Header from "../../components/Header";
 import { Urls } from "../../api/Paths";
 
@@ -99,9 +99,9 @@ const FormAddOffices = () => {
               }}
             >
 
-              <OfficesFormAddInputs
+              <OfficesFormInputs
                 handleBlur={handleBlur} handleChange={handleChange}
-                values={values} touched={touched} errors={errors} />
+                values={values} touched={touched} errors={errors} isEdit={false} />
 
             </Box>
             <Box display="flex" justifyContent="end" mt="20px">

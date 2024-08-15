@@ -1,6 +1,6 @@
 import { TextField } from "@mui/material";
 
-const OfficesFormAddInputs = ({ handleBlur, handleChange, values, touched,
+const OfficesFormInputs = ({ handleBlur, handleChange, values, touched,
   errors, isEdit }) => {
 
   return (
@@ -117,4 +117,4 @@ const OfficesFormAddInputs = ({ handleBlur, handleChange, values, touched,
 
 }
 
-export default OfficesFormAddInputs;
+export default OfficesFormInputs;
