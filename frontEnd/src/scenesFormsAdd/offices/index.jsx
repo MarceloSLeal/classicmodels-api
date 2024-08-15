@@ -1,32 +1,28 @@
 import React, { useState } from "react";
 
 import {
-  Box, Button, Dialog, DialogActions,
-  DialogContent, DialogContentText, DialogTitle,
+  Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle,
 } from "@mui/material";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
 import { Formik } from "formik";
 import * as yup from "yup";
 
-import CustomersFormAddInputs from "../../components/formAddInputs/Customers";
+import OfficesFormAddInputs from "../../components/formAddInputs/Offices";
 import Header from "../../components/Header";
 import { Urls } from "../../api/Paths";
-import FormListCalls from "../../components/FormsListCalls";
 
 const initialValues = {
-  name: "", email: "", contactLastName: "", contactFirstName: "", phone: "",
-  addressLine1: "", addressLine2: "", city: "", state: "", postalCode: "",
-  country: "", creditLimit: "", employeeId: "",
+  city: "", country: "", state: "", phone: "", addressLine1: "", addressLine2: "",
+  postalCode: "", territory: "",
 };
 
 const phoneRegExp = /^((\+[1-9]{1,4}[ -]?)|(\([0-9]{2,3}\)[ -]?)|([0-9]{2,4})[ -]?)*?[0-9]{3,4}[ -]?[0-9]{3,4}$/;
 
-const customersSchema = yup.object().shape({
-  name: yup.string().max(50).required(),
-  email: yup.string().email().max(50).required(),
-  contactLastName: yup.string().max(50).required(),
-  contactFirstName: yup.string().max(50).required(),
+const officesSchema = yup.object().shape({
+  city: yup.string().max(50).required(),
+  country: yup.string().max(50).required(),
+  state: yup.string().max(50),
   phone: yup
     .string()
     .matches(phoneRegExp, "Phone number is not valid")
@@ -34,20 +30,12 @@ const customersSchema = yup.object().shape({
     .required(),
   addressLine1: yup.string().max(50).required(),
   addressLine2: yup.string().max(50),
-  city: yup.string().max(50).required(),
-  state: yup.string().max(50),
-  postalCode: yup.string().max(15),
-  country: yup.string().max(50).required(),
-  creditLimit: yup.number().positive().max(999999.99).required(),
-  employeeId: yup.number().positive(),
-});
+  postalCode: yup.string().max(15).required(),
+  territory: yup.string().max(10).required(),
+})
 
-const FormAddCustomer = () => {
+const FormAddOffices = () => {
   const url = Urls();
-
-  const [dataEmployeeIdNameList, setDataEmployeeIdNameList] = useState(null);
-  FormListCalls(url.employees.findByEmployeesIds, setDataEmployeeIdNameList);
-
   const isNonMobile = useMediaQuery("(min-width:600px)");
   const [responseCode, setResponseCode] = useState(null);
   const [resetFormFn, setResetFormFn] = useState(null);
@@ -58,7 +46,7 @@ const FormAddCustomer = () => {
     setStatus('');
     setResponseCode(null);
     try {
-      const response = await fetch(url.customers.findAll_Post, {
+      const response = await fetch(url.offices.findAll_Post, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -70,14 +58,15 @@ const FormAddCustomer = () => {
       setResponseCode(response.status);
 
       if (response.ok) {
-        setStatus('Customer created successfully!');
+        setStatus('Office created successfully');
         setResetFormFn(() => resetForm);
       } else {
-        setStatus(`Error: ${data.title || 'Failed to create Customer'}`);
+        setStatus(`Error: ${data.title || 'Failed to create Office'}`);
       }
     } catch (error) {
-      setStatus(`Error: ${error.message || 'Failed to create Customer'}`);
+      setStatus(`Error: ${error.message || 'Failed to create Office'}`);
     }
+
     setSubmitting(false);
     setDialogOpen(true);
   }
@@ -91,14 +80,15 @@ const FormAddCustomer = () => {
 
   return (
     <Box m="20px">
-      <Header title="CREATE CUSTOMER" subtitle="Create a new Customer" />
+      <Header title="CREATE OFFICE" subtitle="Create a new OFfice" />
 
       <Formik
         onSubmit={handleFormSubmit}
         initialValues={initialValues}
-        validationSchema={customersSchema}
+        validationSchema={officesSchema}
       >
-        {({ values, errors, touched, handleBlur, handleChange, handleSubmit, setFieldValue }) => (
+
+        {({ values, errors, touched, handleBlur, handleChange, handleSubmit }) => (
           <form onSubmit={handleSubmit}>
             <Box
               display="grid"
@@ -109,14 +99,14 @@ const FormAddCustomer = () => {
               }}
             >
 
-              <CustomersFormAddInputs handleBlur={handleBlur} handleChange={handleChange}
-                values={values} touched={touched} errors={errors}
-                dataEmployeeIdNameList={dataEmployeeIdNameList} setFieldValue={setFieldValue} />
+              <OfficesFormAddInputs
+                handleBlur={handleBlur} handleChange={handleChange}
+                values={values} touched={touched} errors={errors} />
 
             </Box>
             <Box display="flex" justifyContent="end" mt="20px">
               <Button type="submit" color="secondary" variant="contained">
-                Create New Customer
+                Create New Office
               </Button>
             </Box>
 
@@ -137,9 +127,10 @@ const FormAddCustomer = () => {
             </Dialog>
           </form>
         )}
+
       </Formik>
     </Box>
-  );
-};
+  )
+}
 
-export default FormAddCustomer;
+export default FormAddOffices;

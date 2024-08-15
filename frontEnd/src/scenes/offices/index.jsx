@@ -104,14 +104,15 @@ const Offices = () => {
 
   const columns = [
     { field: "id", headerName: "ID", flex: 0.5 },
-    { field: "city", headerName: "CITY", flex: 1, cellClassName: "name-column-cell" },
-    { field: "country", headerName: "COUNTRY", flex: 1, cellClassName: "name-column-cell" },
+    { field: "city", headerName: "CITY", flex: 1, cellClassName: "name-column--cell" },
+    { field: "country", headerName: "COUNTRY", flex: 1, cellClassName: "name-column--cell" },
     { field: "state", headerName: "STATE", flex: 1 },
     { field: "phone", headerName: "PHONE", flex: 1 },
     { field: "addressLine1", headerName: "ADRESS1", flex: 1 },
     { field: "addressLine2", headerName: "ADRESS2", flex: 1 },
     { field: "postalCode", headerName: "POSTAL CODE", flex: 1 },
     { field: "territory", headerName: "TERRITORY", flex: 1 },
+    { field: "employeeId", headerName: "EMPLOYEES ID", flex: 1 },
 
     {
       field: 'actions',
