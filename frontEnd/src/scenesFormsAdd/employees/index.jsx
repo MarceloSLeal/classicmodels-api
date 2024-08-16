@@ -8,7 +8,7 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import { Formik } from "formik";
 import * as yup from "yup";
 
-import EmployeesFormAddInputs from "../../components/formAddInputs/Employees";
+import EmployeesFormInputs from "../../components/formInputs/Employees";
 import Header from "../../components/Header";
 import { Urls } from "../../api/Paths";
 import { Constants } from "../../data/constants";
@@ -103,9 +103,9 @@ const FormAddEmployee = () => {
               }}
             >
 
-              <EmployeesFormAddInputs
+              <EmployeesFormInputs
                 handleBlur={handleBlur} handleChange={handleChange}
-                values={values} touched={touched} errors={errors}
+                values={values} touched={touched} errors={errors} isEdit={false}
                 dataIdName={dataIdName} dataOfficeIdName={dataOfficeIdName}
                 jobTitleList={jobTitleList} setFieldValue={setFieldValue}
                 employeesSchema={employeesSchema} />

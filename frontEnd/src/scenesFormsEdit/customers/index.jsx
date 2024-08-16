@@ -10,7 +10,7 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import { Formik } from "formik";
 import * as yup from "yup";
 
-import CustomersFormEditInputs from "../../components/formEditInputs/Customers";
+import CustomersFormInputs from "../../components/formInputs/Customers";
 import { useNavigate } from "react-router-dom";
 import Header from "../../components/Header";
 import { Urls } from "../../api/Paths";
@@ -113,9 +113,9 @@ const FormEditCustomer = () => {
               }}
             >
 
-              <CustomersFormEditInputs rowData={rowData} handleBlur={handleBlur}
+              <CustomersFormInputs rowData={rowData} handleBlur={handleBlur}
                 handleChange={handleChange} values={values} touched={touched}
-                errors={errors} setFieldValue={setFieldValue}
+                errors={errors} isEdit={true} setFieldValue={setFieldValue}
                 dataEmployeeIdNameList={dataEmployeeIdNameList} />
 
             </Box>

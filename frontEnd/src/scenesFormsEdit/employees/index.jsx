@@ -10,7 +10,7 @@ import {
 import { Formik } from "formik";
 import * as yup from "yup";
 
-import EmployeesFormEditInputs from "../../components/formEditInputs/Employees";
+import EmployeesFormInputs from "../../components/formInputs/Employees";
 import { useNavigate } from "react-router-dom";
 import Header from "../../components/Header";
 import { Urls } from "../../api/Paths";
@@ -106,9 +106,9 @@ const FormEditEmployee = () => {
               }}
             >
 
-              <EmployeesFormEditInputs
+              <EmployeesFormInputs
                 handleBlur={handleBlur} handleChange={handleChange}
-                values={values} touched={touched} errors={errors}
+                values={values} touched={touched} errors={errors} isEdit={true}
                 dataIdName={dataIdName} dataOfficeIdName={dataOfficeIdName}
                 jobTitleList={jobTitleList} setFieldValue={setFieldValue}
                 employeeSchema={employeeSchema} />

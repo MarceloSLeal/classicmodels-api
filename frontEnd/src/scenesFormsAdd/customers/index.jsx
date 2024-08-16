@@ -9,7 +9,7 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import { Formik } from "formik";
 import * as yup from "yup";
 
-import CustomersFormAddInputs from "../../components/formAddInputs/Customers";
+import CustomersFormInputs from "../../components/formInputs/Customers";
 import Header from "../../components/Header";
 import { Urls } from "../../api/Paths";
 import FormListCalls from "../../components/FormsListCalls";
@@ -109,8 +109,8 @@ const FormAddCustomer = () => {
               }}
             >
 
-              <CustomersFormAddInputs handleBlur={handleBlur} handleChange={handleChange}
-                values={values} touched={touched} errors={errors}
+              <CustomersFormInputs handleBlur={handleBlur} handleChange={handleChange}
+                values={values} touched={touched} errors={errors} isEdit={false}
                 dataEmployeeIdNameList={dataEmployeeIdNameList} setFieldValue={setFieldValue} />
 
             </Box>
