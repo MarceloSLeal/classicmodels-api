@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { DataGrid, GridToolbarContainer } from "@mui/x-data-grid";
+import { DataGrid, GridActionsCellItem, GridToolbarContainer } from "@mui/x-data-grid";
 import { Box, useTheme } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import Button from "@mui/material/Button";
+import ViewListOutlinedIcon from '@mui/icons-material/ViewListOutlined';
 
 import Header from '../../components/Header';
 import useFetchData from '../../api/getData';
@@ -18,16 +19,9 @@ const OrderDetails = () => {
   const colors = tokens(theme.palette.mode);
   const { data, loading, error } = useFetchData(url.orderdetails.findAll);
   const [rows, setRows] = useState([]);
-  const navigateEdit = useNavigate();
   const navigate = useNavigate();
+  const navigateSelectOrder = useNavigate();
 
-  // useEffect(() => {
-  //   if (data) {
-  //     setRows(data);
-  //   }
-  // }, [data]);
-
-  // TODO -- Ordenação, verificar no banco de dados se está certo
   useEffect(() => {
     if (data) {
       const sortedData = data.sort((a, b) => {
@@ -43,7 +37,7 @@ const OrderDetails = () => {
   // TODO -- Decidir o que fazer nesse botão ou se colocar mais alguns ou nenhum
   const EditToolBar = () => {
     const handleClick = () => {
-      navigate("/indefinido")
+      navigate("/orderdetails")
     }
 
     return (
@@ -62,12 +56,38 @@ const OrderDetails = () => {
     );
   }
 
+  const handleSelectOrderId = (params) => {
+    const rowData = params.row;
+    navigateSelectOrder("/selectorderid", { state: { rowData } });
+  }
+
   const columns = [
+
     { field: "orderId", headerName: "ORDER ID", flex: 0.5 },
     { field: "productId", headerName: "PRODUCT ID", flex: 1 },
     { field: "quantityOrdered", headerName: "QUANTITY ORDERED", flex: 1 },
     { field: "priceEach", headerName: "PRICE EACH", flex: 1 },
     { field: "orderLineNumber", headerName: "ORDER LINE NUMBER", flex: 1 },
+    {
+      field: 'actions',
+      type: 'actions',
+      headerName: 'SELECT ORDER',
+      width: 100,
+      cellClassName: 'actions',
+      flex: 0.5,
+      getActions: (params) => {
+
+        return [
+          <GridActionsCellItem
+            icon={<ViewListOutlinedIcon />}
+            label="SELECT ORDER ID"
+            className="textPrimary"
+            onClick={handleSelectOrderId(params)}
+            color="inherit"
+          />,
+        ]
+      }
+    },
   ]
 
   if (loading) {
