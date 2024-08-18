@@ -3,8 +3,6 @@ import { useNavigate } from 'react-router-dom';
 
 import { DataGrid, GridActionsCellItem, GridToolbarContainer } from "@mui/x-data-grid";
 import { Box, useTheme } from "@mui/material";
-import AddIcon from "@mui/icons-material/Add";
-import Button from "@mui/material/Button";
 import ViewListOutlinedIcon from '@mui/icons-material/ViewListOutlined';
 
 import Header from '../../components/Header';
@@ -19,7 +17,6 @@ const OrderDetails = () => {
   const colors = tokens(theme.palette.mode);
   const { data, loading, error } = useFetchData(url.orderdetails.findAll);
   const [rows, setRows] = useState([]);
-  const navigate = useNavigate();
   const navigateSelectOrder = useNavigate();
 
   useEffect(() => {
@@ -34,32 +31,9 @@ const OrderDetails = () => {
     }
   }, [data]);
 
-  // TODO -- Decidir o que fazer nesse botão ou se colocar mais alguns ou nenhum
-  const EditToolBar = () => {
-    const handleClick = () => {
-      navigate("/orderdetails")
-    }
-
-    return (
-      <GridToolbarContainer>
-        <Button
-          sx={{
-            backgroundColor: colors.blueAccent[700],
-            color: colors.primary[100],
-            paddingTop: '10px', paddingRight: '10px',
-            paddingBottom: '10px', paddingLeft: '10px',
-          }}
-          startIcon={<AddIcon />} onClick={handleClick}>
-          ???
-        </Button>
-      </GridToolbarContainer>
-    );
-  }
-
   const handleSelectOrderId = (params) => {
     const rowData = params.row;
-    // TODO resolver esse problema!!!!
-    // navigateSelectOrder("/selectorderid", { state: { rowData } });
+    navigateSelectOrder("/selectorderid", { state: { rowData } });
   }
 
   const columns = [
@@ -77,7 +51,7 @@ const OrderDetails = () => {
             icon={<ViewListOutlinedIcon />}
             label="SELECT ORDER ID"
             className="textPrimary"
-            onClick={handleSelectOrderId(params)}
+            onClick={() => handleSelectOrderId(params)}
             color="inherit"
           />,
         ]
@@ -149,10 +123,6 @@ const OrderDetails = () => {
           rows={rows}
           columns={columns}
           getRowId={(row) => `${row.orderId}-${row.productId}`}
-          slots={{
-            // TODO -- se não for usar o botao no cabeçalho remover slots
-            toolbar: EditToolBar,
-          }}
         />
       </Box>
     </Box>

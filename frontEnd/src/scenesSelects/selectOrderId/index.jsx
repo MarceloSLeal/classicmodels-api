@@ -55,7 +55,8 @@ const SelectOrderId = () => {
   if (loading) {
     return (
       <Box m="20px">
-        <Header title="ORDER DETAILS" subtitle={`Show Order ${data.orderId}`} />
+        <Header title={`SELECT ORDER ${rowData.orderId}`}
+          subtitle={`Show Order ${rowData.orderId}`} />
         <Box
           sx={{ fontSize: "2rem" }} >
           Loading...
@@ -67,7 +68,8 @@ const SelectOrderId = () => {
   if (error) {
     return (
       <Box m="20px">
-        <Header title="ORDER DETAILS" subtitle={`Show Order ${data.orderId}`} />
+        <Header title={`SELECT ORDER ${rowData.orderId}`}
+          subtitle={`Show Order ${rowData.orderId}`} />
         <Box>Error: {error.message}{ }</Box>
       </Box>
     );
@@ -75,7 +77,8 @@ const SelectOrderId = () => {
 
   return (
     <Box m="20px">
-      <Header title="ORDER DETAILS" subtitle={`Show Order ${data.orderId}`} />
+      <Header title={`SELECT ORDER ${rowData.orderId}`}
+        subtitle={`Show Order ${rowData.orderId}`} />
       <Box
         m="40px 0 0 0"
         height="75vh"
@@ -109,7 +112,6 @@ const SelectOrderId = () => {
         <DataGrid
           rows={rows}
           columns={columns}
-          // TODO -- depois colocar o orderLineNumber como RowId
           getRowId={(row) => `${row.orderId}-${row.productId}`}
         />
       </Box>
