@@ -58,16 +58,11 @@ const OrderDetails = () => {
 
   const handleSelectOrderId = (params) => {
     const rowData = params.row;
-    navigateSelectOrder("/selectorderid", { state: { rowData } });
+    // TODO resolver esse problema!!!!
+    // navigateSelectOrder("/selectorderid", { state: { rowData } });
   }
 
   const columns = [
-
-    { field: "orderId", headerName: "ORDER ID", flex: 0.5 },
-    { field: "productId", headerName: "PRODUCT ID", flex: 1 },
-    { field: "quantityOrdered", headerName: "QUANTITY ORDERED", flex: 1 },
-    { field: "priceEach", headerName: "PRICE EACH", flex: 1 },
-    { field: "orderLineNumber", headerName: "ORDER LINE NUMBER", flex: 1 },
     {
       field: 'actions',
       type: 'actions',
@@ -88,6 +83,12 @@ const OrderDetails = () => {
         ]
       }
     },
+
+    { field: "orderId", headerName: "ORDER ID", flex: 0.5 },
+    { field: "productId", headerName: "PRODUCT ID", flex: 1 },
+    { field: "quantityOrdered", headerName: "QUANTITY ORDERED", flex: 1 },
+    { field: "priceEach", headerName: "PRICE EACH", flex: 1 },
+    { field: "orderLineNumber", headerName: "ORDER LINE NUMBER", flex: 1 },
   ]
 
   if (loading) {

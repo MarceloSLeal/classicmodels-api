@@ -21,7 +21,24 @@ const SelectOrderId = () => {
 
   useEffect(() => {
     if (data) {
-      setRows(data);
+
+      let cumulativeTotal = 0;
+
+      const { orderId, orderList } = data;
+
+      const rows = orderList.map((item) => {
+        const subtotal = item.quantityOrdered * item.priceEach;
+        cumulativeTotal += subtotal;
+
+        return {
+          ...item,
+          orderId: orderId,
+          subtotal: subtotal.toFixed(2),
+          total: cumulativeTotal.toFixed(2),
+        };
+      });
+
+      setRows(rows);
     }
   }, [data]);
 
@@ -30,13 +47,15 @@ const SelectOrderId = () => {
     { field: "productId", headerName: "PRODUCT ID", flex: 1 },
     { field: "quantityOrdered", headerName: "QUANTITY ORDERED", flex: 1 },
     { field: "priceEach", headerName: "PRICE EACH", flex: 1 },
+    { field: "subtotal", headerName: "SUBTOTAL", flex: 1 },
+    { field: "total", headerName: "TOTAL", flex: 1 },
     { field: "orderLineNumber", headerName: "ORDER LINE NUMBER", flex: 1 },
   ]
 
   if (loading) {
     return (
       <Box m="20px">
-        <Header title="ORDER DETAILS" subtitle="Show Order Details" />
+        <Header title="ORDER DETAILS" subtitle={`Show Order ${data.orderId}`} />
         <Box
           sx={{ fontSize: "2rem" }} >
           Loading...
@@ -48,7 +67,7 @@ const SelectOrderId = () => {
   if (error) {
     return (
       <Box m="20px">
-        <Header title="ORDER DETAILS" subtitle="Show Order Details" />
+        <Header title="ORDER DETAILS" subtitle={`Show Order ${data.orderId}`} />
         <Box>Error: {error.message}{ }</Box>
       </Box>
     );
@@ -56,7 +75,7 @@ const SelectOrderId = () => {
 
   return (
     <Box m="20px">
-      <Header title="ORDER DETAILS" subtitle="Show Order Details" />
+      <Header title="ORDER DETAILS" subtitle={`Show Order ${data.orderId}`} />
       <Box
         m="40px 0 0 0"
         height="75vh"
