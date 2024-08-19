@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { DataGrid, GridActionsCellItem, GridToolbarContainer } from "@mui/x-data-grid";
+import { DataGrid, GridActionsCellItem } from "@mui/x-data-grid";
 import { Box, useTheme } from "@mui/material";
 import ViewListOutlinedIcon from '@mui/icons-material/ViewListOutlined';
+import ToysOutlinedIcon from '@mui/icons-material/ToysOutlined';
+import Tooltip, { tooltipClasses } from '@mui/material/Tooltip';
+import { styled } from '@mui/material/styles';
 
 import Header from '../../components/Header';
 import useFetchData from '../../api/getData';
@@ -18,6 +21,7 @@ const OrderDetails = () => {
   const { data, loading, error } = useFetchData(url.orderdetails.findAll);
   const [rows, setRows] = useState([]);
   const navigateSelectOrder = useNavigate();
+  const navigateSelectProduct = useNavigate();
 
   useEffect(() => {
     if (data) {
@@ -36,29 +40,75 @@ const OrderDetails = () => {
     navigateSelectOrder("/selectorderid", { state: { rowData } });
   }
 
+  const handleSelectProductId = (params) => {
+    const rowData = params.row;
+    navigateSelectProduct("/selectproductid", { state: { rowData } });
+  }
+
+  const GridActionTooltip = styled(({ className, ...props }) => (
+    <Tooltip {...props} classes={{ popper: className }} />
+  ))(() => ({
+    [`& .${tooltipClasses.tooltip}`]: {
+      backgroundColor: colors.primary[400],
+      color: colors.primary[100],
+      fontSize: 15,
+      border: `1px solid ${colors.primary[100]}`,
+    },
+  }));
+
   const columns = [
     {
-      field: 'actions',
+      field: 'selectOrder',
       type: 'actions',
       headerName: 'SELECT ORDER',
       width: 100,
       cellClassName: 'actions',
-      flex: 0.5,
+      flex: 0.8,
       getActions: (params) => {
 
         return [
-          <GridActionsCellItem
-            icon={<ViewListOutlinedIcon />}
-            label="SELECT ORDER ID"
-            className="textPrimary"
-            onClick={() => handleSelectOrderId(params)}
-            color="inherit"
-          />,
+          <GridActionTooltip title="select this order separately on another page"
+            placement="bottom">
+            <GridActionsCellItem
+              icon={<ViewListOutlinedIcon />}
+              label="SELECT ORDER ID"
+              className="textPrimary"
+              onClick={() => handleSelectOrderId(params)}
+              color="inherit"
+            />
+          </GridActionTooltip>,
         ]
       }
     },
 
     { field: "orderId", headerName: "ORDER ID", flex: 0.5 },
+
+    {
+      field: 'selectProduct',
+      type: 'actions',
+      headerName: 'SELECT PRODUCT',
+      width: 100,
+      cellClassName: 'actions',
+      flex: 0.8,
+      getActions: (params) => {
+
+        return [
+
+          <GridActionTooltip title="select all orders in which this product was purchased"
+            placement="bottom">
+
+            <GridActionsCellItem
+              icon={<ToysOutlinedIcon />}
+              label="SELECT PRODUCT ID"
+              className="textPrimary"
+              onClick={() => handleSelectProductId(params)}
+              color="inherit"
+            />
+          </GridActionTooltip>,
+        ]
+      }
+    },
+
     { field: "productId", headerName: "PRODUCT ID", flex: 1 },
     { field: "quantityOrdered", headerName: "QUANTITY ORDERED", flex: 1 },
     { field: "priceEach", headerName: "PRICE EACH", flex: 1 },
@@ -115,14 +165,14 @@ const OrderDetails = () => {
             backgroundColor: colors.blueAccent[700],
           },
           "& .MuiDataGrid-toolbarContainer .MuiButton-text": {
-            color: `${colors.grey[100]} !important`,
+            color: `${colors.grey[100]}!important`,
           },
         }}
       >
         <DataGrid
           rows={rows}
           columns={columns}
-          getRowId={(row) => `${row.orderId}-${row.productId}`}
+          getRowId={(row) => `${row.orderId} - ${row.productId}`}
         />
       </Box>
     </Box>
