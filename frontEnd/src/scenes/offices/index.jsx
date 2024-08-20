@@ -30,7 +30,7 @@ const Offices = () => {
   const [status, setStatus] = useState('');
   const [rows, setRows] = useState([]);
   const navigateEdit = useNavigate();
-  const navigate = useNavigate();
+  const navigateAdd = useNavigate();
 
   useEffect(() => {
     if (data) {
@@ -40,7 +40,7 @@ const Offices = () => {
 
   const EditToolBar = () => {
     const handleClick = () => {
-      navigate("/formaddoffices")
+      navigateAdd("/formaddoffices")
     }
 
     return (
