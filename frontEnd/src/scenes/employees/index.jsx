@@ -10,6 +10,8 @@ import DeleteIcon from '@mui/icons-material/DeleteOutlined';
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import Button from '@mui/material/Button';
+import Tooltip, { tooltipClasses } from '@mui/material/Tooltip';
+import { styled } from '@mui/material/styles';
 
 import Header from "../../components/Header";
 import useFetchData from "../../api/getData";
@@ -104,6 +106,17 @@ const Employees = () => {
     setDialogDeleteOpen(false);
   }
 
+  const GridActionTooltip = styled(({ className, ...props }) => (
+    <Tooltip {...props} classes={{ popper: className }} />
+  ))(() => ({
+    [`& .${tooltipClasses.tooltip}`]: {
+      backgroundColor: colors.primary[400],
+      color: colors.primary[100],
+      fontSize: 15,
+      border: `1px solid ${colors.primary[100]}`,
+    },
+  }));
+
   const columns = [
     { field: "id", headerName: "ID", flex: 0.5 },
     { field: "lastName", headerName: "LAST NAME", flex: 1, cellClassName: "name-column--cell" },
@@ -124,19 +137,27 @@ const Employees = () => {
       getActions: (params) => {
 
         return [
-          <GridActionsCellItem
-            icon={<EditIcon />}
-            label="Edit"
-            className="textPrimary"
-            onClick={handleEditDatagridButton(params)}
-            color="inherit"
-          />,
-          <GridActionsCellItem
-            icon={<DeleteIcon />}
-            label="Delete"
-            onClick={handleDeleteDatagridButton(params)}
-            color="inherit"
-          />,
+
+          <GridActionTooltip title="Edit this Employee"
+            placement="bottom">
+            <GridActionsCellItem
+              icon={<EditIcon />}
+              label="Edit"
+              className="textPrimary"
+              onClick={handleEditDatagridButton(params)}
+              color="inherit"
+            />
+          </GridActionTooltip>,
+
+          <GridActionTooltip title="Delete this Employee"
+            placement="bottom">
+            <GridActionsCellItem
+              icon={<DeleteIcon />}
+              label="Delete"
+              onClick={handleDeleteDatagridButton(params)}
+              color="inherit"
+            />
+          </GridActionTooltip>,
         ];
       },
     },
