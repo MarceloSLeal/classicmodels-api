@@ -13,6 +13,8 @@ import OrderDetails from './scenes/orderDetails';
 import SelectOrderId from './scenesSelects/selectOrderId';
 import SelectProductId from './scenesSelects/selectProductId';
 
+import Orders from './scenes/orders';
+
 // import Orders from "./scenes/orders";
 // import Payments from "./scenes/payments";
 // import ProductLines from "./scenes/productlines";
@@ -52,6 +54,8 @@ const App = () => {
 
               <Route path="/selectorderid" element={<SelectOrderId />} />
               <Route path="/selectproductid" element={<SelectProductId />} />
+
+              <Route path="/orders" element={<Orders />} />
 
               {/* <Route path="/orderdetails" element={<OrderDetails />} /> */}
               {/* <Route path="/orders" element={<Orders />} /> */}

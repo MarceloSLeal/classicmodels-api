@@ -1,5 +1,6 @@
 package com.classicmodels.domain.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
@@ -8,7 +9,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.OffsetDateTime;
-import java.util.Date;
 
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Getter
@@ -24,14 +24,17 @@ public class Orders {
 
     @PastOrPresent
     @NotNull
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
     private OffsetDateTime date;
 
     @FutureOrPresent
     @NotNull
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
     private OffsetDateTime requiredDate;
 
     @FutureOrPresent
     @Nullable
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
     private OffsetDateTime shippedDate;
 
 //    @Size(max = 15)
