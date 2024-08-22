@@ -24,17 +24,12 @@ const Orders = () => {
   useEffect(() => {
     if (data) {
       setRows(data);
-      console.log("Data", data);
-      console.log(new Date("2003-01-06T00:00:00.000Z"));
     }
   }, [data]);
 
-  console.log("Rows", rows);
-
   const EditToolBar = () => {
     const handleClick = () => {
-      // TODO -- adiconar o caminho do form
-      // navigateAdd("/formaddoffices")
+      navigateAdd("/formaddorders")
     }
 
     return (
@@ -76,8 +71,8 @@ const Orders = () => {
       },
     },
     {
-      field: "requiredDate",
-      headerName: "REQUIRED DATE",
+      field: "shippedDate",
+      headerName: "SHIPPED DATE",
       flex: 1,
       renderCell: (params) => {
         const date = new Date(params.value);
@@ -85,8 +80,8 @@ const Orders = () => {
       },
     },
     {
-      field: "shippedDate",
-      headerName: "SHIPPED DATE",
+      field: "requiredDate",
+      headerName: "REQUIRED DATE",
       flex: 1,
       renderCell: (params) => {
         const date = new Date(params.value);
