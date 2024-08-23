@@ -20,16 +20,25 @@ import { Urls } from "../../api/Paths";
 import { Constants } from "../../data/constants";
 import FormListCalls from "../../components/FormsListCalls";
 import { tokens } from "../../theme";
+import OrdersFormInputs from "../../components/formInputs/Orders";
 
 const initialValues = {
-  requiredDate: "", comments: "", customerId: "",
+  requiredDate: "", comments: "", customerId: "", productId: "",
+  quantityOrdered: "", priceEach: "",
 }
+
+// TODO -- adicionar validação para comments, aceitar somente caracteres normais
+
+const commentsRegex = /^[\p{L}\p{N}\s.,!?'"()-]+$/u;
+
 
 const ordersSchema = yup.object().shape(({
   requiredDate: yup.date().required(),
-  comments: yup.string(),
+  comments: yup
+    .string()
+    .matches(commentsRegex, "Accepts only text"),
   customerId: yup.number().required(),
-  //orderDetails properties
+
   productId: yup.number().required(),
   quantityOrdered: yup.number().required(),
   priceEach: yup.number().required(),
@@ -164,7 +173,6 @@ const FormAddOrders = () => {
                 }}
               >
 
-
                 {/* TOTO - Criar o OrdersFormInputs */}
                 {/* <EmployeesFormInputs */}
                 {/*   handleBlur={handleBlur} handleChange={handleChange} */}
@@ -172,6 +180,12 @@ const FormAddOrders = () => {
                 {/*   dataIdName={dataIdName} dataOfficeIdName={dataOfficeIdName} */}
                 {/*   jobTitleList={jobTitleList} setFieldValue={setFieldValue} */}
                 {/*   employeesSchema={employeesSchema} /> */}
+
+                <OrdersFormInputs
+                  handleBlur={handleBlur} handleChange={handleChange}
+                  values={values} touched={touched} errors={errors}
+                  setFieldValue={setFieldValue}
+                />
 
               </Box>
               <Box display="flex" justifyContent="end" mt="20px">
