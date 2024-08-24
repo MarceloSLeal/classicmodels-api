@@ -53,6 +53,7 @@ export const Urls = (param) => ({
         findByScale: `${prefix}products/scale/${param}`,
         findByVender: `${prefix}products/vendor/${param}`,
         put_Delete: `${prefix}products/${param}`,
+        findByIdNameMsrp: `${prefix}products/idnamemsrp`,
       },
     }
   )

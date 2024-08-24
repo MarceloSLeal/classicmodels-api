@@ -52,6 +52,7 @@ const GridActionTooltip = styled(({ className, ...props }) => (
     color: colors.primary[100],
     fontSize: 15,
     border: `1px solid ${colors.primary[100]}`,
+    i
   },
 }));
 
@@ -80,6 +81,7 @@ const columns = [
           />
         </GridActionTooltip>,
       ];
+      t
     },
   },
 ]
@@ -91,9 +93,12 @@ const FormAddOrders = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   //
-  // TODO -- Fazer ou verificar se tem um endpoint para listar os customers id e nome
+  // TODO -- Fazer ou verificar se tem um endpoint para listar os customers id e nome, e product id, name e msrp
   // const [dataIdName, setDataIdName] = useState(null);
   // FormListCalls(url.employees.findByIdNames, setDataIdName);
+  const [dataProductIdNameMsrp, setDataProductIdNameMsrp] = useState(null);
+  FormListCalls(url.products.findByIdNameMsrp, setDataProductIdNameMsrp);
+
 
   // TODO -- verifiquei que precisa criar o método POST para inserir na tabela OrderDetails
 
@@ -173,18 +178,10 @@ const FormAddOrders = () => {
                 }}
               >
 
-                {/* TOTO - Criar o OrdersFormInputs */}
-                {/* <EmployeesFormInputs */}
-                {/*   handleBlur={handleBlur} handleChange={handleChange} */}
-                {/*   values={values} touched={touched} errors={errors} isEdit={false} */}
-                {/*   dataIdName={dataIdName} dataOfficeIdName={dataOfficeIdName} */}
-                {/*   jobTitleList={jobTitleList} setFieldValue={setFieldValue} */}
-                {/*   employeesSchema={employeesSchema} /> */}
-
                 <OrdersFormInputs
                   handleBlur={handleBlur} handleChange={handleChange}
                   values={values} touched={touched} errors={errors}
-                  setFieldValue={setFieldValue}
+                  setFieldValue={setFieldValue} dataProductIdNameMsrp={dataProductIdNameMsrp}
                 />
 
               </Box>

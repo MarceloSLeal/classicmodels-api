@@ -1,4 +1,4 @@
-import { TextField, FormControl, InputLabel, Select, MenuItem } from "@mui/material";
+import { TextField, FormControl, InputLabel, Select, MenuItem, FormHelperText } from "@mui/material";
 
 import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -7,7 +7,7 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import dayjs from 'dayjs';
 
 const OrdersFormInputs = ({ handleBlur, handleChange, values, touched,
-  errors, setFieldValue, dataProductId, ordersSchema }) => {
+  errors, setFieldValue, dataProductIdNameMsrp, ordersSchema }) => {
 
   const tomorrow = dayjs().add(1, 'day');
 
@@ -44,30 +44,31 @@ const OrdersFormInputs = ({ handleBlur, handleChange, values, touched,
       <FormControl
         variant="filled"
         sx={{ gridColumn: "span 2" }}
+        validationschema={ordersSchema}
+        error={!!touched.productId && !!errors.productId}
       >
         <InputLabel id="productId-select-label">Product Id</InputLabel>
         <Select
           labelId="productId-select-label"
           id="productId-select"
           name="productId"
-          // value={isReportsToValid ? values.reportsTo : ""}
-          value={""}
+          value={values.productId}
           onChange={(event) => setFieldValue('productId',
             event.target.value)}
           onBlur={handleBlur}
           label="Product Id"
         >
-          <MenuItem value="">
-            <em>None</em>
-          </MenuItem>
-          {/* {dataIdName && dataIdName.map((employee) => ( */}
-          {/*   <MenuItem key={employee.id} value={employee.id}> */}
-          {/*     {employee.id} {" "} */}
-          {/*     {employee.lastName} {employee.firstName} - {employee.jobTitle} */}
-          {/*   </MenuItem> */}
-          {/* ))} */}
+          {dataProductIdNameMsrp && dataProductIdNameMsrp.map((product) => (
+            <MenuItem key={product.id} value={product.id}>
+              {product.id} {" - "}
+              {product.name} {" - MSRP - "} {product.msrp}
+            </MenuItem>
+          ))}
         </Select>
-      </FormControl>
+        <FormHelperText error={!!touched.productId && !!errors.productId}>
+          {touched.productId && errors.productId}
+        </FormHelperText>
+      </FormControl >
 
       <TextField
         variant="filled"
