@@ -151,7 +151,7 @@ const FormAddOrders = () => {
 
     <Box>
       <Box m="20px">
-        <Header title="CREATE ORDER" subtitle="Create a new Order" />
+        <Header title="CREATE ORDER" />
 
         <Formik
           onSubmit={handleFormSubmit}
@@ -178,11 +178,11 @@ const FormAddOrders = () => {
                   dataCustomersIdNameCreditLimit={dataCustomersIdNameCreditLimit}
                 />
 
-              </Box>
-              <Box display="flex" justifyContent="end" mt="20px">
-                <Button type="submit" color="secondary" variant="contained">
-                  Create New Employee
+                <Button type="submit" color="secondary" variant="contained"
+                  sx={{ gridColumn: "span 1", width: "50%" }}>
+                  Add New Item
                 </Button>
+
               </Box>
 
               <Dialog open={dialogOpen} onClose={handleClose}>
@@ -209,7 +209,7 @@ const FormAddOrders = () => {
       <Box m="20px">
         <Box
           m="40px 0 0 0"
-          height="75vh"
+          height="60vh"
           sx={{
             "& .MuiDataGrid-root": {
               border: "none",
@@ -223,7 +223,7 @@ const FormAddOrders = () => {
             "& .MuiDataGrid-columnHeader": {
               backgroundColor: colors.blueAccent[700],
               borderBottom: "none",
-              fontSize: 14
+              fontSize: 12,
             },
             "& .MuiDataGrid-virtualScroller": {
               backgroundColor: colors.primary[400],

@@ -5,6 +5,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import dayjs from 'dayjs';
+import Divider from '@mui/material/Divider';
 
 const OrdersFormInputs = ({ handleBlur, handleChange, values, touched,
   errors, setFieldValue, dataProductIdNameQuantityInStock,
@@ -15,10 +16,43 @@ const OrdersFormInputs = ({ handleBlur, handleChange, values, touched,
 
   return (
     <>
+      <Divider textAlign="left" sx={{ gridColumn: "span 4" }}>
+        Order Informations
+      </Divider>
+
+      <FormControl
+        variant="filled"
+        sx={{ gridColumn: "span 2" }}
+        validationschema={ordersSchema}
+        error={!!touched.customerId && !!errors.customerId}
+      >
+        <InputLabel id="customerId-select-label">Customer Id</InputLabel>
+        <Select
+          labelId="customerId-select-label"
+          id="customerId-select"
+          name="customerId"
+          value={values.customerId}
+          onChange={(event) => setFieldValue('customerId',
+            event.target.value)}
+          onBlur={handleBlur}
+          label="Customer Id"
+        >
+          {dataCustomersIdNameCreditLimit && dataCustomersIdNameCreditLimit.map((customer) => (
+            <MenuItem key={customer.id} value={customer.id}>
+              {customer.id} {" "}
+              {customer.name} {" CREDIT LIMIT "} {customer.creditLimit}
+            </MenuItem>
+          ))}
+        </Select>
+        <FormHelperText error={!!touched.customerId && !!errors.customerId}>
+          {touched.customerId && errors.customerId}
+        </FormHelperText>
+      </FormControl>
+
       <LocalizationProvider dateAdapter={AdapterDayjs}>
         <DemoContainer
           components={['DatePicker']}
-          sx={{ gridColumn: "span 2" }}
+          sx={{ gridColumn: "span 1" }}
         >
           <DatePicker
             label="Required Date"
@@ -33,15 +67,20 @@ const OrdersFormInputs = ({ handleBlur, handleChange, values, touched,
         type="text"
         label="Comments"
         multiline
-        rows={4}
+        rows={3}
         onBlur={handleBlur}
         onChange={handleChange}
         values={values.comments}
         name="comments"
         error={!!touched.comments && !!errors.comments}
         helperText={touched.comments && errors.comments}
-        sx={{ gridColumn: "span 2" }}
+        sx={{ gridColumn: "span 1" }}
       />
+
+
+      <Divider textAlign="left" sx={{ gridColumn: "span 4" }}>
+        Order Itens
+      </Divider>
 
       <FormControl
         variant="filled"
@@ -82,37 +121,9 @@ const OrdersFormInputs = ({ handleBlur, handleChange, values, touched,
         name="quantityOrdered"
         error={!!touched.quantityOrdered && !!errors.quantityOrdered}
         helperText={touched.quantityOrdered && errors.quantityOrdered}
-        sx={{ gridColumn: "span 2" }}
+        sx={{ gridColumn: "span 1" }}
       />
 
-      <FormControl
-        variant="filled"
-        sx={{ gridColumn: "span 2" }}
-        validationschema={ordersSchema}
-        error={!!touched.customerId && !!errors.customerId}
-      >
-        <InputLabel id="customerId-select-label">Customer Id</InputLabel>
-        <Select
-          labelId="customerId-select-label"
-          id="customerId-select"
-          name="customerId"
-          value={values.customerId}
-          onChange={(event) => setFieldValue('customerId',
-            event.target.value)}
-          onBlur={handleBlur}
-          label="Customer Id"
-        >
-          {dataCustomersIdNameCreditLimit && dataCustomersIdNameCreditLimit.map((customer) => (
-            <MenuItem key={customer.id} value={customer.id}>
-              {customer.id} {" "}
-              {customer.name} {" CREDIT LIMIT "} {customer.creditLimit}
-            </MenuItem>
-          ))}
-        </Select>
-        <FormHelperText error={!!touched.customerId && !!errors.customerId}>
-          {touched.customerId && errors.customerId}
-        </FormHelperText>
-      </FormControl>
 
     </>
   )
