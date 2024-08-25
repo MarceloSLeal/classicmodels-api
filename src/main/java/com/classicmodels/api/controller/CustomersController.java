@@ -3,6 +3,8 @@ package com.classicmodels.api.controller;
 import com.classicmodels.api.mapper.CustomerMapper;
 import com.classicmodels.api.model.CustomerRepModel;
 import com.classicmodels.api.model.input.CustomerInput;
+import com.classicmodels.api.model.lists.CustomersRepModelIdNameCreditLimitList;
+import com.classicmodels.api.model.lists.interfaces.CustomersIdNameCreditLimitProjection;
 import com.classicmodels.domain.exception.BusinessException;
 import com.classicmodels.domain.exception.EntityNotFoundException;
 import com.classicmodels.domain.model.Customer;
@@ -15,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @RestController
@@ -38,6 +41,26 @@ public class CustomersController {
         return customersRepository.findById(id)
                 .map(customer -> ResponseEntity.ok(customerMapper.toModel(customer)))
                 .orElse(ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/idnamecreditlimit")
+    public ResponseEntity<List<CustomersRepModelIdNameCreditLimitList>> buscarPorIdNameCreditLimit() {
+
+        List<CustomersIdNameCreditLimitProjection> projections = customersRepository.findIdNameCreditLimit();
+        if (projections.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+
+        List<CustomersRepModelIdNameCreditLimitList> customersIds = projections.stream()
+                .map(projection -> {
+                    CustomersRepModelIdNameCreditLimitList dto = new CustomersRepModelIdNameCreditLimitList();
+                    dto.setId(projection.getId());
+                    dto.setName(projection.getName());
+                    dto.setCreditLimit(projection.getCreditLimit());
+                    return dto;
+                })
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(customersIds);
     }
 
     @GetMapping("/findbyemail/{email}")

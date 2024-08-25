@@ -5,9 +5,10 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class ProductsRepModelIdNameMsrpList {
+public class CustomersRepModelIdNameCreditLimitList {
 
     private Long id;
     private String name;
-    private String msrp;
+    private Double creditLimit;
+
 }

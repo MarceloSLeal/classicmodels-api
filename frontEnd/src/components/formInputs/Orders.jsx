@@ -7,7 +7,9 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import dayjs from 'dayjs';
 
 const OrdersFormInputs = ({ handleBlur, handleChange, values, touched,
-  errors, setFieldValue, dataProductIdNameMsrp, ordersSchema }) => {
+  errors, setFieldValue, dataProductIdNameQuantityInStock,
+  dataCustomersIdNameCreditLimit, ordersSchema,
+}) => {
 
   const tomorrow = dayjs().add(1, 'day');
 
@@ -58,10 +60,10 @@ const OrdersFormInputs = ({ handleBlur, handleChange, values, touched,
           onBlur={handleBlur}
           label="Product Id"
         >
-          {dataProductIdNameMsrp && dataProductIdNameMsrp.map((product) => (
+          {dataProductIdNameQuantityInStock && dataProductIdNameQuantityInStock.map((product) => (
             <MenuItem key={product.id} value={product.id}>
               {product.id} {" - "}
-              {product.name} {" - MSRP - "} {product.msrp}
+              {product.name} {" - stock - "} {product.quantityInStock}
             </MenuItem>
           ))}
         </Select>
@@ -86,29 +88,30 @@ const OrdersFormInputs = ({ handleBlur, handleChange, values, touched,
       <FormControl
         variant="filled"
         sx={{ gridColumn: "span 2" }}
+        validationschema={ordersSchema}
+        error={!!touched.customerId && !!errors.customerId}
       >
         <InputLabel id="customerId-select-label">Customer Id</InputLabel>
         <Select
           labelId="customerId-select-label"
           id="customerId-select"
           name="customerId"
-          // value={isReportsToValid ? values.reportsTo : ""}
-          value={""}
+          value={values.customerId}
           onChange={(event) => setFieldValue('customerId',
             event.target.value)}
           onBlur={handleBlur}
           label="Customer Id"
         >
-          <MenuItem value="">
-            <em>None</em>
-          </MenuItem>
-          {/* {dataIdName && dataIdName.map((employee) => ( */}
-          {/*   <MenuItem key={employee.id} value={employee.id}> */}
-          {/*     {employee.id} {" "} */}
-          {/*     {employee.lastName} {employee.firstName} - {employee.jobTitle} */}
-          {/*   </MenuItem> */}
-          {/* ))} */}
+          {dataCustomersIdNameCreditLimit && dataCustomersIdNameCreditLimit.map((customer) => (
+            <MenuItem key={customer.id} value={customer.id}>
+              {customer.id} {" "}
+              {customer.name} {" CREDIT LIMIT "} {customer.creditLimit}
+            </MenuItem>
+          ))}
         </Select>
+        <FormHelperText error={!!touched.customerId && !!errors.customerId}>
+          {touched.customerId && errors.customerId}
+        </FormHelperText>
       </FormControl>
 
     </>

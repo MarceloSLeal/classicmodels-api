@@ -3,22 +3,20 @@ package com.classicmodels.api.controller;
 import com.classicmodels.api.mapper.ProductsMapper;
 import com.classicmodels.api.model.ProductsRepModel;
 import com.classicmodels.api.model.input.ProductsInput;
-import com.classicmodels.api.model.lists.ProductsRepModelIdNameMsrpList;
-import com.classicmodels.api.model.lists.interfaces.ProductsIdNameMsrpProjection;
+import com.classicmodels.api.model.lists.ProductsRepModelIdNameQuantityInStockList;
+import com.classicmodels.api.model.lists.interfaces.ProductsIdNameQuantityInStockProjection;
 import com.classicmodels.domain.exception.EntityNotFoundException;
 import com.classicmodels.domain.model.Products;
 import com.classicmodels.domain.repository.ProductsRepository;
 import com.classicmodels.domain.service.ProductsCatalogService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @AllArgsConstructor
@@ -35,20 +33,20 @@ public class ProductsController {
         return productsRepository.findAll();
     }
 
-    @GetMapping("/idnamemsrp")
-    public ResponseEntity<List<ProductsRepModelIdNameMsrpList>> buscarPorIdNameMsrp() {
+    @GetMapping("/idnamequantityinstock")
+    public ResponseEntity<List<ProductsRepModelIdNameQuantityInStockList>> buscarPorIdNameMsrp() {
 
-        List<ProductsIdNameMsrpProjection> projections = productsRepository.findIdNameMsrp();
+        List<ProductsIdNameQuantityInStockProjection> projections = productsRepository.findIdNameQuantityInStock();
         if (projections.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
 
-        List<ProductsRepModelIdNameMsrpList> productsIds = projections.stream()
+        List<ProductsRepModelIdNameQuantityInStockList> productsIds = projections.stream()
                 .map(projection -> {
-                    ProductsRepModelIdNameMsrpList dto = new ProductsRepModelIdNameMsrpList();
+                    ProductsRepModelIdNameQuantityInStockList dto = new ProductsRepModelIdNameQuantityInStockList();
                     dto.setId(projection.getId());
                     dto.setName(projection.getName());
-                    dto.setMsrp(projection.getMsrp());
+                    dto.setQuantityInStock(projection.getQuantityInStock());
                     return dto;
                 })
                 .collect(Collectors.toList());

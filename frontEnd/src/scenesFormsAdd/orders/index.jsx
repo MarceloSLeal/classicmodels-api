@@ -13,11 +13,8 @@ import { styled } from '@mui/material/styles';
 import { Formik } from "formik";
 import * as yup from "yup";
 
-// TOTO -- Criar o OrdersFormInputs
-// adicionar id, nome do produto e preço na lista
 import Header from "../../components/Header";
 import { Urls } from "../../api/Paths";
-import { Constants } from "../../data/constants";
 import FormListCalls from "../../components/FormsListCalls";
 import { tokens } from "../../theme";
 import OrdersFormInputs from "../../components/formInputs/Orders";
@@ -27,10 +24,7 @@ const initialValues = {
   quantityOrdered: "", priceEach: "",
 }
 
-// TODO -- adicionar validação para comments, aceitar somente caracteres normais
-
 const commentsRegex = /^[\p{L}\p{N}\s.,!?'"()-]+$/u;
-
 
 const ordersSchema = yup.object().shape(({
   requiredDate: yup.date().required(),
@@ -81,7 +75,6 @@ const columns = [
           />
         </GridActionTooltip>,
       ];
-      t
     },
   },
 ]
@@ -92,12 +85,12 @@ const FormAddOrders = () => {
   const [rows, setRows] = useState([]);
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
-  //
-  // TODO -- Fazer ou verificar se tem um endpoint para listar os customers id e nome, e product id, name e msrp
-  // const [dataIdName, setDataIdName] = useState(null);
-  // FormListCalls(url.employees.findByIdNames, setDataIdName);
-  const [dataProductIdNameMsrp, setDataProductIdNameMsrp] = useState(null);
-  FormListCalls(url.products.findByIdNameMsrp, setDataProductIdNameMsrp);
+
+  const [dataProductIdNameQuantityInStock, setDataProductIdNameQuantityInStock] = useState(null);
+  FormListCalls(url.products.findByIdNameQuantityInStock, setDataProductIdNameQuantityInStock);
+
+  const [dataCustomersIdNameCreditLimit, setDataCustomersIdNameCreditLimit] = useState(null);
+  FormListCalls(url.customers.findByIdNameCreditLimit, setDataCustomersIdNameCreditLimit);
 
 
   // TODO -- verifiquei que precisa criar o método POST para inserir na tabela OrderDetails
@@ -181,7 +174,8 @@ const FormAddOrders = () => {
                 <OrdersFormInputs
                   handleBlur={handleBlur} handleChange={handleChange}
                   values={values} touched={touched} errors={errors}
-                  setFieldValue={setFieldValue} dataProductIdNameMsrp={dataProductIdNameMsrp}
+                  setFieldValue={setFieldValue} dataProductIdNameQuantityInStock={dataProductIdNameQuantityInStock}
+                  dataCustomersIdNameCreditLimit={dataCustomersIdNameCreditLimit}
                 />
 
               </Box>
@@ -211,7 +205,6 @@ const FormAddOrders = () => {
         </Formik>
 
       </Box>
-
 
       <Box m="20px">
         <Box
@@ -249,7 +242,6 @@ const FormAddOrders = () => {
             columns={columns}
           />
         </Box>
-
 
       </Box>
     </Box>

@@ -8,6 +8,7 @@ export const Urls = (param) => ({
         findAll_Post: `${prefix}customers`,
         findById_Put_Delete: `${prefix}customers/${param}`,
         findByEmail: `${prefix}customers/findbyemail/${param}`,
+        findByIdNameCreditLimit: `${prefix}customers/idnamecreditlimit`,
       },
       employees: {
         findAll_Post: `${prefix}employees`,
@@ -53,7 +54,7 @@ export const Urls = (param) => ({
         findByScale: `${prefix}products/scale/${param}`,
         findByVender: `${prefix}products/vendor/${param}`,
         put_Delete: `${prefix}products/${param}`,
-        findByIdNameMsrp: `${prefix}products/idnamemsrp`,
+        findByIdNameQuantityInStock: `${prefix}products/idnamequantityinstock`,
       },
     }
   )
