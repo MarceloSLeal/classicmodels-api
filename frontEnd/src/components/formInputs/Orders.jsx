@@ -8,8 +8,8 @@ import dayjs from 'dayjs';
 import Divider from '@mui/material/Divider';
 
 const OrdersFormInputs = ({ handleBlur, handleChange, values, touched,
-  errors, setFieldValue, dataProductIdNameQuantityInStock,
-  dataCustomersIdNameCreditLimit, ordersSchema,
+  errors, ordersSchema, setFieldValue, dataProductIdNameQuantityInStock,
+  dataCustomersIdNameCreditLimit, handleInputChange
 }) => {
 
   const tomorrow = dayjs().add(1, 'day');
@@ -95,7 +95,7 @@ const OrdersFormInputs = ({ handleBlur, handleChange, values, touched,
           name="productId"
           value={values.productId}
           onChange={(event) => setFieldValue('productId',
-            event.target.value)}
+            event.target.value, handleInputChange("productId", event.target.value))}
           onBlur={handleBlur}
           label="Product Id"
         >
@@ -116,7 +116,9 @@ const OrdersFormInputs = ({ handleBlur, handleChange, values, touched,
         type="text"
         label="Quantity"
         onBlur={handleBlur}
-        onChange={handleChange}
+        // onChange={handleChange}
+        onChange={(event) => setFieldValue('quantityOrdered',
+          event.target.value, handleInputChange("quantityOrdered", event.target.value))}
         value={values.quantityOrdered}
         name="quantityOrdered"
         error={!!touched.quantityOrdered && !!errors.quantityOrdered}

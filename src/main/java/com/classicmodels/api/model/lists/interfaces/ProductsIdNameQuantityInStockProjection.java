@@ -4,4 +4,5 @@ public interface ProductsIdNameQuantityInStockProjection {
     Long getId();
     String getName();
     Short getQuantityInStock();
+    Double getMsrp();
 }

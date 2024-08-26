@@ -101,14 +101,35 @@ const FormAddOrders = () => {
     },
   ]
 
+  const [formValues, setFormValues] = useState({
+    orderId: null,
+    productId: null,
+    quantityOrdered: 0,
+    priceEach: 0,
+    orderLineNumber: null,
+  })
+
+  const handleInputChange = (name, value) => {
+    setFormValues((prevValues) => ({
+      ...prevValues,
+      [name]: value,
+    }));
+  };
+
   /////////////////////////////////////////////////////////////////////////////
   // let lineCounter = 0;
 
   const createRow = () => {
     lineCounter += 1;
+    const msrpValue = dataProductIdNameQuantityInStock?.find(product =>
+      product.id === formValues.productId)?.msrp;
+    formValues.priceEach = msrpValue;
+    formValues.orderLineNumber = lineCounter;
+
     return {
-      orderId: 0, headerName: 0, productId: 0, quantityOrdered: 0,
-      priceEach: 0, orderLineNumber: lineCounter,
+      orderId: 0, productId: formValues.productId,
+      quantityOrdered: formValues.quantityOrdered, priceEach: formValues.priceEach,
+      orderLineNumber: lineCounter,
     };
   };
 
@@ -148,10 +169,15 @@ const FormAddOrders = () => {
     });
   };
 
+  const handleTeste = () => {
+    console.log("formValues", formValues);
+    console.log("rows", rows);
+  }
+
   const handleAddRow = () => {
     setRows((prevRows) => [...prevRows, createRow()]);
-    console.log(lineCounter);
     // setRows(createRow());
+    // console.log(formValues);
 
   };
 
@@ -231,13 +257,20 @@ const FormAddOrders = () => {
                 <OrdersFormInputs
                   handleBlur={handleBlur} handleChange={handleChange}
                   values={values} touched={touched} errors={errors}
-                  setFieldValue={setFieldValue} dataProductIdNameQuantityInStock={dataProductIdNameQuantityInStock}
+                  ordersSchema={ordersSchema} setFieldValue={setFieldValue}
+                  dataProductIdNameQuantityInStock={dataProductIdNameQuantityInStock}
                   dataCustomersIdNameCreditLimit={dataCustomersIdNameCreditLimit}
+                  handleInputChange={handleInputChange}
                 />
 
                 <Button onClick={handleAddRow} color="secondary" variant="contained"
                   sx={{ gridColumn: "span 1", width: "50%" }}>
                   Add New Item
+                </Button>
+
+                <Button onClick={handleTeste} color="secondary" variant="contained"
+                  sx={{ gridColumn: "span 1", width: "50%" }}>
+                  Teste
                 </Button>
 
               </Box>

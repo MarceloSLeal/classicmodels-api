@@ -47,6 +47,7 @@ public class ProductsController {
                     dto.setId(projection.getId());
                     dto.setName(projection.getName());
                     dto.setQuantityInStock(projection.getQuantityInStock());
+                    dto.setMsrp(projection.getMsrp());
                     return dto;
                 })
                 .collect(Collectors.toList());

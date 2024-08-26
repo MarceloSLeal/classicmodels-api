@@ -10,4 +10,5 @@ public class ProductsRepModelIdNameQuantityInStockList {
     private Long id;
     private String name;
     private Short quantityInStock;
+    private Double msrp;
 }

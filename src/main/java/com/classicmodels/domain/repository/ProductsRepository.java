@@ -17,7 +17,7 @@ public interface ProductsRepository extends JpaRepository<Products, Long> {
     List<Products> findByScale(String scale);
     List<Products> findByVendor(String vendor);
 
-    @Query( value = "SELECT id, name, quantity_in_stock as quantityInStock FROM classicmodels_api.products", nativeQuery = true)
+    @Query( value = "SELECT id, name, quantity_in_stock as quantityInStock, msrp FROM classicmodels_api.products", nativeQuery = true)
     List<ProductsIdNameQuantityInStockProjection> findIdNameQuantityInStock();
 
 }
