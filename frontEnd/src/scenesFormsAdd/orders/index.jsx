@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 import { DataGrid, GridToolbarContainer, GridActionsCellItem } from "@mui/x-data-grid";
 import {
@@ -19,6 +19,7 @@ import FormListCalls from "../../components/FormsListCalls";
 import { tokens } from "../../theme";
 import OrdersFormInputs from "../../components/formInputs/Orders";
 
+
 const initialValues = {
   requiredDate: "", comments: "", customerId: "", productId: "",
   quantityOrdered: "", priceEach: "",
@@ -38,46 +39,7 @@ const ordersSchema = yup.object().shape(({
   priceEach: yup.number().required(),
 }));
 
-const GridActionTooltip = styled(({ className, ...props }) => (
-  <Tooltip {...props} classes={{ popper: className }} />
-))(() => ({
-  [`& .${tooltipClasses.tooltip}`]: {
-    backgroundColor: colors.primary[400],
-    color: colors.primary[100],
-    fontSize: 15,
-    border: `1px solid ${colors.primary[100]}`,
-    i
-  },
-}));
-
-const columns = [
-  { field: "orderId", headerName: "ORDER ID", flex: 0.5 },
-  { field: "productId", headerName: "PRODUCT ID", flex: 0.5 },
-  { field: "quantityOrdered", headerName: "QUANTITY ORDERED", flex: 0.5 },
-  { field: "priceEach", headerName: "PRICE EACH", flex: 0.5 },
-  { field: "orderLineNumber", headerName: "ORDER LINE NUMBER", flex: 1 },
-  {
-    field: 'actions',
-    type: 'actions',
-    headerName: 'ACTIONS',
-    width: 100,
-    cellClassName: 'actions',
-    getActions: (params) => {
-
-      return [
-        <GridActionTooltip title="Delete this Line"
-          placement="bottom">
-          <GridActionsCellItem
-            icon={<DeleteIcon />}
-            label="Delete"
-            onClick={handleDeleteDatagridButton(params)}
-            color="inherit"
-          />
-        </GridActionTooltip>,
-      ];
-    },
-  },
-]
+let lineCounter = 0;
 
 const FormAddOrders = () => {
 
@@ -85,6 +47,12 @@ const FormAddOrders = () => {
   const [rows, setRows] = useState([]);
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
+  const isNonMobile = useMediaQuery("(min-width:600px)");
+  const [responseCode, setResponseCode] = useState(null);
+  const [resetFormFn, setResetFormFn] = useState(null);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [status, setStatus] = useState('');
+  // TODO -- verifiquei que precisa criar o método POST para inserir na tabela OrderDetails
 
   const [dataProductIdNameQuantityInStock, setDataProductIdNameQuantityInStock] = useState(null);
   FormListCalls(url.products.findByIdNameQuantityInStock, setDataProductIdNameQuantityInStock);
@@ -93,13 +61,101 @@ const FormAddOrders = () => {
   FormListCalls(url.customers.findByIdNameCreditLimit, setDataCustomersIdNameCreditLimit);
 
 
-  // TODO -- verifiquei que precisa criar o método POST para inserir na tabela OrderDetails
+  const GridActionTooltip = styled(({ className, ...props }) => (
+    <Tooltip {...props} classes={{ popper: className }} />
+  ))(() => ({
+    [`& .${tooltipClasses.tooltip}`]: {
+      backgroundColor: colors.primary[400],
+      color: colors.primary[100],
+      fontSize: 15,
+      border: `1px solid ${colors.primary[100]}`,
+    },
+  }));
 
-  const isNonMobile = useMediaQuery("(min-width:600px)");
-  const [responseCode, setResponseCode] = useState(null);
-  const [resetFormFn, setResetFormFn] = useState(null);
-  const [dialogOpen, setDialogOpen] = useState(false);
-  const [status, setStatus] = useState('');
+  const columns = [
+    { field: "orderId", headerName: "ORDER ID", flex: 0.5 },
+    { field: "productId", headerName: "PRODUCT ID", flex: 0.5 },
+    { field: "quantityOrdered", headerName: "QUANTITY ORDERED", flex: 0.5 },
+    { field: "priceEach", headerName: "PRICE EACH", flex: 0.5 },
+    { field: "orderLineNumber", headerName: "ORDER LINE NUMBER", flex: 1 },
+    {
+      field: 'actions',
+      type: 'actions',
+      headerName: 'ACTIONS',
+      width: 100,
+      cellClassName: 'actions',
+      getActions: (params) => {
+
+        return [
+          <GridActionTooltip title="Delete this Line"
+            placement="bottom">
+            <GridActionsCellItem
+              icon={<DeleteIcon />}
+              label="Delete"
+              onClick={handleDeleteDatagridButton(params)}
+              color="inherit"
+            />
+          </GridActionTooltip>,
+        ];
+      },
+    },
+  ]
+
+  /////////////////////////////////////////////////////////////////////////////
+  // let lineCounter = 0;
+
+  const createRow = () => {
+    lineCounter += 1;
+    return {
+      orderId: 0, headerName: 0, productId: 0, quantityOrdered: 0,
+      priceEach: 0, orderLineNumber: lineCounter,
+    };
+  };
+
+  const UpdateRowsProp = () => {
+    const [rows, setRows] = React.useState(() => [
+      createRow(),
+    ]);
+  }
+
+  const handleUpdateRow = () => {
+    if (rows.length === 0) {
+      return;
+    }
+    setRows((prevRows) => {
+      const rowToUpdateIndex = randomInt(0, rows.length - 1);
+
+      return prevRows.map((row, index) =>
+        index === rowToUpdateIndex ? { ...row, username: randomUserName() } : row,
+      );
+    });
+  };
+
+  const handleUpdateAllRows = () => {
+    setRows(rows.map((row) => ({ ...row, username: randomUserName() })));
+  };
+
+  const handleDeleteRow = () => {
+    if (rows.length === 0) {
+      return;
+    }
+    setRows((prevRows) => {
+      const rowToDeleteIndex = randomInt(0, prevRows.length - 1);
+      return [
+        ...rows.slice(0, rowToDeleteIndex),
+        ...rows.slice(rowToDeleteIndex + 1),
+      ];
+    });
+  };
+
+  const handleAddRow = () => {
+    setRows((prevRows) => [...prevRows, createRow()]);
+    console.log(lineCounter);
+    // setRows(createRow());
+
+  };
+
+  /////////////////////////////////////////////////////////////////////////////
 
   // TODO -- Descobrir uma forma de fazer o submit para orders e ordersDetails
   // com os objetos que estiverem no form, se for um ou dois
@@ -131,6 +187,7 @@ const FormAddOrders = () => {
     setSubmitting(false);
     setDialogOpen(true);
   }
+
 
   // TODO -- fazer a verificação com o response de orders e orderDetails
   const handleClose = () => {
@@ -178,7 +235,7 @@ const FormAddOrders = () => {
                   dataCustomersIdNameCreditLimit={dataCustomersIdNameCreditLimit}
                 />
 
-                <Button type="submit" color="secondary" variant="contained"
+                <Button onClick={handleAddRow} color="secondary" variant="contained"
                   sx={{ gridColumn: "span 1", width: "50%" }}>
                   Add New Item
                 </Button>
@@ -240,6 +297,7 @@ const FormAddOrders = () => {
           <DataGrid
             rows={rows}
             columns={columns}
+            getRowId={(row) => `${row.orderLineNumber}`}
           />
         </Box>
 
