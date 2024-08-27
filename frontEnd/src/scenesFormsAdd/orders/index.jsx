@@ -52,6 +52,8 @@ const FormAddOrders = () => {
   const [resetFormFn, setResetFormFn] = useState(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [status, setStatus] = useState('');
+  const [setFieldValueRef, setSetFieldValueRef] = useState(null);
+
   // TODO -- verifiquei que precisa criar o método POST para inserir na tabela OrderDetails
 
   const [dataProductIdNameQuantityInStock, setDataProductIdNameQuantityInStock] = useState(null);
@@ -109,6 +111,16 @@ const FormAddOrders = () => {
     orderLineNumber: null,
   })
 
+  const resetFormValues = () => {
+    setFormValues({
+      orderId: null,
+      productId: null,
+      quantityOrdered: 0,
+      priceEach: 0,
+      orderLineNumber: null,
+    })
+  }
+
   const handleInputChange = (name, value) => {
     setFormValues((prevValues) => ({
       ...prevValues,
@@ -120,17 +132,25 @@ const FormAddOrders = () => {
   // let lineCounter = 0;
 
   const createRow = () => {
+
     lineCounter += 1;
     const msrpValue = dataProductIdNameQuantityInStock?.find(product =>
       product.id === formValues.productId)?.msrp;
     formValues.priceEach = msrpValue;
     formValues.orderLineNumber = lineCounter;
 
-    return {
-      orderId: 0, productId: formValues.productId,
+    setFieldValueRef("quantityOrdered", "", false);
+    setFieldValueRef("productId", "", false);
+
+    let addRow = {
+      orderId: null, productId: formValues.productId,
       quantityOrdered: formValues.quantityOrdered, priceEach: formValues.priceEach,
       orderLineNumber: lineCounter,
     };
+
+    setRows((prevRows) => [...prevRows, addRow]);
+    resetFormValues();
+
   };
 
   const UpdateRowsProp = () => {
@@ -175,10 +195,19 @@ const FormAddOrders = () => {
   }
 
   const handleAddRow = () => {
-    setRows((prevRows) => [...prevRows, createRow()]);
-    // setRows(createRow());
-    // console.log(formValues);
 
+    const isProdId = rows?.some(prod => prod.productId === formValues.productId);
+
+    if (isProdId) {
+      setStatus("The product is already on order");
+      setDialogOpen(true);
+      return
+    }
+
+    // TODO -- verificar se prodId e quantityOrdered estão vazios
+
+    // setRows((prevRows) => [...prevRows, createRow()]);
+    createRow();
   };
 
   /////////////////////////////////////////////////////////////////////////////
@@ -241,59 +270,59 @@ const FormAddOrders = () => {
           initialValues={initialValues}
           validationSchema={ordersSchema}
         >
+          {({ values, errors, touched, handleBlur, handleChange, handleSubmit, setFieldValue }) => {
 
-          {({ values, errors, touched, handleBlur, handleChange, handleSubmit,
-            setFieldValue }) => (
-            <form onSubmit={handleSubmit}>
-              <Box
-                display="grid"
-                gap="20px"
-                gridTemplateColumns="repeat(4, minmax(0, 1fr))"
-                sx={{
-                  "& > div": { gridColumn: isNonMobile ? undefined : "span 4" },
-                }}
-              >
+            useEffect(() => {
+              setSetFieldValueRef(() => setFieldValue);
+            }, [setFieldValue]);
 
-                <OrdersFormInputs
-                  handleBlur={handleBlur} handleChange={handleChange}
-                  values={values} touched={touched} errors={errors}
-                  ordersSchema={ordersSchema} setFieldValue={setFieldValue}
-                  dataProductIdNameQuantityInStock={dataProductIdNameQuantityInStock}
-                  dataCustomersIdNameCreditLimit={dataCustomersIdNameCreditLimit}
-                  handleInputChange={handleInputChange}
-                />
+            return (
+              <form onSubmit={handleSubmit}>
+                <Box
+                  display="grid"
+                  gap="20px"
+                  gridTemplateColumns="repeat(4, minmax(0, 1fr))"
+                  sx={{
+                    "& > div": { gridColumn: isNonMobile ? undefined : "span 4" },
+                  }}
+                >
+                  <OrdersFormInputs
+                    handleBlur={handleBlur} handleChange={handleChange}
+                    values={values} touched={touched} errors={errors}
+                    ordersSchema={ordersSchema} setFieldValue={setFieldValue}
+                    dataProductIdNameQuantityInStock={dataProductIdNameQuantityInStock}
+                    dataCustomersIdNameCreditLimit={dataCustomersIdNameCreditLimit}
+                    handleInputChange={handleInputChange}
+                  />
 
-                <Button onClick={handleAddRow} color="secondary" variant="contained"
-                  sx={{ gridColumn: "span 1", width: "50%" }}>
-                  Add New Item
-                </Button>
+                  <Button onClick={handleAddRow} color="secondary" variant="contained"
+                    sx={{ gridColumn: "span 1", width: "50%" }} type="submit">
+                    Add New Item
+                  </Button>
 
-                <Button onClick={handleTeste} color="secondary" variant="contained"
-                  sx={{ gridColumn: "span 1", width: "50%" }}>
-                  Teste
-                </Button>
+                  <Button onClick={handleTeste} color="secondary" variant="contained"
+                    sx={{ gridColumn: "span 1", width: "50%" }}>
+                    Teste
+                  </Button>
+                </Box>
 
-              </Box>
-
-              <Dialog open={dialogOpen} onClose={handleClose}>
-                <DialogTitle>Operation Status</DialogTitle>
-                <DialogContent>
-                  <DialogContentText>
-                    {status}
-                    {responseCode !== null && <br />}
-                    Response Code: {responseCode}
-                  </DialogContentText>
-                  <DialogActions>
-                    <Button onClick={handleClose} color="primary">
-                      OK
-                    </Button>
-                  </DialogActions>
-                </DialogContent>
-              </Dialog>
-            </form>
-          )}
+                <Dialog open={dialogOpen} onClose={handleClose}>
+                  <DialogTitle>Operation Status</DialogTitle>
+                  <DialogContent>
+                    <DialogContentText>
+                      {status}
+                    </DialogContentText>
+                    <DialogActions>
+                      <Button onClick={handleClose} color="primary">
+                        OK
+                      </Button>
+                    </DialogActions>
+                  </DialogContent>
+                </Dialog>
+              </form>
+            );
+          }}
         </Formik>
-
       </Box>
 
       <Box m="20px">

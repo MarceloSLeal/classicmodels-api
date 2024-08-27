@@ -84,7 +84,7 @@ const OrdersFormInputs = ({ handleBlur, handleChange, values, touched,
 
       <FormControl
         variant="filled"
-        sx={{ gridColumn: "span 2" }}
+        sx={{ gridColumn: "span 1" }}
         validationschema={ordersSchema}
         error={!!touched.productId && !!errors.productId}
       >
