@@ -53,6 +53,7 @@ const FormAddOrders = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [status, setStatus] = useState('');
   const [setFieldValueRef, setSetFieldValueRef] = useState(null);
+  const [errorsRef, setErrorsRef] = useState(null);
 
   // TODO -- verifiquei que precisa criar o método POST para inserir na tabela OrderDetails
 
@@ -106,8 +107,8 @@ const FormAddOrders = () => {
   const [formValues, setFormValues] = useState({
     orderId: null,
     productId: null,
-    quantityOrdered: 0,
-    priceEach: 0,
+    quantityOrdered: null,
+    priceEach: null,
     orderLineNumber: null,
   })
 
@@ -115,8 +116,8 @@ const FormAddOrders = () => {
     setFormValues({
       orderId: null,
       productId: null,
-      quantityOrdered: 0,
-      priceEach: 0,
+      quantityOrdered: null,
+      priceEach: null,
       orderLineNumber: null,
     })
   }
@@ -192,9 +193,22 @@ const FormAddOrders = () => {
   const handleTeste = () => {
     console.log("formValues", formValues);
     console.log("rows", rows);
+    console.log("errors!!", !!errorsRef.quantityOrdered);
   }
 
   const handleAddRow = () => {
+
+    if (!!errorsRef.quantityOrdered === true) {
+      setStatus("Product Id or Quantity has an error");
+      setDialogOpen(true);
+      return
+    }
+
+    if (formValues.productId === null || formValues.quantityOrdered === null) {
+      setStatus("Product ID or Quantity is empty");
+      setDialogOpen(true);
+      return
+    }
 
     const isProdId = rows?.some(prod => prod.productId === formValues.productId);
 
@@ -253,10 +267,12 @@ const FormAddOrders = () => {
   }
 
   const handleDeleteDatagridButton = (params) => () => {
-    // TODO deletar a linha no dataGrid
-    // setIdDelete(params.id);
-    //
-    // setDialogConfirmOpen(true);
+    const updatedRows = rows.filter(row => row.orderLineNumber !== params.row.orderLineNumber);
+    const reorderedRows = updatedRows.map((row, index) => ({
+      ...row,
+      orderLineNumber: index + 1, // Reorganizar para que a sequência seja contínua
+    }));
+    setRows(reorderedRows);
   }
 
   return (
@@ -274,7 +290,8 @@ const FormAddOrders = () => {
 
             useEffect(() => {
               setSetFieldValueRef(() => setFieldValue);
-            }, [setFieldValue]);
+              setErrorsRef(() => errors);
+            }, [setFieldValue, errors, touched]);
 
             return (
               <form onSubmit={handleSubmit}>
@@ -296,7 +313,7 @@ const FormAddOrders = () => {
                   />
 
                   <Button onClick={handleAddRow} color="secondary" variant="contained"
-                    sx={{ gridColumn: "span 1", width: "50%" }} type="submit">
+                    sx={{ gridColumn: "span 1", width: "50%" }}>
                     Add New Item
                   </Button>
 
