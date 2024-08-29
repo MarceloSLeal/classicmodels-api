@@ -7,10 +7,13 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import dayjs from 'dayjs';
 import Divider from '@mui/material/Divider';
 
+// const OrdersFormInputs = ({ handleBlur, handleChange, values, touched,
+//   errors, ordersSchema, setFieldValue, dataProductIdNameQuantityInStock,
+//   dataCustomersIdNameCreditLimit, handleInputChange
+// }) => {
+
 const OrdersFormInputs = ({ handleBlur, handleChange, values, touched,
-  errors, ordersSchema, setFieldValue, dataProductIdNameQuantityInStock,
-  dataCustomersIdNameCreditLimit, handleInputChange
-}) => {
+  errors, ordersSchema, setFieldValue, dataCustomersIdNameCreditLimit, }) => {
 
   const tomorrow = dayjs().add(1, 'day');
 
@@ -77,55 +80,53 @@ const OrdersFormInputs = ({ handleBlur, handleChange, values, touched,
         sx={{ gridColumn: "span 1" }}
       />
 
-
-      <Divider textAlign="left" sx={{ gridColumn: "span 4" }}>
-        Order Itens
-      </Divider>
-
-      <FormControl
-        variant="filled"
-        sx={{ gridColumn: "span 1" }}
-        validationschema={ordersSchema}
-        error={!!touched.productId && !!errors.productId}
-      >
-        <InputLabel id="productId-select-label">Product Id</InputLabel>
-        <Select
-          labelId="productId-select-label"
-          id="productId-select"
-          name="productId"
-          value={values.productId}
-          onChange={(event) => setFieldValue('productId',
-            event.target.value, handleInputChange("productId", event.target.value))}
-          onBlur={handleBlur}
-          label="Product Id"
-        >
-          {dataProductIdNameQuantityInStock && dataProductIdNameQuantityInStock.map((product) => (
-            <MenuItem key={product.id} value={product.id}>
-              {product.id} {" - "}
-              {product.name} {" - stock - "} {product.quantityInStock}
-            </MenuItem>
-          ))}
-        </Select>
-        <FormHelperText error={!!touched.productId && !!errors.productId}>
-          {touched.productId && errors.productId}
-        </FormHelperText>
-      </FormControl >
-
-      <TextField
-        variant="filled"
-        type="text"
-        label="Quantity"
-        onBlur={handleBlur}
-        // onChange={handleChange}
-        onChange={(event) => setFieldValue('quantityOrdered',
-          event.target.value, handleInputChange("quantityOrdered", event.target.value))}
-        value={values.quantityOrdered}
-        name="quantityOrdered"
-        error={!!touched.quantityOrdered && !!errors.quantityOrdered}
-        helperText={touched.quantityOrdered && errors.quantityOrdered}
-        sx={{ gridColumn: "span 1" }}
-      />
-
+      {/* <Divider textAlign="left" sx={{ gridColumn: "span 4" }}> */}
+      {/*   Order Itens */}
+      {/* </Divider> */}
+      {/**/}
+      {/* <FormControl */}
+      {/*   variant="filled" */}
+      {/*   sx={{ gridColumn: "span 1" }} */}
+      {/*   validationschema={ordersSchema} */}
+      {/*   error={!!touched.productId && !!errors.productId} */}
+      {/* > */}
+      {/*   <InputLabel id="productId-select-label">Product Id</InputLabel> */}
+      {/*   <Select */}
+      {/*     labelId="productId-select-label" */}
+      {/*     id="productId-select" */}
+      {/*     name="productId" */}
+      {/*     value={values.productId} */}
+      {/*     onChange={(event) => setFieldValue('productId', */}
+      {/*       event.target.value, handleInputChange("productId", event.target.value))} */}
+      {/*     onBlur={handleBlur} */}
+      {/*     label="Product Id" */}
+      {/*   > */}
+      {/*     {dataProductIdNameQuantityInStock && dataProductIdNameQuantityInStock.map((product) => ( */}
+      {/*       <MenuItem key={product.id} value={product.id}> */}
+      {/*         {product.id} {" - "} */}
+      {/*         {product.name} {" - stock - "} {product.quantityInStock} */}
+      {/*       </MenuItem> */}
+      {/*     ))} */}
+      {/*   </Select> */}
+      {/*   <FormHelperText error={!!touched.productId && !!errors.productId}> */}
+      {/*     {touched.productId && errors.productId} */}
+      {/*   </FormHelperText> */}
+      {/* </FormControl > */}
+      {/**/}
+      {/* <TextField */}
+      {/*   variant="filled" */}
+      {/*   type="text" */}
+      {/*   label="Quantity" */}
+      {/*   onBlur={handleBlur} */}
+      {/*   // onChange={handleChange} */}
+      {/*   onChange={(event) => setFieldValue('quantityOrdered', */}
+      {/*     event.target.value, handleInputChange("quantityOrdered", event.target.value))} */}
+      {/*   value={values.quantityOrdered} */}
+      {/*   name="quantityOrdered" */}
+      {/*   error={!!touched.quantityOrdered && !!errors.quantityOrdered} */}
+      {/*   helperText={touched.quantityOrdered && errors.quantityOrdered} */}
+      {/*   sx={{ gridColumn: "span 1" }} */}
+      {/* /> */}
 
     </>
   )

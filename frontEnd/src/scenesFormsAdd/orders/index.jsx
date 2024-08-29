@@ -10,7 +10,7 @@ import DeleteIcon from '@mui/icons-material/DeleteOutlined';
 import Tooltip, { tooltipClasses } from '@mui/material/Tooltip';
 import { styled } from '@mui/material/styles';
 
-import { Formik } from "formik";
+import { Form, Formik } from "formik";
 import * as yup from "yup";
 
 import Header from "../../components/Header";
@@ -18,26 +18,30 @@ import { Urls } from "../../api/Paths";
 import FormListCalls from "../../components/FormsListCalls";
 import { tokens } from "../../theme";
 import OrdersFormInputs from "../../components/formInputs/Orders";
+import OrdersDetailsFormInputs from "../../components/formInputs/OrdersDetails";
 
 
-const initialValues = {
-  requiredDate: "", comments: "", customerId: "", productId: "",
-  quantityOrdered: "", priceEach: "",
+const ordersInitialValues = {
+  requiredDate: "", comments: "", customerId: ""
+}
+const ordersDetailsInitialValues = {
+  productId: "", quantityOrdered: "", priceEach: ""
 }
 
 const commentsRegex = /^[\p{L}\p{N}\s.,!?'"()-]+$/u;
-
 const ordersSchema = yup.object().shape(({
   requiredDate: yup.date().required(),
   comments: yup
     .string()
     .matches(commentsRegex, "Accepts only text"),
   customerId: yup.number().required(),
-
+}));
+const ordersDetailsSchema = yup.object().shape(({
   productId: yup.number().required(),
   quantityOrdered: yup.number().required(),
   priceEach: yup.number().required(),
-}));
+
+}))
 
 let lineCounter = 0;
 
@@ -52,8 +56,6 @@ const FormAddOrders = () => {
   const [resetFormFn, setResetFormFn] = useState(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [status, setStatus] = useState('');
-  const [setFieldValueRef, setSetFieldValueRef] = useState(null);
-  const [errorsRef, setErrorsRef] = useState(null);
 
   // TODO -- verifiquei que precisa criar o método POST para inserir na tabela OrderDetails
 
@@ -122,73 +124,28 @@ const FormAddOrders = () => {
     })
   }
 
-  const handleInputChange = (name, value) => {
-    setFormValues((prevValues) => ({
-      ...prevValues,
-      [name]: value,
-    }));
-  };
 
   /////////////////////////////////////////////////////////////////////////////
   // let lineCounter = 0;
 
-  const createRow = () => {
-
-    lineCounter += 1;
-    const msrpValue = dataProductIdNameQuantityInStock?.find(product =>
-      product.id === formValues.productId)?.msrp;
-    formValues.priceEach = msrpValue;
-    formValues.orderLineNumber = lineCounter;
-
-    setFieldValueRef("quantityOrdered", "", false);
-    setFieldValueRef("productId", "", false);
-
-    let addRow = {
-      orderId: null, productId: formValues.productId,
-      quantityOrdered: formValues.quantityOrdered, priceEach: formValues.priceEach,
-      orderLineNumber: lineCounter,
-    };
-
-    setRows((prevRows) => [...prevRows, addRow]);
-    resetFormValues();
-
-  };
-
-  const UpdateRowsProp = () => {
-    const [rows, setRows] = React.useState(() => [
-      createRow(),
-    ]);
-  }
-
-  const handleUpdateRow = () => {
-    if (rows.length === 0) {
-      return;
-    }
-    setRows((prevRows) => {
-      const rowToUpdateIndex = randomInt(0, rows.length - 1);
-
-      return prevRows.map((row, index) =>
-        index === rowToUpdateIndex ? { ...row, username: randomUserName() } : row,
-      );
-    });
-  };
-
-  const handleUpdateAllRows = () => {
-    setRows(rows.map((row) => ({ ...row, username: randomUserName() })));
-  };
-
-  const handleDeleteRow = () => {
-    if (rows.length === 0) {
-      return;
-    }
-    setRows((prevRows) => {
-      const rowToDeleteIndex = randomInt(0, prevRows.length - 1);
-      return [
-        ...rows.slice(0, rowToDeleteIndex),
-        ...rows.slice(rowToDeleteIndex + 1),
-      ];
-    });
-  };
+  // const createRow = () => {
+  //
+  //   lineCounter += 1;
+  //   const msrpValue = dataProductIdNameQuantityInStock?.find(product =>
+  //     product.id === formValues.productId)?.msrp;
+  //   formValues.priceEach = msrpValue;
+  //   formValues.orderLineNumber = lineCounter;
+  //
+  //   let addRow = {
+  //     orderId: null, productId: formValues.productId,
+  //     quantityOrdered: formValues.quantityOrdered, priceEach: formValues.priceEach,
+  //     orderLineNumber: lineCounter,
+  //   };
+  //
+  //   setRows((prevRows) => [...prevRows, addRow]);
+  //   resetFormValues();
+  //
+  // };
 
   const handleTeste = () => {
     console.log("formValues", formValues);
@@ -198,11 +155,7 @@ const FormAddOrders = () => {
 
   const handleAddRow = () => {
 
-    if (!!errorsRef.quantityOrdered === true) {
-      setStatus("Product Id or Quantity has an error");
-      setDialogOpen(true);
-      return
-    }
+    console.log(formValues);
 
     if (formValues.productId === null || formValues.quantityOrdered === null) {
       setStatus("Product ID or Quantity is empty");
@@ -218,10 +171,20 @@ const FormAddOrders = () => {
       return
     }
 
-    // TODO -- verificar se prodId e quantityOrdered estão vazios
+    lineCounter += 1;
+    const msrpValue = dataProductIdNameQuantityInStock?.find(product =>
+      product.id === formValues.productId)?.msrp;
+    formValues.priceEach = msrpValue;
+    formValues.orderLineNumber = lineCounter;
 
-    // setRows((prevRows) => [...prevRows, createRow()]);
-    createRow();
+    let addRow = {
+      orderId: null, productId: formValues.productId,
+      quantityOrdered: formValues.quantityOrdered, priceEach: formValues.priceEach,
+      orderLineNumber: lineCounter,
+    };
+
+    setRows((prevRows) => [...prevRows, addRow]);
+    resetFormValues();
   };
 
   /////////////////////////////////////////////////////////////////////////////
@@ -253,6 +216,8 @@ const FormAddOrders = () => {
       setStatus(`Error: ${error.message || 'Failed to create Order'}`);
     }
 
+    setDialogOpen(true);
+
     setSubmitting(false);
     setDialogOpen(true);
   }
@@ -270,7 +235,7 @@ const FormAddOrders = () => {
     const updatedRows = rows.filter(row => row.orderLineNumber !== params.row.orderLineNumber);
     const reorderedRows = updatedRows.map((row, index) => ({
       ...row,
-      orderLineNumber: index + 1, // Reorganizar para que a sequência seja contínua
+      orderLineNumber: index + 1,
     }));
     setRows(reorderedRows);
   }
@@ -283,63 +248,109 @@ const FormAddOrders = () => {
 
         <Formik
           onSubmit={handleFormSubmit}
-          initialValues={initialValues}
+          initialValues={ordersInitialValues}
           validationSchema={ordersSchema}
         >
-          {({ values, errors, touched, handleBlur, handleChange, handleSubmit, setFieldValue }) => {
+          {({ values, errors, touched, handleBlur, handleChange, handleSubmit, setFieldValue }) => (
 
-            useEffect(() => {
-              setSetFieldValueRef(() => setFieldValue);
-              setErrorsRef(() => errors);
-            }, [setFieldValue, errors, touched]);
+            <form onSubmit={handleSubmit}>
+              <Box
+                display="grid"
+                gap="20px"
+                gridTemplateColumns="repeat(4, minmax(0, 1fr))"
+                sx={{
+                  "& > div": { gridColumn: isNonMobile ? undefined : "span 4" },
+                }}
+              >
+                <OrdersFormInputs
+                  handleBlur={handleBlur} handleChange={handleChange}
+                  values={values} touched={touched} errors={errors}
+                  ordersSchema={ordersSchema} setFieldValue={setFieldValue}
+                  dataProductIdNameQuantityInStock={dataProductIdNameQuantityInStock}
+                  dataCustomersIdNameCreditLimit={dataCustomersIdNameCreditLimit}
+                />
 
-            return (
-              <form onSubmit={handleSubmit}>
-                <Box
-                  display="grid"
-                  gap="20px"
-                  gridTemplateColumns="repeat(4, minmax(0, 1fr))"
-                  sx={{
-                    "& > div": { gridColumn: isNonMobile ? undefined : "span 4" },
-                  }}
-                >
-                  <OrdersFormInputs
-                    handleBlur={handleBlur} handleChange={handleChange}
-                    values={values} touched={touched} errors={errors}
-                    ordersSchema={ordersSchema} setFieldValue={setFieldValue}
-                    dataProductIdNameQuantityInStock={dataProductIdNameQuantityInStock}
-                    dataCustomersIdNameCreditLimit={dataCustomersIdNameCreditLimit}
-                    handleInputChange={handleInputChange}
-                  />
+                {/* <Button onClick={handleAddRow} color="secondary" variant="contained" */}
+                {/*   sx={{ gridColumn: "span 1", width: "50%" }}> */}
+                {/*   Add New Item */}
+                {/* </Button> */}
 
-                  <Button onClick={handleAddRow} color="secondary" variant="contained"
-                    sx={{ gridColumn: "span 1", width: "50%" }}>
-                    Add New Item
-                  </Button>
+                <Button type="submit" color="secondary" variant="contained"
+                  sx={{ gridColumn: "span 1", width: "50%" }}>
+                  Create New Order
+                </Button>
 
-                  <Button onClick={handleTeste} color="secondary" variant="contained"
-                    sx={{ gridColumn: "span 1", width: "50%" }}>
-                    Teste
-                  </Button>
-                </Box>
+                <Button onClick={handleTeste} color="secondary" variant="contained"
+                  sx={{ gridColumn: "span 1", width: "50%" }}>
+                  Teste
+                </Button>
+              </Box>
 
-                <Dialog open={dialogOpen} onClose={handleClose}>
-                  <DialogTitle>Operation Status</DialogTitle>
-                  <DialogContent>
-                    <DialogContentText>
-                      {status}
-                    </DialogContentText>
-                    <DialogActions>
-                      <Button onClick={handleClose} color="primary">
-                        OK
-                      </Button>
-                    </DialogActions>
-                  </DialogContent>
-                </Dialog>
-              </form>
-            );
-          }}
+              {/* <Dialog open={dialogOpen} onClose={handleClose}> */}
+              {/*   <DialogTitle>Operation Status</DialogTitle> */}
+              {/*   <DialogContent> */}
+              {/*     <DialogContentText> */}
+              {/*       {status} */}
+              {/*     </DialogContentText> */}
+              {/*     <DialogActions> */}
+              {/*       <Button onClick={handleClose} color="primary"> */}
+              {/*         OK */}
+              {/*       </Button> */}
+              {/*     </DialogActions> */}
+              {/*   </DialogContent> */}
+              {/* </Dialog> */}
+            </form>
+          )}
         </Formik>
+
+        <Formik
+          onSubmit={handleAddRow}
+          initialValues={ordersDetailsInitialValues}
+          validationSchema={ordersDetailsSchema}
+        >
+          {({ values, errors, touched, handleBlur, handleChange, setFieldValue }) => (
+            <form onSubmit={handleAddRow}>
+              <Box
+                display="grid"
+                gap="20px"
+                gridTemplateColumns="repeat(4, minmax(0, 1fr))"
+                sx={{
+                  "& > div": { gridColumn: isNonMobile ? undefined : "span 4" },
+                }}
+              >
+
+                <OrdersDetailsFormInputs
+                  handleBlur={handleBlur} handleChange={handleChange} values={values} touched={touched}
+                  errors={errors} ordersDetailsSchema={ordersDetailsSchema}
+                  setFieldValue={setFieldValue} dataProductIdNameQuantityInStock={dataProductIdNameQuantityInStock}
+                />
+
+                <Button type="submit" color="secondary" variant="contained"
+                  sx={{ gridColumn: "span 1", width: "50%" }}>
+                  Add New Item
+                </Button>
+
+              </Box>
+
+
+            </form>
+          )}
+        </Formik>
+
+        <Dialog open={dialogOpen} onClose={handleClose}>
+          <DialogTitle>Operation Status</DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+              {status}
+            </DialogContentText>
+            <DialogActions>
+              <Button onClick={handleClose} color="primary">
+                OK
+              </Button>
+            </DialogActions>
+          </DialogContent>
+        </Dialog>
+
       </Box>
 
       <Box m="20px">
@@ -383,7 +394,6 @@ const FormAddOrders = () => {
       </Box>
     </Box>
   )
-
 
 }
 
