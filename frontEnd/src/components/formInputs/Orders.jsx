@@ -19,7 +19,7 @@ const OrdersFormInputs = ({ handleBlur, handleChange, values, touched,
 
   return (
     <>
-      <Divider textAlign="left" sx={{ gridColumn: "span 4" }}>
+      <Divider textAlign="left" sx={{ gridColumn: "span 5" }}>
         Order Informations
       </Divider>
 

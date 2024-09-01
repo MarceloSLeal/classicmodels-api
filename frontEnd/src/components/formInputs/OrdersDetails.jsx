@@ -7,13 +7,13 @@ const OrdersDetailsFormInputs = ({ handleBlur, handleChange, values, touched,
 
   return (
     <>
-      <Divider textAlign="left" sx={{ gridColumn: "span 4" }}>
+      <Divider textAlign="left" sx={{ gridColumn: "span 5" }}>
         Order Itens
       </Divider>
 
       <FormControl
         variant="filled"
-        sx={{ gridColumn: "span 1" }}
+        sx={{ gridColumn: "span 2" }}
         validationschema={ordersDetailsSchema}
         error={!!touched.productId && !!errors.productId}
       >

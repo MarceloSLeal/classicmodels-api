@@ -39,9 +39,7 @@ const ordersSchema = yup.object().shape(({
 const ordersDetailsSchema = yup.object().shape(({
   productId: yup.number().required(),
   quantityOrdered: yup.number().required(),
-  priceEach: yup.number().required(),
-
-}))
+}));
 
 let lineCounter = 0;
 
@@ -106,64 +104,17 @@ const FormAddOrders = () => {
     },
   ]
 
-  const [formValues, setFormValues] = useState({
-    orderId: null,
-    productId: null,
-    quantityOrdered: null,
-    priceEach: null,
-    orderLineNumber: null,
-  })
-
-  const resetFormValues = () => {
-    setFormValues({
-      orderId: null,
-      productId: null,
-      quantityOrdered: null,
-      priceEach: null,
-      orderLineNumber: null,
-    })
-  }
-
-
-  /////////////////////////////////////////////////////////////////////////////
-  // let lineCounter = 0;
-
-  // const createRow = () => {
-  //
-  //   lineCounter += 1;
-  //   const msrpValue = dataProductIdNameQuantityInStock?.find(product =>
-  //     product.id === formValues.productId)?.msrp;
-  //   formValues.priceEach = msrpValue;
-  //   formValues.orderLineNumber = lineCounter;
-  //
-  //   let addRow = {
-  //     orderId: null, productId: formValues.productId,
-  //     quantityOrdered: formValues.quantityOrdered, priceEach: formValues.priceEach,
-  //     orderLineNumber: lineCounter,
-  //   };
-  //
-  //   setRows((prevRows) => [...prevRows, addRow]);
-  //   resetFormValues();
-  //
-  // };
 
   const handleTeste = () => {
-    console.log("formValues", formValues);
+    console.log("handleTeste");
     console.log("rows", rows);
-    console.log("errors!!", !!errorsRef.quantityOrdered);
   }
 
-  const handleAddRow = () => {
 
-    console.log(formValues);
+  // TODO -- adicionar lógica para calcular preço de acordo com a quantidade
+  const handleSubmitOrdersDetails = (values, { setSubmitting, resetForm }) => {
 
-    if (formValues.productId === null || formValues.quantityOrdered === null) {
-      setStatus("Product ID or Quantity is empty");
-      setDialogOpen(true);
-      return
-    }
-
-    const isProdId = rows?.some(prod => prod.productId === formValues.productId);
+    const isProdId = rows?.some(prod => prod.productId === values.productId);
 
     if (isProdId) {
       setStatus("The product is already on order");
@@ -173,25 +124,37 @@ const FormAddOrders = () => {
 
     lineCounter += 1;
     const msrpValue = dataProductIdNameQuantityInStock?.find(product =>
-      product.id === formValues.productId)?.msrp;
-    formValues.priceEach = msrpValue;
-    formValues.orderLineNumber = lineCounter;
+      product.id === values.productId)?.msrp;
+    values.priceEach = msrpValue;
+    values.orderLineNumber = lineCounter;
 
     let addRow = {
-      orderId: null, productId: formValues.productId,
-      quantityOrdered: formValues.quantityOrdered, priceEach: formValues.priceEach,
+      orderId: null, productId: values.productId,
+      quantityOrdered: values.quantityOrdered, priceEach: values.priceEach,
       orderLineNumber: lineCounter,
     };
 
+    console.log(values);
+
     setRows((prevRows) => [...prevRows, addRow]);
-    resetFormValues();
+
+    resetForm();
+    setSubmitting(false);
   };
 
-  /////////////////////////////////////////////////////////////////////////////
+  const handleDeleteDatagridButton = (params) => () => {
+    const updatedRows = rows.filter(row => row.orderLineNumber !== params.row.orderLineNumber);
+    const reorderedRows = updatedRows.map((row, index) => ({
+      ...row,
+      orderLineNumber: index + 1,
+    }));
+    setRows(reorderedRows);
+    lineCounter -= 1;
+  }
 
   // TODO -- Descobrir uma forma de fazer o submit para orders e ordersDetails
   // com os objetos que estiverem no form, se for um ou dois
-  const handleFormSubmit = async (values, { setSubmitting, resetForm }) => {
+  const handleSubmitOrders = async (values, { setSubmitting, resetForm }) => {
     setStatus('');
     setResponseCode(null);
     try {
@@ -231,14 +194,8 @@ const FormAddOrders = () => {
     }
   }
 
-  const handleDeleteDatagridButton = (params) => () => {
-    const updatedRows = rows.filter(row => row.orderLineNumber !== params.row.orderLineNumber);
-    const reorderedRows = updatedRows.map((row, index) => ({
-      ...row,
-      orderLineNumber: index + 1,
-    }));
-    setRows(reorderedRows);
-  }
+
+  // TODO - ajustar o span nos outros componentes Form Input
 
   return (
 
@@ -247,7 +204,7 @@ const FormAddOrders = () => {
         <Header title="CREATE ORDER" />
 
         <Formik
-          onSubmit={handleFormSubmit}
+          onSubmit={handleSubmitOrders}
           initialValues={ordersInitialValues}
           validationSchema={ordersSchema}
         >
@@ -257,65 +214,42 @@ const FormAddOrders = () => {
               <Box
                 display="grid"
                 gap="20px"
-                gridTemplateColumns="repeat(4, minmax(0, 1fr))"
+                gridTemplateColumns="repeat(5, minmax(0, 1fr))"
                 sx={{
-                  "& > div": { gridColumn: isNonMobile ? undefined : "span 4" },
+                  "& > div": { gridColumn: isNonMobile ? undefined : "span 5" },
                 }}
               >
                 <OrdersFormInputs
                   handleBlur={handleBlur} handleChange={handleChange}
                   values={values} touched={touched} errors={errors}
                   ordersSchema={ordersSchema} setFieldValue={setFieldValue}
-                  dataProductIdNameQuantityInStock={dataProductIdNameQuantityInStock}
                   dataCustomersIdNameCreditLimit={dataCustomersIdNameCreditLimit}
                 />
 
-                {/* <Button onClick={handleAddRow} color="secondary" variant="contained" */}
-                {/*   sx={{ gridColumn: "span 1", width: "50%" }}> */}
-                {/*   Add New Item */}
-                {/* </Button> */}
-
                 <Button type="submit" color="secondary" variant="contained"
-                  sx={{ gridColumn: "span 1", width: "50%" }}>
+                  sx={{ gridColumn: "span 1", height: "50%" }}>
                   Create New Order
                 </Button>
 
-                <Button onClick={handleTeste} color="secondary" variant="contained"
-                  sx={{ gridColumn: "span 1", width: "50%" }}>
-                  Teste
-                </Button>
               </Box>
-
-              {/* <Dialog open={dialogOpen} onClose={handleClose}> */}
-              {/*   <DialogTitle>Operation Status</DialogTitle> */}
-              {/*   <DialogContent> */}
-              {/*     <DialogContentText> */}
-              {/*       {status} */}
-              {/*     </DialogContentText> */}
-              {/*     <DialogActions> */}
-              {/*       <Button onClick={handleClose} color="primary"> */}
-              {/*         OK */}
-              {/*       </Button> */}
-              {/*     </DialogActions> */}
-              {/*   </DialogContent> */}
-              {/* </Dialog> */}
             </form>
           )}
         </Formik>
 
         <Formik
-          onSubmit={handleAddRow}
+          onSubmit={handleSubmitOrdersDetails}
           initialValues={ordersDetailsInitialValues}
           validationSchema={ordersDetailsSchema}
         >
-          {({ values, errors, touched, handleBlur, handleChange, setFieldValue }) => (
-            <form onSubmit={handleAddRow}>
+
+          {({ values, errors, touched, handleBlur, handleChange, handleSubmit, setFieldValue }) => (
+            <form onSubmit={handleSubmit}>
               <Box
                 display="grid"
                 gap="20px"
-                gridTemplateColumns="repeat(4, minmax(0, 1fr))"
+                gridTemplateColumns="repeat(5, minmax(0, 1fr))"
                 sx={{
-                  "& > div": { gridColumn: isNonMobile ? undefined : "span 4" },
+                  "& > div": { gridColumn: isNonMobile ? undefined : "span 5" },
                 }}
               >
 
@@ -326,30 +260,38 @@ const FormAddOrders = () => {
                 />
 
                 <Button type="submit" color="secondary" variant="contained"
-                  sx={{ gridColumn: "span 1", width: "50%" }}>
+                  sx={{ gridColumn: "span 1" }}>
                   Add New Item
                 </Button>
 
+                <Button onClick={handleTeste} color="secondary" variant="contained"
+                  sx={{ gridColumn: "span 1" }}>
+                  Teste
+                </Button>
+
               </Box>
+
+
+              <Dialog open={dialogOpen} onClose={handleClose}>
+                <DialogTitle>Operation Status</DialogTitle>
+                <DialogContent>
+                  <DialogContentText>
+                    {status}
+                  </DialogContentText>
+                  <DialogActions>
+                    <Button onClick={handleClose} color="primary">
+                      OK
+                    </Button>
+                  </DialogActions>
+                </DialogContent>
+              </Dialog>
 
 
             </form>
           )}
         </Formik>
 
-        <Dialog open={dialogOpen} onClose={handleClose}>
-          <DialogTitle>Operation Status</DialogTitle>
-          <DialogContent>
-            <DialogContentText>
-              {status}
-            </DialogContentText>
-            <DialogActions>
-              <Button onClick={handleClose} color="primary">
-                OK
-              </Button>
-            </DialogActions>
-          </DialogContent>
-        </Dialog>
+
 
       </Box>
 
@@ -392,7 +334,7 @@ const FormAddOrders = () => {
         </Box>
 
       </Box>
-    </Box>
+    </Box >
   )
 
 }
