@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 
-import { DataGrid, GridToolbarContainer, GridActionsCellItem } from "@mui/x-data-grid";
+import { DataGrid, GridActionsCellItem } from "@mui/x-data-grid";
 import {
   Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle,
   useTheme,
@@ -10,7 +10,7 @@ import DeleteIcon from '@mui/icons-material/DeleteOutlined';
 import Tooltip, { tooltipClasses } from '@mui/material/Tooltip';
 import { styled } from '@mui/material/styles';
 
-import { Form, Formik } from "formik";
+import { Formik } from "formik";
 import * as yup from "yup";
 
 import Header from "../../components/Header";
@@ -19,23 +19,32 @@ import FormListCalls from "../../components/FormsListCalls";
 import { tokens } from "../../theme";
 import OrdersFormInputs from "../../components/formInputs/Orders";
 import OrdersDetailsFormInputs from "../../components/formInputs/OrdersDetails";
+import dayjs from 'dayjs';
 
-
+const tomorrow = dayjs().add(1, 'day'); // Mantenha como objeto dayjs
 const ordersInitialValues = {
-  requiredDate: "", comments: "", customerId: ""
-}
+  customerId: "",
+  requiredDate: { date: tomorrow }, // 'date' agora é um objeto dayjs
+  comments: "",
+};
 const ordersDetailsInitialValues = {
   productId: "", quantityOrdered: "", priceEach: ""
 }
 
 const commentsRegex = /^[\p{L}\p{N}\s.,!?'"()-]+$/u;
-const ordersSchema = yup.object().shape(({
-  requiredDate: yup.date().required(),
+const ordersSchema = yup.object().shape({
+  customerId: yup.number().required(),
+  requiredDate: yup.object().shape({
+    date: yup.mixed().required("Required Date is required").test(
+      "is-dayjs",
+      "Date is not valid",
+      value => dayjs.isDayjs(value) // Verifica se é um objeto dayjs
+    ),
+  }),
   comments: yup
     .string()
     .matches(commentsRegex, "Accepts only text"),
-  customerId: yup.number().required(),
-}));
+});
 const ordersDetailsSchema = yup.object().shape(({
   productId: yup.number().required(),
   quantityOrdered: yup.number().required(),
@@ -157,13 +166,19 @@ const FormAddOrders = () => {
   const handleSubmitOrders = async (values, { setSubmitting, resetForm }) => {
     setStatus('');
     setResponseCode(null);
+
+    const formattedValues = {
+      ...values,
+      requiredDate: values.requiredDate.date.format('YYYY-MM-DDTHH:mm:ssZ'),
+    };
+
     try {
       const response = await fetch(url.orders.findAll_Post, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(values),
+        body: JSON.stringify(formattedValues),
       });
       const data = await response.json();
 
@@ -171,7 +186,7 @@ const FormAddOrders = () => {
 
       if (response.ok) {
         setStatus('Order created successfully!');
-        setResetFormFn(() => resetForm);
+        resetForm();
       } else {
         setStatus(`Error: ${data.title || 'Failed to create Order'}`);
       }
@@ -252,7 +267,6 @@ const FormAddOrders = () => {
                   "& > div": { gridColumn: isNonMobile ? undefined : "span 5" },
                 }}
               >
-
                 <OrdersDetailsFormInputs
                   handleBlur={handleBlur} handleChange={handleChange} values={values} touched={touched}
                   errors={errors} ordersDetailsSchema={ordersDetailsSchema}
@@ -290,9 +304,6 @@ const FormAddOrders = () => {
             </form>
           )}
         </Formik>
-
-
-
       </Box>
 
       <Box m="20px">
@@ -332,11 +343,9 @@ const FormAddOrders = () => {
             getRowId={(row) => `${row.orderLineNumber}`}
           />
         </Box>
-
       </Box>
     </Box >
   )
-
 }
 
 export default FormAddOrders;

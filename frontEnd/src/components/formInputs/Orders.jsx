@@ -1,5 +1,4 @@
 import { TextField, FormControl, InputLabel, Select, MenuItem, FormHelperText } from "@mui/material";
-
 import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -7,15 +6,11 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import dayjs from 'dayjs';
 import Divider from '@mui/material/Divider';
 
-// const OrdersFormInputs = ({ handleBlur, handleChange, values, touched,
-//   errors, ordersSchema, setFieldValue, dataProductIdNameQuantityInStock,
-//   dataCustomersIdNameCreditLimit, handleInputChange
-// }) => {
-
 const OrdersFormInputs = ({ handleBlur, handleChange, values, touched,
   errors, ordersSchema, setFieldValue, dataCustomersIdNameCreditLimit, }) => {
 
-  const tomorrow = dayjs().add(1, 'day');
+  // console.log(values.requiredDate.date);
+
 
   return (
     <>
@@ -52,18 +47,35 @@ const OrdersFormInputs = ({ handleBlur, handleChange, values, touched,
         </FormHelperText>
       </FormControl>
 
-      <LocalizationProvider dateAdapter={AdapterDayjs}>
-        <DemoContainer
-          components={['DatePicker']}
-          sx={{ gridColumn: "span 1" }}
-        >
-          <DatePicker
-            label="Required Date"
-            defaultValue={tomorrow}
-            disablePast
-          />
-        </DemoContainer>
-      </LocalizationProvider>
+      <FormControl
+        variant="filled"
+        sx={{ gridColumn: "span 1" }}
+        validationschema={ordersSchema}
+        error={!!touched.requiredDate?.date && !!errors.requiredDate?.date}
+      >
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+          <DemoContainer
+            components={['DatePicker']}
+            sx={{ gridColumn: "span 1" }}
+          >
+            <DatePicker
+              label="Required Date"
+              disablePast
+              value={values.requiredDate.date} // Objeto dayjs é esperado aqui
+              onChange={(newValue) => {
+                if (dayjs.isDayjs(newValue)) {
+                  setFieldValue('requiredDate', { date: newValue });
+                } else {
+                  console.error("newValue is not a dayjs object", newValue);
+                }
+              }}
+            />
+          </DemoContainer>
+        </LocalizationProvider>
+        <FormHelperText error={!!touched.requiredDate?.date && !!errors.requiredDate?.date}>
+          {touched.requiredDate?.date && errors.requiredDate?.date}
+        </FormHelperText>
+      </FormControl>
 
       <TextField
         variant="filled"
@@ -73,60 +85,12 @@ const OrdersFormInputs = ({ handleBlur, handleChange, values, touched,
         rows={3}
         onBlur={handleBlur}
         onChange={handleChange}
-        values={values.comments}
+        value={values.comments}
         name="comments"
         error={!!touched.comments && !!errors.comments}
         helperText={touched.comments && errors.comments}
         sx={{ gridColumn: "span 1" }}
       />
-
-      {/* <Divider textAlign="left" sx={{ gridColumn: "span 4" }}> */}
-      {/*   Order Itens */}
-      {/* </Divider> */}
-      {/**/}
-      {/* <FormControl */}
-      {/*   variant="filled" */}
-      {/*   sx={{ gridColumn: "span 1" }} */}
-      {/*   validationschema={ordersSchema} */}
-      {/*   error={!!touched.productId && !!errors.productId} */}
-      {/* > */}
-      {/*   <InputLabel id="productId-select-label">Product Id</InputLabel> */}
-      {/*   <Select */}
-      {/*     labelId="productId-select-label" */}
-      {/*     id="productId-select" */}
-      {/*     name="productId" */}
-      {/*     value={values.productId} */}
-      {/*     onChange={(event) => setFieldValue('productId', */}
-      {/*       event.target.value, handleInputChange("productId", event.target.value))} */}
-      {/*     onBlur={handleBlur} */}
-      {/*     label="Product Id" */}
-      {/*   > */}
-      {/*     {dataProductIdNameQuantityInStock && dataProductIdNameQuantityInStock.map((product) => ( */}
-      {/*       <MenuItem key={product.id} value={product.id}> */}
-      {/*         {product.id} {" - "} */}
-      {/*         {product.name} {" - stock - "} {product.quantityInStock} */}
-      {/*       </MenuItem> */}
-      {/*     ))} */}
-      {/*   </Select> */}
-      {/*   <FormHelperText error={!!touched.productId && !!errors.productId}> */}
-      {/*     {touched.productId && errors.productId} */}
-      {/*   </FormHelperText> */}
-      {/* </FormControl > */}
-      {/**/}
-      {/* <TextField */}
-      {/*   variant="filled" */}
-      {/*   type="text" */}
-      {/*   label="Quantity" */}
-      {/*   onBlur={handleBlur} */}
-      {/*   // onChange={handleChange} */}
-      {/*   onChange={(event) => setFieldValue('quantityOrdered', */}
-      {/*     event.target.value, handleInputChange("quantityOrdered", event.target.value))} */}
-      {/*   value={values.quantityOrdered} */}
-      {/*   name="quantityOrdered" */}
-      {/*   error={!!touched.quantityOrdered && !!errors.quantityOrdered} */}
-      {/*   helperText={touched.quantityOrdered && errors.quantityOrdered} */}
-      {/*   sx={{ gridColumn: "span 1" }} */}
-      {/* /> */}
 
     </>
   )
