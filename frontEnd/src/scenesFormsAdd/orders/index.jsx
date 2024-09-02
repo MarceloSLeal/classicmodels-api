@@ -186,6 +186,16 @@ const FormAddOrders = () => {
 
       if (response.ok) {
         setStatus('Order created successfully!');
+
+        const responseOrderId = data.id;
+        console.log("orderId", responseOrderId);
+
+        const rowsUpdate = rows.map((row) => ({
+          ...row,
+          orderId: responseOrderId, // Atualiza o orderId em cada linha
+        }));
+        setRows(rowsUpdate); // Substitui o estado com as linhas atualizadas
+
         resetForm();
       } else {
         setStatus(`Error: ${data.title || 'Failed to create Order'}`);
@@ -282,28 +292,27 @@ const FormAddOrders = () => {
                   sx={{ gridColumn: "span 1" }}>
                   Teste
                 </Button>
-
               </Box>
-
-
-              <Dialog open={dialogOpen} onClose={handleClose}>
-                <DialogTitle>Operation Status</DialogTitle>
-                <DialogContent>
-                  <DialogContentText>
-                    {status}
-                  </DialogContentText>
-                  <DialogActions>
-                    <Button onClick={handleClose} color="primary">
-                      OK
-                    </Button>
-                  </DialogActions>
-                </DialogContent>
-              </Dialog>
-
 
             </form>
           )}
         </Formik>
+
+        {/* TODO -- alterar a cor do botão ok */}
+        <Dialog open={dialogOpen} onClose={handleClose}>
+          <DialogTitle>Operation Status</DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+              {status}
+            </DialogContentText>
+            <DialogActions>
+              <Button onClick={handleClose} color="primary">
+                OK
+              </Button>
+            </DialogActions>
+          </DialogContent>
+        </Dialog>
+
       </Box>
 
       <Box m="20px">
