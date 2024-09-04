@@ -1,26 +1,16 @@
-package com.classicmodels.domain.model;
+package com.classicmodels.api.model.input;
 
-import com.classicmodels.domain.model.modelId.OrderDetailsId;
-import jakarta.persistence.*;
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Getter
 @Setter
-@Entity
-@IdClass(OrderDetailsId.class)
-@Table(name = "orderdetails")
-public class OrderDetails {
+public class OrderDetailsInput {
 
-    @Id
     @NotNull
     private Long orderId;
-    @Id
     @NotNull
     private Long productId;
     @Positive

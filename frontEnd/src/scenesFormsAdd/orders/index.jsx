@@ -117,6 +117,7 @@ const FormAddOrders = () => {
   const handleTeste = () => {
     console.log("handleTeste");
     console.log("rows", rows);
+    console.log(rows);
   }
 
 
@@ -142,8 +143,6 @@ const FormAddOrders = () => {
       quantityOrdered: values.quantityOrdered, priceEach: values.priceEach,
       orderLineNumber: lineCounter,
     };
-
-    console.log(values);
 
     setRows((prevRows) => [...prevRows, addRow]);
 
@@ -188,13 +187,14 @@ const FormAddOrders = () => {
         setStatus('Order created successfully!');
 
         const responseOrderId = data.id;
-        console.log("orderId", responseOrderId);
 
         const rowsUpdate = rows.map((row) => ({
           ...row,
-          orderId: responseOrderId, // Atualiza o orderId em cada linha
+          orderId: responseOrderId,
         }));
-        setRows(rowsUpdate); // Substitui o estado com as linhas atualizadas
+        setRows(rowsUpdate);
+
+        await handlePostOrdersDetails(rowsUpdate);
 
         resetForm();
       } else {
@@ -208,6 +208,29 @@ const FormAddOrders = () => {
 
     setSubmitting(false);
     setDialogOpen(true);
+  }
+
+  const handlePostOrdersDetails = async (rowsUpdate) => {
+
+    console.log("handlePostOrderDetails", rowsUpdate);
+
+    try {
+      const response = await fetch(url.orderdetails.Post, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(rowsUpdate),
+      });
+
+      const data = await response.json();
+
+      console.log(data);
+
+    } catch (error) {
+      setStatus(`Error: ${error.message || 'Failed to save order details'}`);
+    }
+
   }
 
 
