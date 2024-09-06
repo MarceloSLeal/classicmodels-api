@@ -9,9 +9,6 @@ import Divider from '@mui/material/Divider';
 const OrdersFormInputs = ({ handleBlur, handleChange, values, touched,
   errors, ordersSchema, setFieldValue, dataCustomersIdNameCreditLimit, }) => {
 
-  // console.log(values.requiredDate.date);
-
-
   return (
     <>
       <Divider textAlign="left" sx={{ gridColumn: "span 5" }}>
