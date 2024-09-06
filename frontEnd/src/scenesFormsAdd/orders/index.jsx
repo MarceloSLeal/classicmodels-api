@@ -21,10 +21,10 @@ import OrdersFormInputs from "../../components/formInputs/Orders";
 import OrdersDetailsFormInputs from "../../components/formInputs/OrdersDetails";
 import dayjs from 'dayjs';
 
-const tomorrow = dayjs().add(1, 'day'); // Mantenha como objeto dayjs
+const tomorrow = dayjs().add(1, 'day');
 const ordersInitialValues = {
   customerId: "",
-  requiredDate: { date: tomorrow }, // 'date' agora é um objeto dayjs
+  requiredDate: { date: tomorrow },
   comments: "",
 };
 const ordersDetailsInitialValues = {
@@ -38,7 +38,7 @@ const ordersSchema = yup.object().shape({
     date: yup.mixed().required("Required Date is required").test(
       "is-dayjs",
       "Date is not valid",
-      value => dayjs.isDayjs(value) // Verifica se é um objeto dayjs
+      value => dayjs.isDayjs(value)
     ),
   }),
   comments: yup
@@ -63,8 +63,6 @@ const FormAddOrders = () => {
   const [resetFormFn, setResetFormFn] = useState(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [status, setStatus] = useState('');
-
-  // TODO -- verifiquei que precisa criar o método POST para inserir na tabela OrderDetails
 
   const [dataProductIdNameQuantityInStock, setDataProductIdNameQuantityInStock] = useState(null);
   FormListCalls(url.products.findByIdNameQuantityInStock, setDataProductIdNameQuantityInStock);
@@ -114,14 +112,6 @@ const FormAddOrders = () => {
   ]
 
 
-  const handleTeste = () => {
-    console.log("handleTeste");
-    console.log("rows", rows);
-    console.log(rows);
-  }
-
-
-  // TODO -- adicionar lógica para calcular preço de acordo com a quantidade
   const handleSubmitOrdersDetails = (values, { setSubmitting, resetForm }) => {
 
     const isProdId = rows?.some(prod => prod.productId === values.productId);
@@ -132,10 +122,21 @@ const FormAddOrders = () => {
       return
     }
 
+    function calcDicount(numProd) {
+      if (numProd == 1) return 0;
+      if (numProd >= 100) return 40;
+
+      const discount = ((numProd - 1) / 99) * 40;
+      return discount.toFixed(2);
+    }
+
     lineCounter += 1;
     const msrpValue = dataProductIdNameQuantityInStock?.find(product =>
       product.id === values.productId)?.msrp;
-    values.priceEach = msrpValue;
+
+    let discCalc = msrpValue - (msrpValue * calcDicount(values.quantityOrdered) / 100);
+    values.priceEach = discCalc.toFixed(2);
+
     values.orderLineNumber = lineCounter;
 
     let addRow = {
@@ -160,8 +161,6 @@ const FormAddOrders = () => {
     lineCounter -= 1;
   }
 
-  // TODO -- Descobrir uma forma de fazer o submit para orders e ordersDetails
-  // com os objetos que estiverem no form, se for um ou dois
   const handleSubmitOrders = async (values, { setSubmitting, resetForm }) => {
     setStatus('');
     setResponseCode(null);
@@ -233,7 +232,6 @@ const FormAddOrders = () => {
 
   }
 
-
   // TODO -- fazer a verificação com o response de orders e orderDetails
   const handleClose = () => {
     setDialogOpen(false);
@@ -242,11 +240,8 @@ const FormAddOrders = () => {
     }
   }
 
-
   // TODO - ajustar o span nos outros componentes Form Input
-
   return (
-
     <Box>
       <Box m="20px">
         <Header title="CREATE ORDER" />
@@ -289,8 +284,8 @@ const FormAddOrders = () => {
           initialValues={ordersDetailsInitialValues}
           validationSchema={ordersDetailsSchema}
         >
-
           {({ values, errors, touched, handleBlur, handleChange, handleSubmit, setFieldValue }) => (
+
             <form onSubmit={handleSubmit}>
               <Box
                 display="grid"
@@ -309,11 +304,6 @@ const FormAddOrders = () => {
                 <Button type="submit" color="secondary" variant="contained"
                   sx={{ gridColumn: "span 1" }}>
                   Add New Item
-                </Button>
-
-                <Button onClick={handleTeste} color="secondary" variant="contained"
-                  sx={{ gridColumn: "span 1" }}>
-                  Teste
                 </Button>
               </Box>
 
