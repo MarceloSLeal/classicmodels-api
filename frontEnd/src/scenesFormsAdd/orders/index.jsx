@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 
 import { DataGrid, GridActionsCellItem } from "@mui/x-data-grid";
 import {
@@ -60,7 +60,6 @@ const FormAddOrders = () => {
   const colors = tokens(theme.palette.mode);
   const isNonMobile = useMediaQuery("(min-width:600px)");
   const [responseCode, setResponseCode] = useState(null);
-  const [resetFormFn, setResetFormFn] = useState(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [status, setStatus] = useState('');
 
@@ -111,8 +110,17 @@ const FormAddOrders = () => {
     },
   ]
 
-
+  // TODO -- tentar adicionar um aviso quando o valor total do pedido ultrapassar o limite de crédito
   const handleSubmitOrdersDetails = (values, { setSubmitting, resetForm }) => {
+
+    // console.log(dataCustomersIdNameCreditLimit);
+    // console.log("handlePostOrderDetails", rowsUpdate);
+
+    // if ( === null) {
+    //   setStatus("Select a Customer first");
+    //   setDialogOpen(true);
+    //   return
+    // }
 
     const isProdId = rows?.some(prod => prod.productId === values.productId);
 
@@ -161,6 +169,8 @@ const FormAddOrders = () => {
     lineCounter -= 1;
   }
 
+  // TODO -- limpar o array rows após salvar o pedido
+  // TODO -- não permitir o submit se rows estiver vazio
   const handleSubmitOrders = async (values, { setSubmitting, resetForm }) => {
     setStatus('');
     setResponseCode(null);
@@ -211,8 +221,6 @@ const FormAddOrders = () => {
 
   const handlePostOrdersDetails = async (rowsUpdate) => {
 
-    console.log("handlePostOrderDetails", rowsUpdate);
-
     try {
       const response = await fetch(url.orderdetails.Post, {
         method: 'POST',
@@ -224,7 +232,7 @@ const FormAddOrders = () => {
 
       const data = await response.json();
 
-      console.log(data);
+      // console.log(data);
 
     } catch (error) {
       setStatus(`Error: ${error.message || 'Failed to save order details'}`);
@@ -232,12 +240,8 @@ const FormAddOrders = () => {
 
   }
 
-  // TODO -- fazer a verificação com o response de orders e orderDetails
   const handleClose = () => {
     setDialogOpen(false);
-    if (responseCode === 201 && resetFormFn) {
-      resetFormFn();
-    }
   }
 
   // TODO - ajustar o span nos outros componentes Form Input
@@ -317,6 +321,8 @@ const FormAddOrders = () => {
           <DialogContent>
             <DialogContentText>
               {status}
+              {responseCode !== null && <br />}
+              Response Code: {responseCode}
             </DialogContentText>
             <DialogActions>
               <Button onClick={handleClose} color="primary">
