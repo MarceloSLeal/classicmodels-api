@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 
 import { DataGrid, GridActionsCellItem } from "@mui/x-data-grid";
 import {
@@ -20,6 +20,7 @@ import { tokens } from "../../theme";
 import OrdersFormInputs from "../../components/formInputs/Orders";
 import OrdersDetailsFormInputs from "../../components/formInputs/OrdersDetails";
 import dayjs from 'dayjs';
+import { rowsStateInitializer } from "@mui/x-data-grid/internals";
 
 const tomorrow = dayjs().add(1, 'day');
 const ordersInitialValues = {
@@ -62,6 +63,8 @@ const FormAddOrders = () => {
   const [responseCode, setResponseCode] = useState(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [status, setStatus] = useState('');
+  const ordersFormikValuesRef = useRef(null);
+  const setOrdersFieldValueRef = useRef(null);
 
   const [dataProductIdNameQuantityInStock, setDataProductIdNameQuantityInStock] = useState(null);
   FormListCalls(url.products.findByIdNameQuantityInStock, setDataProductIdNameQuantityInStock);
@@ -113,14 +116,14 @@ const FormAddOrders = () => {
   // TODO -- tentar adicionar um aviso quando o valor total do pedido ultrapassar o limite de crédito
   const handleSubmitOrdersDetails = (values, { setSubmitting, resetForm }) => {
 
-    // console.log(dataCustomersIdNameCreditLimit);
-    // console.log("handlePostOrderDetails", rowsUpdate);
+    const customerId = ordersFormikValuesRef.current?.customerId;
 
-    // if ( === null) {
-    //   setStatus("Select a Customer first");
-    //   setDialogOpen(true);
-    //   return
-    // }
+    if (customerId === "") {
+      setStatus("Select a Customer first");
+      setResponseCode(null);
+      setDialogOpen(true);
+      return
+    }
 
     const isProdId = rows?.some(prod => prod.productId === values.productId);
 
@@ -152,6 +155,28 @@ const FormAddOrders = () => {
       quantityOrdered: values.quantityOrdered, priceEach: values.priceEach,
       orderLineNumber: lineCounter,
     };
+
+
+    const totalFromRows = rows.reduce((total, row) => {
+      return total + row.quantityOrdered * row.priceEach;
+    }, 0);
+
+    const total = totalFromRows + (values.quantityOrdered * values.priceEach);
+
+    console.log("total", total);
+    // console.log(dataCustomersIdNameCreditLimit);
+
+    const checkCredit = dataCustomersIdNameCreditLimit.find((custCredit) => {
+      return custCredit.id === customerId;
+    });
+
+    if (total > checkCredit.creditLimit) {
+      setStatus(`With this last order the total amount exceeds the customer's 
+credit limit. ${total}`);
+      setDialogOpen(true);
+      return
+    }
+
 
     setRows((prevRows) => [...prevRows, addRow]);
 
@@ -255,32 +280,39 @@ const FormAddOrders = () => {
           initialValues={ordersInitialValues}
           validationSchema={ordersSchema}
         >
-          {({ values, errors, touched, handleBlur, handleChange, handleSubmit, setFieldValue }) => (
+          {({ values, errors, touched, handleBlur, handleChange, handleSubmit, setFieldValue }) => {
 
-            <form onSubmit={handleSubmit}>
-              <Box
-                display="grid"
-                gap="20px"
-                gridTemplateColumns="repeat(5, minmax(0, 1fr))"
-                sx={{
-                  "& > div": { gridColumn: isNonMobile ? undefined : "span 5" },
-                }}
-              >
-                <OrdersFormInputs
-                  handleBlur={handleBlur} handleChange={handleChange}
-                  values={values} touched={touched} errors={errors}
-                  ordersSchema={ordersSchema} setFieldValue={setFieldValue}
-                  dataCustomersIdNameCreditLimit={dataCustomersIdNameCreditLimit}
-                />
+            useEffect(() => {
+              ordersFormikValuesRef.current = values;
+              setOrdersFieldValueRef.current = setFieldValue;
+            }, [values, setFieldValue]);
 
-                <Button type="submit" color="secondary" variant="contained"
-                  sx={{ gridColumn: "span 1", height: "50%" }}>
-                  Create New Order
-                </Button>
+            return (
+              <form onSubmit={handleSubmit}>
+                <Box
+                  display="grid"
+                  gap="20px"
+                  gridTemplateColumns="repeat(5, minmax(0, 1fr))"
+                  sx={{
+                    "& > div": { gridColumn: isNonMobile ? undefined : "span 5" },
+                  }}
+                >
+                  <OrdersFormInputs
+                    handleBlur={handleBlur} handleChange={handleChange}
+                    values={values} touched={touched} errors={errors}
+                    ordersSchema={ordersSchema} setFieldValue={setFieldValue}
+                    dataCustomersIdNameCreditLimit={dataCustomersIdNameCreditLimit}
+                  />
 
-              </Box>
-            </form>
-          )}
+                  <Button type="submit" color="secondary" variant="contained"
+                    sx={{ gridColumn: "span 1", height: "50%" }}>
+                    Create New Order
+                  </Button>
+
+                </Box>
+              </form>
+            )
+          }}
         </Formik>
 
         <Formik
@@ -315,17 +347,22 @@ const FormAddOrders = () => {
           )}
         </Formik>
 
-        {/* TODO -- alterar a cor do botão ok */}
+        {/* TODO -- mudar a cor do ok para os outros dialogs */}
+        {/* TODO -- talvez criar um componente para o dialogbox */}
         <Dialog open={dialogOpen} onClose={handleClose}>
           <DialogTitle>Operation Status</DialogTitle>
           <DialogContent>
             <DialogContentText>
               {status}
-              {responseCode !== null && <br />}
-              Response Code: {responseCode}
+              <br />
+              {responseCode !== null ? (
+                <>
+                  Response Code: {responseCode}
+                </>
+              ) : null}
             </DialogContentText>
             <DialogActions>
-              <Button onClick={handleClose} color="primary">
+              <Button onClick={handleClose} color="inherit">
                 OK
               </Button>
             </DialogActions>
