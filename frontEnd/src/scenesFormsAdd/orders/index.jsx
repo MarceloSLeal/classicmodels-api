@@ -20,7 +20,6 @@ import { tokens } from "../../theme";
 import OrdersFormInputs from "../../components/formInputs/Orders";
 import OrdersDetailsFormInputs from "../../components/formInputs/OrdersDetails";
 import dayjs from 'dayjs';
-import { rowsStateInitializer } from "@mui/x-data-grid/internals";
 
 const tomorrow = dayjs().add(1, 'day');
 const ordersInitialValues = {
@@ -51,7 +50,6 @@ const ordersDetailsSchema = yup.object().shape(({
   quantityOrdered: yup.number().required(),
 }));
 
-let lineCounter = 0;
 
 const FormAddOrders = () => {
 
@@ -65,6 +63,7 @@ const FormAddOrders = () => {
   const [status, setStatus] = useState('');
   const ordersFormikValuesRef = useRef(null);
   const setOrdersFieldValueRef = useRef(null);
+  const [lineCounter, setLineCounter] = useState(0);
 
   const [dataProductIdNameQuantityInStock, setDataProductIdNameQuantityInStock] = useState(null);
   FormListCalls(url.products.findByIdNameQuantityInStock, setDataProductIdNameQuantityInStock);
@@ -113,7 +112,6 @@ const FormAddOrders = () => {
     },
   ]
 
-  // TODO -- tentar adicionar um aviso quando o valor total do pedido ultrapassar o limite de crédito
   const handleSubmitOrdersDetails = (values, { setSubmitting, resetForm }) => {
 
     const customerId = ordersFormikValuesRef.current?.customerId;
@@ -141,42 +139,34 @@ const FormAddOrders = () => {
       return discount.toFixed(2);
     }
 
-    lineCounter += 1;
     const msrpValue = dataProductIdNameQuantityInStock?.find(product =>
       product.id === values.productId)?.msrp;
 
     let discCalc = msrpValue - (msrpValue * calcDicount(values.quantityOrdered) / 100);
     values.priceEach = discCalc.toFixed(2);
 
-    values.orderLineNumber = lineCounter;
-
-    let addRow = {
-      orderId: null, productId: values.productId,
-      quantityOrdered: values.quantityOrdered, priceEach: values.priceEach,
-      orderLineNumber: lineCounter,
-    };
-
-
     const totalFromRows = rows.reduce((total, row) => {
       return total + row.quantityOrdered * row.priceEach;
     }, 0);
-
     const total = totalFromRows + (values.quantityOrdered * values.priceEach);
-
-    console.log("total", total);
-    // console.log(dataCustomersIdNameCreditLimit);
-
     const checkCredit = dataCustomersIdNameCreditLimit.find((custCredit) => {
       return custCredit.id === customerId;
     });
-
     if (total > checkCredit.creditLimit) {
       setStatus(`With this last order the total amount exceeds the customer's 
-credit limit. ${total}`);
+      credit limit. ${total}`);
       setDialogOpen(true);
       return
     }
 
+    const newCounter = lineCounter + 1;
+    setLineCounter((prevCounter) => prevCounter + 1);
+    values.orderLineNumber = newCounter;
+    let addRow = {
+      orderId: null, productId: values.productId,
+      quantityOrdered: values.quantityOrdered, priceEach: values.priceEach,
+      orderLineNumber: newCounter,
+    };
 
     setRows((prevRows) => [...prevRows, addRow]);
 
@@ -191,14 +181,18 @@ credit limit. ${total}`);
       orderLineNumber: index + 1,
     }));
     setRows(reorderedRows);
-    lineCounter -= 1;
+    setLineCounter((prevCounter) => prevCounter - 1);
   }
 
-  // TODO -- limpar o array rows após salvar o pedido
-  // TODO -- não permitir o submit se rows estiver vazio
   const handleSubmitOrders = async (values, { setSubmitting, resetForm }) => {
     setStatus('');
     setResponseCode(null);
+
+    if (rows.length === 0) {
+      setStatus('need to add items to the order');
+      setDialogOpen(true);
+      return
+    }
 
     const formattedValues = {
       ...values,
@@ -230,6 +224,8 @@ credit limit. ${total}`);
 
         await handlePostOrdersDetails(rowsUpdate);
 
+        setRows([]);
+        setLineCounter(0);
         resetForm();
       } else {
         setStatus(`Error: ${data.title || 'Failed to create Order'}`);
@@ -255,14 +251,14 @@ credit limit. ${total}`);
         body: JSON.stringify(rowsUpdate),
       });
 
-      const data = await response.json();
-
-      // console.log(data);
-
+      if (response.ok) {
+        setStatus((prevString) => prevString + " Order Details created sucessfully!");
+      } else {
+        setStatus((prevString) => prevString + " " + response);
+      }
     } catch (error) {
       setStatus(`Error: ${error.message || 'Failed to save order details'}`);
     }
-
   }
 
   const handleClose = () => {
