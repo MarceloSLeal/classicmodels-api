@@ -16,6 +16,7 @@ import Header from "../../components/Header";
 import { Urls } from "../../api/Paths";
 import FormListCalls from "../../components/FormsListCalls";
 import { Constants } from "../../data/constants";
+import Divider from '@mui/material/Divider';
 
 const employeeSchema = yup.object().shape({
   lastName: yup.string().max(50).required(),
@@ -100,11 +101,13 @@ const FormEditEmployee = () => {
             <Box
               display="grid"
               gap="20px"
-              gridTemplateColumns="repeat(4, minmax(0, 1fr))"
+              gridTemplateColumns="repeat(5, minmax(0, 1fr))"
               sx={{
-                "& > div": { gridColumn: isNonMobile ? undefined : "span 4" },
+                "& > div": { gridColumn: isNonMobile ? undefined : "span 5" },
               }}
             >
+
+              <Divider sx={{ gridColumn: "span 5" }} />
 
               <EmployeesFormInputs
                 handleBlur={handleBlur} handleChange={handleChange}
@@ -119,6 +122,8 @@ const FormEditEmployee = () => {
                 Save
               </Button>
             </Box>
+
+            <Divider sx={{ gridColumn: "span 5" }} />
 
             <Dialog open={dialogOpen} onClose={handleClose}>
               <DialogTitle>Operation Status</DialogTitle>

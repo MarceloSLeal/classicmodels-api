@@ -14,6 +14,7 @@ import OfficesFormInputs from "../../components/formInputs/Offices";
 import { useNavigate } from "react-router-dom";
 import Header from "../../components/Header";
 import { Urls } from "../../api/Paths";
+import Divider from '@mui/material/Divider';
 
 const phoneRegExp = /^((\+[1-9]{1,4}[ -]?)|(\([0-9]{2,3}\)[ -]?)|([0-9]{2,4})[ -]?)*?[0-9]{3,4}[ -]?[0-9]{3,4}$/;
 
@@ -99,11 +100,14 @@ const FormEditOffices = () => {
             <Box
               display="grid"
               gap="20px"
-              gridTemplateColumns="repeat(4, minmax(0, 1fr))"
+              gridTemplateColumns="repeat(5, minmax(0, 1fr))"
               sx={{
-                "& > div": { gridColumn: isNonMobile ? undefined : "span 4" },
+                "& > div": { gridColumn: isNonMobile ? undefined : "span 5" },
               }}
             >
+
+              <Divider sx={{ gridColumn: "span 5" }} />
+
 
               <OfficesFormInputs
                 handleBlur={handleBlur} handleChange={handleChange}
@@ -115,6 +119,9 @@ const FormEditOffices = () => {
                 Save
               </Button>
             </Box>
+
+            <Divider sx={{ gridColumn: "span 5" }} />
+
 
             <Dialog open={dialogOpen} onClose={handleClose}>
               <DialogTitle>Operation Status</DialogTitle>

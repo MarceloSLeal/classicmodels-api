@@ -13,6 +13,7 @@ import Header from "../../components/Header";
 import { Urls } from "../../api/Paths";
 import { Constants } from "../../data/constants";
 import FormListCalls from "../../components/FormsListCalls";
+import Divider from '@mui/material/Divider';
 
 const initialValues = {
   lastName: "", firstName: "", email: "", reportsTo: "", jobTitle: "",
@@ -97,11 +98,13 @@ const FormAddEmployee = () => {
             <Box
               display="grid"
               gap="20px"
-              gridTemplateColumns="repeat(4, minmax(0, 1fr))"
+              gridTemplateColumns="repeat(5, minmax(0, 1fr))"
               sx={{
-                "& > div": { gridColumn: isNonMobile ? undefined : "span 4" },
+                "& > div": { gridColumn: isNonMobile ? undefined : "span 5" },
               }}
             >
+
+              <Divider sx={{ gridColumn: "span 5" }} />
 
               <EmployeesFormInputs
                 handleBlur={handleBlur} handleChange={handleChange}
@@ -116,6 +119,8 @@ const FormAddEmployee = () => {
                 Create New Employee
               </Button>
             </Box>
+
+            <Divider sx={{ gridColumn: "span 5" }} />
 
             <Dialog open={dialogOpen} onClose={handleClose}>
               <DialogTitle>Operation Status</DialogTitle>

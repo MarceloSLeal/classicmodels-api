@@ -13,7 +13,7 @@ const OfficesFormInputs = ({ handleBlur, handleChange, values, touched,
           label="Id"
           value={values.id}
           name="id"
-          sx={{ gridColumn: "span 2" }}
+          sx={{ gridColumn: "span 1" }}
         />
       )}
       <TextField
@@ -26,7 +26,7 @@ const OfficesFormInputs = ({ handleBlur, handleChange, values, touched,
         name="city"
         error={!!touched.city && !!errors.city}
         helperText={touched.city && errors.city}
-        sx={{ gridColumn: "span 2" }}
+        sx={{ gridColumn: "span 1" }}
       />
       <TextField
         variant="filled"
@@ -38,7 +38,7 @@ const OfficesFormInputs = ({ handleBlur, handleChange, values, touched,
         name="country"
         error={!!touched.country && !!errors.country}
         helperText={touched.country && errors.country}
-        sx={{ gridColumn: "span 2" }}
+        sx={{ gridColumn: "span 1" }}
       />
       <TextField
         variant="filled"
@@ -50,7 +50,7 @@ const OfficesFormInputs = ({ handleBlur, handleChange, values, touched,
         name="state"
         error={!!touched.state && !!errors.state}
         helperText={touched.state && errors.state}
-        sx={{ gridColumn: "span 2" }}
+        sx={{ gridColumn: "span 1" }}
       />
       <TextField
         variant="filled"
@@ -62,7 +62,7 @@ const OfficesFormInputs = ({ handleBlur, handleChange, values, touched,
         name="phone"
         error={!!touched.phone && !!errors.phone}
         helperText={touched.phone && errors.phone}
-        sx={{ gridColumn: "span 2" }}
+        sx={{ gridColumn: "span 1" }}
       />
       <TextField
         variant="filled"
@@ -98,7 +98,7 @@ const OfficesFormInputs = ({ handleBlur, handleChange, values, touched,
         name="postalCode"
         error={!!touched.postalCode && !!errors.postalCode}
         helperText={touched.postalCode && errors.postalCode}
-        sx={{ gridColumn: "span 2" }}
+        sx={{ gridColumn: "span 1" }}
       />
       <TextField
         variant="filled"
@@ -110,7 +110,7 @@ const OfficesFormInputs = ({ handleBlur, handleChange, values, touched,
         name="territory"
         error={!!touched.territory && !!errors.territory}
         helperText={touched.territory && errors.territory}
-        sx={{ gridColumn: "span 2" }}
+        sx={{ gridColumn: "span 1" }}
       />
     </>
   )

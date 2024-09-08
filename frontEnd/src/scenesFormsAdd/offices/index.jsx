@@ -11,6 +11,7 @@ import * as yup from "yup";
 import OfficesFormInputs from "../../components/formInputs/Offices";
 import Header from "../../components/Header";
 import { Urls } from "../../api/Paths";
+import Divider from '@mui/material/Divider';
 
 const initialValues = {
   city: "", country: "", state: "", phone: "", addressLine1: "", addressLine2: "",
@@ -80,7 +81,7 @@ const FormAddOffices = () => {
 
   return (
     <Box m="20px">
-      <Header title="CREATE OFFICE" subtitle="Create a new OFfice" />
+      <Header title="CREATE OFFICE" subtitle="Create a new Office" />
 
       <Formik
         onSubmit={handleFormSubmit}
@@ -93,11 +94,13 @@ const FormAddOffices = () => {
             <Box
               display="grid"
               gap="20px"
-              gridTemplateColumns="repeat(4, minmax(0, 1fr))"
+              gridTemplateColumns="repeat(5, minmax(0, 1fr))"
               sx={{
-                "& > div": { gridColumn: isNonMobile ? undefined : "span 4" },
+                "& > div": { gridColumn: isNonMobile ? undefined : "span 5" },
               }}
             >
+
+              <Divider sx={{ gridColumn: "span 5" }} />
 
               <OfficesFormInputs
                 handleBlur={handleBlur} handleChange={handleChange}
@@ -109,6 +112,8 @@ const FormAddOffices = () => {
                 Create New Office
               </Button>
             </Box>
+
+            <Divider sx={{ gridColumn: "span 5" }} />
 
             <Dialog open={dialogOpen} onClose={handleClose}>
               <DialogTitle>Operation Status</DialogTitle>

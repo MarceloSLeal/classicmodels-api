@@ -24,7 +24,7 @@ const EmployeesFormInputs = ({ handleBlur, handleChange, values, touched,
           label="Id"
           value={values.id}
           name="id"
-          sx={{ gridColumn: "span 2" }}
+          sx={{ gridColumn: "span 1" }}
         />
       )}
       <TextField
@@ -73,7 +73,7 @@ const EmployeesFormInputs = ({ handleBlur, handleChange, values, touched,
         name="extension"
         error={!!touched.extension && !!errors.extension}
         helperText={touched.extension && errors.extension}
-        sx={{ gridColumn: "span 2" }}
+        sx={{ gridColumn: "span 1" }}
       />
 
       <FormControl
@@ -85,7 +85,6 @@ const EmployeesFormInputs = ({ handleBlur, handleChange, values, touched,
           labelId="reportsTo-select-label"
           id="reportsTo-select-error"
           name="reportsTo"
-          //value={values.reportsTo}
           value={isReportsToValid ? values.reportsTo : ""}
           onChange={(event) => setFieldValue('reportsTo',
             event.target.value)}
@@ -106,7 +105,7 @@ const EmployeesFormInputs = ({ handleBlur, handleChange, values, touched,
 
       <FormControl
         variant="filled"
-        sx={{ gridColumn: "span 2" }}
+        sx={{ gridColumn: "span 1" }}
         validationschema={employeesSchema}
         error={!!touched.officeId && !!errors.officeId}
       >
@@ -115,7 +114,6 @@ const EmployeesFormInputs = ({ handleBlur, handleChange, values, touched,
           labelId="office-select-label"
           id="office-select-error"
           name="officeId"
-          //value={values.officeId}
           value={isOfficeIdValid ? values.officeId : ""}
           onChange={(event) => setFieldValue('officeId',
             event.target.value)}
@@ -134,7 +132,7 @@ const EmployeesFormInputs = ({ handleBlur, handleChange, values, touched,
 
       <FormControl
         variant="filled"
-        sx={{ gridColumn: "span 2" }}
+        sx={{ gridColumn: "span 1" }}
         validationschema={employeesSchema}
         error={!!touched.jobTitle && !!errors.jobTitle}
       >

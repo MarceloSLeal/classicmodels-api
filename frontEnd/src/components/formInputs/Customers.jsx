@@ -17,7 +17,7 @@ const CustomersFormInputs = ({ rowData, handleBlur, handleChange, values,
           label="Id"
           value={rowData.id}
           name="id"
-          sx={{ gridColumn: "span 2" }}
+          sx={{ gridColumn: "span 1" }}
         />
       )}
       <TextField
@@ -78,7 +78,7 @@ const CustomersFormInputs = ({ rowData, handleBlur, handleChange, values,
         name="phone"
         error={!!touched.phone && !!errors.phone}
         helperText={touched.phone && errors.phone}
-        sx={{ gridColumn: "span 2" }}
+        sx={{ gridColumn: "span 1" }}
       />
       <TextField
         variant="filled"
@@ -98,7 +98,6 @@ const CustomersFormInputs = ({ rowData, handleBlur, handleChange, values,
         label="Address Line 2"
         onBlur={handleBlur}
         onChange={handleChange}
-        //value={values.addressLine2 == ! null ? rowData.addressLine2 : ""}
         value={values.addressLine2 ?? ""}
         name="addressLine2"
         error={!!touched.addressLine2 && !!errors.addressLine2}
@@ -115,7 +114,7 @@ const CustomersFormInputs = ({ rowData, handleBlur, handleChange, values,
         name="city"
         error={!!touched.city && !!errors.city}
         helperText={touched.city && errors.city}
-        sx={{ gridColumn: "span 2" }}
+        sx={{ gridColumn: "span 1" }}
       />
       <TextField
         variant="filled"
@@ -123,12 +122,11 @@ const CustomersFormInputs = ({ rowData, handleBlur, handleChange, values,
         label="State"
         onBlur={handleBlur}
         onChange={handleChange}
-        //value={values.state == ! null ? rowData.state : ""}
         value={values.state ?? ""}
         name="state"
         error={!!touched.state && !!errors.state}
         helperText={touched.state && errors.state}
-        sx={{ gridColumn: "span 2" }}
+        sx={{ gridColumn: "span 1" }}
       />
       <TextField
         variant="filled"
@@ -136,12 +134,11 @@ const CustomersFormInputs = ({ rowData, handleBlur, handleChange, values,
         label="Postal Code"
         onBlur={handleBlur}
         onChange={handleChange}
-        //value={values.postalCode == ! null ? rowData.postalCode : ""}
         value={values.postalCode ?? ""}
         name="postalCode"
         error={!!touched.postalCode && !!errors.postalCode}
         helperText={touched.postalCode && errors.postalCode}
-        sx={{ gridColumn: "span 2" }}
+        sx={{ gridColumn: "span 1" }}
       />
       <TextField
         variant="filled"
@@ -153,7 +150,7 @@ const CustomersFormInputs = ({ rowData, handleBlur, handleChange, values,
         name="country"
         error={!!touched.country && !!errors.country}
         helperText={touched.country && errors.country}
-        sx={{ gridColumn: "span 2" }}
+        sx={{ gridColumn: "span 1" }}
       />
       <TextField
         variant="filled"
@@ -165,7 +162,7 @@ const CustomersFormInputs = ({ rowData, handleBlur, handleChange, values,
         name="creditLimit"
         error={!!touched.creditLimit && !!errors.creditLimit}
         helperText={touched.creditLimit && errors.creditLimit}
-        sx={{ gridColumn: "span 2" }}
+        sx={{ gridColumn: "span 1" }}
       />
 
       <FormControl
@@ -177,7 +174,6 @@ const CustomersFormInputs = ({ rowData, handleBlur, handleChange, values,
           labelId="employee-select-label"
           id="employee-select"
           name="employeeId"
-          //value={values.employeeId ?? ""}
           value={isEmployeeIdValid ? values.employeeId : ""}
           onChange={(event) => setFieldValue('employeeId', event.target.value)}
           onBlur={handleBlur}

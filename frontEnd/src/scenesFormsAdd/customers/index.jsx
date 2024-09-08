@@ -13,6 +13,7 @@ import CustomersFormInputs from "../../components/formInputs/Customers";
 import Header from "../../components/Header";
 import { Urls } from "../../api/Paths";
 import FormListCalls from "../../components/FormsListCalls";
+import Divider from '@mui/material/Divider';
 
 const initialValues = {
   name: "", email: "", contactLastName: "", contactFirstName: "", phone: "",
@@ -103,11 +104,13 @@ const FormAddCustomer = () => {
             <Box
               display="grid"
               gap="20px"
-              gridTemplateColumns="repeat(4, minmax(0, 1fr))"
+              gridTemplateColumns="repeat(5, minmax(0, 1fr))"
               sx={{
-                "& > div": { gridColumn: isNonMobile ? undefined : "span 4" },
+                "& > div": { gridColumn: isNonMobile ? undefined : "span 5" },
               }}
             >
+
+              <Divider sx={{ gridColumn: "span 5" }} />
 
               <CustomersFormInputs handleBlur={handleBlur} handleChange={handleChange}
                 values={values} touched={touched} errors={errors} isEdit={false}
@@ -119,6 +122,8 @@ const FormAddCustomer = () => {
                 Create New Customer
               </Button>
             </Box>
+
+            <Divider sx={{ gridColumn: "span 5" }} />
 
             <Dialog open={dialogOpen} onClose={handleClose}>
               <DialogTitle>Operation Status</DialogTitle>
