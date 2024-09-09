@@ -56,22 +56,6 @@ public class OrderDetailsController {
         }
     }
 
-//    TODO - preciso adicionar um método POST para esse controller
-
-//    @PostMapping
-//    public void adicionar(@Valid @RequestBody List<OrderDetailsInput> orderDetailsInput) {
-//        System.out.println("Método POST");
-//        orderDetailsInput.forEach(orderList -> {
-//            String strId = String.valueOf(orderList.getOrderId());
-//            String strProduct = String.valueOf(orderList.getProductId());
-//            String strQtd = String.valueOf(orderList.getQuantityOrdered());
-//            String strPrice = String.valueOf(orderList.getPriceEach());
-//            String strLine = String.valueOf(orderList.getOrderLineNumber());
-//            System.out.printf("orderId %s, productId %s, quantityOrdered %s, priceEach %s, orderLineNumber %s%n",
-//                    strId, strProduct, strQtd, strPrice, strLine);
-//        });
-//    }
-
     @PostMapping
     public ResponseEntity<List<OrderDetailsRepModel>> adicionar(@Valid @RequestBody List<OrderDetailsInput> orderDetailsInput) {
 

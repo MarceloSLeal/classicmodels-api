@@ -342,8 +342,9 @@ const FormAddOrders = () => {
           )}
         </Formik>
 
-        {/* TODO -- mudar a cor do ok para os outros dialogs */}
-        {/* TODO -- talvez criar um componente para o dialogbox */}
+        {/* TODO -- criando componetes para os dialogs */}
+        {/* TODO -- definir ON DELETE SET NULL no constraint da tabela employees,  */}
+        {/* procurar outras constraints em outras tabelas que precisem dessa alteração */}
         <Dialog open={dialogOpen} onClose={handleClose}>
           <DialogTitle>Operation Status</DialogTitle>
           <DialogContent>

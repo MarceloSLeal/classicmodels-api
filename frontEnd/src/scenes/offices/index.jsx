@@ -2,10 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { DataGrid, GridToolbarContainer, GridActionsCellItem } from "@mui/x-data-grid";
-import {
-  Box, useTheme, Dialog, DialogActions, DialogContent, DialogTitle,
-  DialogContentText
-} from "@mui/material";
+import { Box, useTheme } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/DeleteOutlined";
 import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
@@ -17,6 +14,7 @@ import Header from '../../components/Header';
 import useFetchData from '../../api/getData';
 import { Urls } from '../../api/Paths';
 import { tokens } from "../../theme";
+import ConfirmDeleteDialog from '../../components/dialogs/ConfirmDeleteDialog';
 
 const Offices = () => {
 
@@ -224,38 +222,12 @@ const Offices = () => {
         />
       </Box>
 
-      <Dialog open={dialogConfirmOpen} onClose={handleCloseConfirm}>
-        <DialogTitle>CONFIRM DELETE?</DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            ID: {idDelete}
-          </DialogContentText>
-          <DialogActions>
-            <Button onClick={handleDeleteConfirm} color="error">
-              DELETE
-            </Button>
-            <Button onClick={handleCloseConfirm} color="inherit">
-              CANCEL
-            </Button>
-          </DialogActions>
-        </DialogContent>
-      </Dialog>
-
-      <Dialog open={dialogDeleteOpen} onClose={handleCloseDelete}>
-        <DialogTitle>CUSTOMER DELETED</DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            ID: {idDelete}
-            <br />
-            Status: {status}
-          </DialogContentText>
-          <DialogActions>
-            <Button onClick={handleCloseDelete} color="inherit">
-              OK
-            </Button>
-          </DialogActions>
-        </DialogContent>
-      </Dialog>
+      <ConfirmDeleteDialog
+        dialogConfirmOpen={dialogConfirmOpen} handleCloseConfirm={handleCloseConfirm}
+        contextText={"ID:"} contextVar={idDelete} handleDeleteConfirm={handleDeleteConfirm}
+        dialogDeleteOpen={dialogDeleteOpen} handleCloseDelete={handleCloseDelete}
+        status={status}
+      />
 
     </Box>
   )
