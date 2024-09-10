@@ -1,10 +1,8 @@
 import React, { useState } from "react";
 
-import {
-  Box, Button, Dialog, DialogActions,
-  DialogContent, DialogContentText, DialogTitle,
-} from "@mui/material";
+import { Box, Button } from "@mui/material";
 import useMediaQuery from "@mui/material/useMediaQuery";
+import Divider from '@mui/material/Divider';
 
 import { Formik } from "formik";
 import * as yup from "yup";
@@ -13,7 +11,7 @@ import CustomersFormInputs from "../../components/formInputs/Customers";
 import Header from "../../components/Header";
 import { Urls } from "../../api/Paths";
 import FormListCalls from "../../components/FormsListCalls";
-import Divider from '@mui/material/Divider';
+import OperationStatusDialog from "../../components/dialogs/OperationStatusDialog"
 
 const initialValues = {
   name: "", email: "", contactLastName: "", contactFirstName: "", phone: "",
@@ -125,24 +123,15 @@ const FormAddCustomer = () => {
 
             <Divider sx={{ gridColumn: "span 5" }} />
 
-            <Dialog open={dialogOpen} onClose={handleClose}>
-              <DialogTitle>Operation Status</DialogTitle>
-              <DialogContent>
-                <DialogContentText>
-                  {status}
-                  {responseCode !== null && <br />}
-                  Response Code: {responseCode}
-                </DialogContentText>
-                <DialogActions>
-                  <Button onClick={handleClose} color="primary">
-                    OK
-                  </Button>
-                </DialogActions>
-              </DialogContent>
-            </Dialog>
           </form>
         )}
       </Formik>
+
+      <OperationStatusDialog
+        dialogOpen={dialogOpen} onClose={handleClose} status={status}
+        responseCode={responseCode} onClick={handleClose}
+      />
+
     </Box>
   );
 };

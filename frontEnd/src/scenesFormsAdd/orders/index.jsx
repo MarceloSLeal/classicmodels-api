@@ -1,10 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 
 import { DataGrid, GridActionsCellItem } from "@mui/x-data-grid";
-import {
-  Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle,
-  useTheme,
-} from "@mui/material";
+import { Box, Button, useTheme } from "@mui/material";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import DeleteIcon from '@mui/icons-material/DeleteOutlined';
 import Tooltip, { tooltipClasses } from '@mui/material/Tooltip';
@@ -20,6 +17,7 @@ import { tokens } from "../../theme";
 import OrdersFormInputs from "../../components/formInputs/Orders";
 import OrdersDetailsFormInputs from "../../components/formInputs/OrdersDetails";
 import dayjs from 'dayjs';
+import OperationStatusDialog from "../../components/dialogs/OperationStatusDialog"
 
 const tomorrow = dayjs().add(1, 'day');
 const ordersInitialValues = {
@@ -212,7 +210,7 @@ const FormAddOrders = () => {
       setResponseCode(response.status);
 
       if (response.ok) {
-        setStatus('Order created successfully!');
+        setStatus(`Order ${data.id} created successfully!`);
 
         const responseOrderId = data.id;
 
@@ -342,28 +340,9 @@ const FormAddOrders = () => {
           )}
         </Formik>
 
-        {/* TODO -- criando componetes para os dialogs */}
         {/* TODO -- definir ON DELETE SET NULL no constraint da tabela employees,  */}
         {/* procurar outras constraints em outras tabelas que precisem dessa alteração */}
-        <Dialog open={dialogOpen} onClose={handleClose}>
-          <DialogTitle>Operation Status</DialogTitle>
-          <DialogContent>
-            <DialogContentText>
-              {status}
-              <br />
-              {responseCode !== null ? (
-                <>
-                  Response Code: {responseCode}
-                </>
-              ) : null}
-            </DialogContentText>
-            <DialogActions>
-              <Button onClick={handleClose} color="inherit">
-                OK
-              </Button>
-            </DialogActions>
-          </DialogContent>
-        </Dialog>
+        {/* TODO -- talvez criar um componente para esse Box cheio de configurações */}
 
       </Box>
 
@@ -405,6 +384,12 @@ const FormAddOrders = () => {
           />
         </Box>
       </Box>
+
+      <OperationStatusDialog
+        dialogOpen={dialogOpen} onClose={handleClose} status={status}
+        responseCode={responseCode} onClick={handleClose}
+      />
+
     </Box >
   )
 }

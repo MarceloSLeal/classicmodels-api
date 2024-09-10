@@ -1,11 +1,8 @@
 import { useLocation } from "react-router-dom";
 import React, { useState } from "react";
 
-import {
-  Box, Button, Dialog, DialogActions, DialogContent, DialogContentText,
-  DialogTitle,
-  useMediaQuery
-} from "@mui/material";
+import { Box, Button, useMediaQuery } from "@mui/material";
+import Divider from '@mui/material/Divider';
 
 import { Formik } from "formik";
 import * as yup from "yup";
@@ -16,7 +13,7 @@ import Header from "../../components/Header";
 import { Urls } from "../../api/Paths";
 import FormListCalls from "../../components/FormsListCalls";
 import { Constants } from "../../data/constants";
-import Divider from '@mui/material/Divider';
+import OperationStatusDialog from "../../components/dialogs/OperationStatusDialog"
 
 const employeeSchema = yup.object().shape({
   lastName: yup.string().max(50).required(),
@@ -125,25 +122,15 @@ const FormEditEmployee = () => {
 
             <Divider sx={{ gridColumn: "span 5" }} />
 
-            <Dialog open={dialogOpen} onClose={handleClose}>
-              <DialogTitle>Operation Status</DialogTitle>
-              <DialogContent>
-                <DialogContentText>
-                  {status}
-                  {responseCode !== null && <br />}
-                  Response Code: {responseCode}
-                </DialogContentText>
-                <DialogActions>
-                  <Button onClick={handleClose} color="inherit">
-                    OK
-                  </Button>
-                </DialogActions>
-              </DialogContent>
-            </Dialog>
-
           </form>
         )}
       </Formik>
+
+      <OperationStatusDialog
+        dialogOpen={dialogOpen} onClose={handleClose} status={status}
+        responseCode={responseCode} onClick={handleClose}
+      />
+
     </Box>
   )
 

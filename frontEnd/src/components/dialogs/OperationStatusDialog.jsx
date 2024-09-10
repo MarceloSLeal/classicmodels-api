@@ -5,7 +5,7 @@ import {
 import Button from '@mui/material/Button';
 
 const OperationStatusDialog = ({ dialogOpen, handleClose, status, responseCode,
-  handleClose }) => {
+  onClick }) => {
 
   return (
     <>
@@ -22,7 +22,7 @@ const OperationStatusDialog = ({ dialogOpen, handleClose, status, responseCode,
             ) : null}
           </DialogContentText>
           <DialogActions>
-            <Button onClick={handleClose} color="inherit">
+            <Button onClick={onClick} color="inherit">
               OK
             </Button>
           </DialogActions>
