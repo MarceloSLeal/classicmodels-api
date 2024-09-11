@@ -89,7 +89,8 @@ const Employees = () => {
       if (response.status === 204) {
         setStatus(`${response.status} Employee Deleted Succesfully!`);
 
-        setRows((prevData) => prevData.filter((item) => item.id !== idDelete));
+        refreshData();
+
       } else {
         setStatus(`Error: ${response.status} Failed to delete Employee`);
       }
@@ -103,6 +104,18 @@ const Employees = () => {
   const handleCloseDelete = () => {
     setDialogDeleteOpen(false);
   }
+
+  const refreshData = async () => {
+    try {
+      const response = await fetch(urlData.employees.findAll_Post);
+      const updatedData = await response.json();
+
+      setRows(updatedData);
+    } catch (error) {
+      // TODO -- verificar como colocar isso em um dialog
+      console.error('Failed to refresh data:', error);
+    }
+  };
 
   const GridActionTooltip = styled(({ className, ...props }) => (
     <Tooltip {...props} classes={{ popper: className }} />
