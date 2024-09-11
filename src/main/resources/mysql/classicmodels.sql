@@ -48,7 +48,7 @@ CREATE TABLE `customers` (
   `credit_limit` decimal(10,2) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `employee_id` (`employee_id`),
-  CONSTRAINT `customers_ibfk_1` FOREIGN KEY (`employee_id`) REFERENCES `employees` (`id`)
+  CONSTRAINT `customers_ibfk_1` FOREIGN KEY (`employee_id`) REFERENCES `employees` (`id`) ON DELETE SET NULL
 ) engine=InnoDB default charset=UTF8MB4;
 
 /*Data for the table `customers` */
@@ -315,7 +315,7 @@ CREATE TABLE `employees` (
   PRIMARY KEY (`id`),
   KEY `reports_to` (`reports_to`),
   KEY `office_id` (`office_id`),
-  CONSTRAINT `employees_ibfk_1` FOREIGN KEY (`reports_to`) REFERENCES `employees` (`id`),
+  CONSTRAINT `employees_ibfk_1` FOREIGN KEY (`reports_to`) REFERENCES `employees` (`id`) ON DELETE SET NULL,
   CONSTRAINT `employees_ibfk_2` FOREIGN KEY (`office_id`) REFERENCES `offices` (`id`)
 ) engine=InnoDB default charset=UTF8MB4;
 
