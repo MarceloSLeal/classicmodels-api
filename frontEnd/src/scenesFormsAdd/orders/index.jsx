@@ -340,8 +340,6 @@ const FormAddOrders = () => {
           )}
         </Formik>
 
-        {/* TODO -- definir ON DELETE SET NULL no constraint da tabela employees,  */}
-        {/* procurar outras constraints em outras tabelas que precisem dessa alteração */}
         {/* TODO -- talvez criar um componente para esse Box cheio de configurações */}
 
       </Box>

@@ -23,18 +23,6 @@ const OrderDetails = () => {
   const navigateSelectOrder = useNavigate();
   const navigateSelectProduct = useNavigate();
 
-  useEffect(() => {
-    if (data) {
-      const sortedData = data.sort((a, b) => {
-        if (a.orderId !== b.orderId) {
-          return a.orderId - b.orderId;
-        }
-        return a.orderLineNumber - b.orderLineNumber;
-      });
-      setRows(sortedData);
-    }
-  }, [data]);
-
   const handleSelectOrderId = (params) => {
     const rowData = params.row;
     navigateSelectOrder("/selectorderid", { state: { rowData } });
@@ -115,6 +103,18 @@ const OrderDetails = () => {
     { field: "orderLineNumber", headerName: "ORDER LINE NUMBER", flex: 1 },
   ]
 
+  useEffect(() => {
+    if (data) {
+      const sortedData = data.sort((a, b) => {
+        if (a.orderId !== b.orderId) {
+          return a.orderId - b.orderId;
+        }
+        return a.orderLineNumber - b.orderLineNumber;
+      });
+      setRows(sortedData);
+    }
+  }, [data]);
+
   if (loading) {
     return (
       <Box m="20px">
@@ -175,6 +175,7 @@ const OrderDetails = () => {
           getRowId={(row) => `${row.orderId} - ${row.productId}`}
         />
       </Box>
+
     </Box>
   )
 

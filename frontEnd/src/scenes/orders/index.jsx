@@ -1,10 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { DataGrid, GridToolbarContainer } from "@mui/x-data-grid";
 import { Box, useTheme } from "@mui/material";
-import AddIcon from "@mui/icons-material/Add";
-import Button from "@mui/material/Button";
 import Tooltip, { tooltipClasses } from '@mui/material/Tooltip';
 import { styled } from '@mui/material/styles';
 
@@ -12,6 +9,7 @@ import Header from '../../components/Header';
 import useFetchData from '../../api/getData';
 import { Urls } from '../../api/Paths';
 import { tokens } from "../../theme";
+import BoxDataGrid from "../../components/boxes/BoxDataGrid"
 
 const Orders = () => {
   const url = Urls();
@@ -19,35 +17,9 @@ const Orders = () => {
   const colors = tokens(theme.palette.mode);
   const { data, loading, error } = useFetchData(url.orders.findAll_Post);
   const [rows, setRows] = useState([]);
-  const navigateAdd = useNavigate();
 
-  useEffect(() => {
-    if (data) {
-      setRows(data);
-    }
-  }, [data]);
 
-  const EditToolBar = () => {
-    const handleClick = () => {
-      navigateAdd("/formaddorders")
-    }
-
-    return (
-      <GridToolbarContainer>
-        <Button
-          sx={{
-            backgroundColor: colors.blueAccent[700],
-            color: colors.primary[100],
-            paddingTop: '10px', paddingRight: '10px',
-            paddingBottom: '10px', paddingLeft: '10px',
-          }}
-          startIcon={<AddIcon />} onClick={handleClick}>
-          Add record
-        </Button>
-      </GridToolbarContainer>
-    );
-  }
-
+  // TODO -- adicionar o tooltip no botao do grid
   const GridActionTooltip = styled(({ className, ...props }) => (
     <Tooltip {...props} classes={{ popper: className }} />
   ))(() => ({
@@ -93,6 +65,13 @@ const Orders = () => {
     { field: "customerId", headerName: "CUSTOMER ID", flex: 0.5 },
   ]
 
+
+  useEffect(() => {
+    if (data) {
+      setRows(data);
+    }
+  }, [data]);
+
   if (loading) {
     return (
       <Box m="20px">
@@ -117,44 +96,13 @@ const Orders = () => {
   return (
     <Box m="20px">
       <Header title="ORDERS" subtitle="Manage Orders" />
-      <Box
-        m="40px 0 0 0"
-        height="75vh"
-        sx={{
-          "& .MuiDataGrid-root": {
-            border: "none",
-          },
-          "& .MuiDataGrid-cell": {
-            borderBottom: "none",
-          },
-          "& .name-column--cell": {
-            color: colors.greenAccent[300],
-          },
-          "& .MuiDataGrid-columnHeader": {
-            backgroundColor: colors.blueAccent[700],
-            borderBottom: "none",
-            fontSize: 14
-          },
-          "& .MuiDataGrid-virtualScroller": {
-            backgroundColor: colors.primary[400],
-          },
-          "& .MuiDataGrid-footerContainer": {
-            borderTop: "none",
-            backgroundColor: colors.blueAccent[700],
-          },
-          "& .MuiDataGrid-toolbarContainer .MuiButton-text": {
-            color: `${colors.grey[100]} !important`,
-          },
-        }}
-      >
-        <DataGrid
-          rows={rows}
-          columns={columns}
-          slots={{
-            toolbar: EditToolBar,
-          }}
-        />
-      </Box>
+
+      <BoxDataGrid
+        colors={colors}
+        rows={rows}
+        columns={columns}
+        path={"/formaddorders"}
+      />
 
     </Box>
   )

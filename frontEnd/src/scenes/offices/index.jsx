@@ -1,12 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { DataGrid, GridToolbarContainer, GridActionsCellItem } from "@mui/x-data-grid";
+import { GridActionsCellItem } from "@mui/x-data-grid";
 import { Box, useTheme } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/DeleteOutlined";
-import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
-import Button from "@mui/material/Button";
 import Tooltip, { tooltipClasses } from '@mui/material/Tooltip';
 import { styled } from '@mui/material/styles';
 
@@ -15,6 +13,7 @@ import useFetchData from '../../api/getData';
 import { Urls } from '../../api/Paths';
 import { tokens } from "../../theme";
 import ConfirmDeleteDialog from '../../components/dialogs/ConfirmDeleteDialog';
+import BoxDataGrid from "../../components/boxes/BoxDataGrid"
 
 const Offices = () => {
 
@@ -28,34 +27,6 @@ const Offices = () => {
   const [status, setStatus] = useState('');
   const [rows, setRows] = useState([]);
   const navigateEdit = useNavigate();
-  const navigateAdd = useNavigate();
-
-  useEffect(() => {
-    if (data) {
-      setRows(data);
-    }
-  }, [data]);
-
-  const EditToolBar = () => {
-    const handleClick = () => {
-      navigateAdd("/formaddoffices")
-    }
-
-    return (
-      <GridToolbarContainer>
-        <Button
-          sx={{
-            backgroundColor: colors.blueAccent[700],
-            color: colors.primary[100],
-            paddingTop: '10px', paddingRight: '10px',
-            paddingBottom: '10px', paddingLeft: '10px',
-          }}
-          startIcon={<AddIcon />} onClick={handleClick}>
-          Add record
-        </Button>
-      </GridToolbarContainer>
-    );
-  }
 
   const handleEditDatagridButton = (params) => () => {
     const rowData = params.row;
@@ -159,6 +130,12 @@ const Offices = () => {
     },
   ];
 
+  useEffect(() => {
+    if (data) {
+      setRows(data);
+    }
+  }, [data]);
+
   if (loading) {
     return (
       <Box m="20px">
@@ -183,44 +160,13 @@ const Offices = () => {
   return (
     <Box m="20px">
       <Header title="OFFICES" subtitle="Manage Offices" />
-      <Box
-        m="40px 0 0 0"
-        height="75vh"
-        sx={{
-          "& .MuiDataGrid-root": {
-            border: "none",
-          },
-          "& .MuiDataGrid-cell": {
-            borderBottom: "none",
-          },
-          "& .name-column--cell": {
-            color: colors.greenAccent[300],
-          },
-          "& .MuiDataGrid-columnHeader": {
-            backgroundColor: colors.blueAccent[700],
-            borderBottom: "none",
-            fontSize: 14
-          },
-          "& .MuiDataGrid-virtualScroller": {
-            backgroundColor: colors.primary[400],
-          },
-          "& .MuiDataGrid-footerContainer": {
-            borderTop: "none",
-            backgroundColor: colors.blueAccent[700],
-          },
-          "& .MuiDataGrid-toolbarContainer .MuiButton-text": {
-            color: `${colors.grey[100]} !important`,
-          },
-        }}
-      >
-        <DataGrid
-          rows={rows}
-          columns={columns}
-          slots={{
-            toolbar: EditToolBar,
-          }}
-        />
-      </Box>
+
+      <BoxDataGrid
+        colors={colors}
+        rows={rows}
+        columns={columns}
+        path={"/formaddoffices"}
+      />
 
       <ConfirmDeleteDialog
         dialogConfirmOpen={dialogConfirmOpen} handleCloseConfirm={handleCloseConfirm}
