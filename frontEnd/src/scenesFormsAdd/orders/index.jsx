@@ -14,7 +14,7 @@ import Header from "../../components/Header";
 import { Urls } from "../../api/Paths";
 import FormListCalls from "../../components/FormsListCalls";
 import { tokens } from "../../theme";
-import OrdersFormInputs from "../../components/formInputs/Orders";
+import OrdersAddFormInputs from "../../components/formInputs/OrdersAdd";
 import OrdersDetailsFormInputs from "../../components/formInputs/OrdersDetails";
 import dayjs from 'dayjs';
 import OperationStatusDialog from "../../components/dialogs/OperationStatusDialog"
@@ -290,7 +290,7 @@ const FormAddOrders = () => {
                     "& > div": { gridColumn: isNonMobile ? undefined : "span 5" },
                   }}
                 >
-                  <OrdersFormInputs
+                  <OrdersAddFormInputs
                     handleBlur={handleBlur} handleChange={handleChange}
                     values={values} touched={touched} errors={errors}
                     ordersSchema={ordersSchema} setFieldValue={setFieldValue}
@@ -339,8 +339,6 @@ const FormAddOrders = () => {
             </form>
           )}
         </Formik>
-
-        {/* TODO -- talvez criar um componente para esse Box cheio de configurações */}
 
       </Box>
 

@@ -10,6 +10,8 @@ import useFetchData from '../../api/getData';
 import { Urls } from '../../api/Paths';
 import { tokens } from "../../theme";
 import BoxDataGrid from "../../components/boxes/BoxDataGrid"
+import { GridActionsCellItem } from '@mui/x-data-grid';
+import EditIcon from "@mui/icons-material/Edit";
 
 const Orders = () => {
   const url = Urls();
@@ -17,9 +19,14 @@ const Orders = () => {
   const colors = tokens(theme.palette.mode);
   const { data, loading, error } = useFetchData(url.orders.findAll_Post);
   const [rows, setRows] = useState([]);
+  const navigateEdit = useNavigate();
 
+  // TODO -- adiconar página de edit e caminho
+  const handleEditDataGridButton = (params) => () => {
+    const rowData = params.row;
+    navigateEdit("/formeditorders", { state: { rowData } });
+  }
 
-  // TODO -- adicionar o tooltip no botao do grid
   const GridActionTooltip = styled(({ className, ...props }) => (
     <Tooltip {...props} classes={{ popper: className }} />
   ))(() => ({
@@ -63,8 +70,29 @@ const Orders = () => {
     { field: "status", headerName: "STATUS", flex: 1 },
     { field: "comments", headerName: "COMMENTS", flex: 1 },
     { field: "customerId", headerName: "CUSTOMER ID", flex: 0.5 },
-  ]
 
+    {
+      field: 'actions',
+      type: 'actions',
+      headerName: 'ACTIONS',
+      width: 100,
+      cellClassName: 'actions',
+      getActions: (params) => {
+
+        return [
+          <GridActionTooltip title="Edit Order" placement="bottom">
+            <GridActionsCellItem
+              icon={<EditIcon />}
+              label="Edit"
+              className="textPrimary"
+              onClick={handleEditDataGridButton(params)}
+              color="inherit"
+            />
+          </GridActionTooltip>
+        ];
+      },
+    },
+  ];
 
   useEffect(() => {
     if (data) {
