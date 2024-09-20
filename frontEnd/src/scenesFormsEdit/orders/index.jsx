@@ -1,5 +1,6 @@
 import { useLocation } from "react-router-dom";
 import React, { useState } from "react";
+import dayjs from 'dayjs';
 
 import { Box, Button, useMediaQuery } from "@mui/material";
 import Divider from '@mui/material/Divider';
@@ -7,7 +8,7 @@ import Divider from '@mui/material/Divider';
 import { Formik } from "formik";
 import * as yup from "yup";
 
-import OfficesFormInputs from "../../components/formInputs/Offices";
+import OrdersFormInput from "../../components/formInputs/Orders";
 import { useNavigate } from "react-router-dom";
 import Header from "../../components/Header";
 import { Urls } from "../../api/Paths";
@@ -15,9 +16,7 @@ import OperationStatusDialog from "../../components/dialogs/OperationStatusDialo
 
 const ordersSchema = yup.object().shape({
   id: yup.number().required(),
-  date: yup.object().shape({
-    date: yup.mixed().required()
-  }),
+  date: yup.date().required(),
   shippedDate: yup.object().shape({
     date: yup.mixed()
   }),
@@ -41,7 +40,7 @@ const FormEditOrders = () => {
   const navigate = useNavigate();
 
   const initialValues = {
-    id: rowData.id, date: rowData.date, shippedDate: rowData.shippedDate,
+    id: rowData.id, date: dayjs(rowData.date), shippedDate: rowData.shippedDate,
     requiredDate: rowData.requiredDate, status: rowData.status,
     comments: rowData.comments
   }
@@ -108,6 +107,11 @@ const FormEditOrders = () => {
               {/* <OfficesFormInputs */}
               {/*   handleBlur={handleBlur} handleChange={handleChange} */}
               {/*   values={values} touched={touched} errors={errors} isEdit={true} /> */}
+              <OrdersFormInput
+                handleBlur={handleBlur} handleChange={handleChange} values={values}
+                touched={touched} errors={errors} ordersSchema={ordersSchema}
+              />
+
 
             </Box>
             <Box display="flex" justifyContent="end" mt="20px">
