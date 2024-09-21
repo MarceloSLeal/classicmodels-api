@@ -21,7 +21,6 @@ const Orders = () => {
   const [rows, setRows] = useState([]);
   const navigateEdit = useNavigate();
 
-  // TODO -- adiconar página de edit e caminho
   const handleEditDataGridButton = (params) => () => {
     const rowData = params.row;
     navigateEdit("/formeditorders", { state: { rowData } });

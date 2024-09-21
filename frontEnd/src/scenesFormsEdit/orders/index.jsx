@@ -13,18 +13,17 @@ import { useNavigate } from "react-router-dom";
 import Header from "../../components/Header";
 import { Urls } from "../../api/Paths";
 import OperationStatusDialog from "../../components/dialogs/OperationStatusDialog"
+import { Constants } from "../../data/constants";
 
+const commentsRegex = /^[\p{L}\p{N}\s.,!?'"()-]+$/u;
 const ordersSchema = yup.object().shape({
   id: yup.number().required(),
   date: yup.date().required(),
-  shippedDate: yup.object().shape({
-    date: yup.mixed()
-  }),
-  requiredDate: yup.object().shape({
-    date: yup.mixed().required()
-  }),
+  shippedDate: yup.date(),
+  requiredDate: yup.date(),
   status: yup.string().required(),
-  comments: yup.string(),
+  comments: yup.string().matches(commentsRegex, "Accepts only text"),
+  customerId: yup.number().required,
 });
 
 // TODO -- verificar a geração do shippedDate no POST de ORDERS
@@ -32,6 +31,7 @@ const FormEditOrders = () => {
   const location = useLocation();
   const { rowData } = location.state || {};
   const url = Urls(rowData.id);
+  const orderStatus = Constants().orders.status;
 
   const isNonMobile = useMediaQuery("(min-width:600px)");
   const [responseCode, setResponseCode] = useState(null);
@@ -40,9 +40,11 @@ const FormEditOrders = () => {
   const navigate = useNavigate();
 
   const initialValues = {
-    id: rowData.id, date: dayjs(rowData.date), shippedDate: rowData.shippedDate,
-    requiredDate: rowData.requiredDate, status: rowData.status,
-    comments: rowData.comments
+    id: rowData.id, date: dayjs(rowData.date),
+    shippedDate: dayjs(rowData.shippedDate),
+    requiredDate: dayjs(rowData.requiredDate), status: rowData.status,
+    comments: rowData.comments,
+    customerId: rowData.customerId,
   }
 
   const handleFormSubmit = async (values, { setSubmitting }) => {
@@ -88,8 +90,7 @@ const FormEditOrders = () => {
         initialValues={initialValues}
         validationSchema={ordersSchema}
       >
-        {({ values, errors, touched, handleBlur, handleChange, handleSubmit
-        }) => (
+        {({ values, errors, touched, handleBlur, handleChange, handleSubmit, setFieldValue }) => (
           <form onSubmit={handleSubmit}>
             <Box
               display="grid"
@@ -110,6 +111,7 @@ const FormEditOrders = () => {
               <OrdersFormInput
                 handleBlur={handleBlur} handleChange={handleChange} values={values}
                 touched={touched} errors={errors} ordersSchema={ordersSchema}
+                setFieldValue={setFieldValue} orderStatus={orderStatus}
               />
 
 
