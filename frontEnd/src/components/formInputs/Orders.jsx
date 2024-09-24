@@ -56,8 +56,10 @@ const OrdersFormInput = ({ handleBlur, handleChange, values, touched,
               label="Shipped Date"
               value={values.shippedDate}
               onChange={(newValue) => {
-                if (dayjs.isDayjs(newValue)) {
+                if (newValue && dayjs.isDayjs(newValue)) {
                   setFieldValue('shippedDate', newValue);
+                } else {
+                  setFieldValue('shippedDate', null);
                 }
               }}
             />
@@ -94,7 +96,7 @@ const OrdersFormInput = ({ handleBlur, handleChange, values, touched,
         validationschema={ordersSchema}
         error={!!touched.status && !!errors.status}
       >
-        <InputLabel id="order-status-label">Job Title</InputLabel>
+        <InputLabel id="order-status-label">Status</InputLabel>
         <Select
           labelId="order-status-label"
           id="order-status-label"

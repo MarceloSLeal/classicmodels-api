@@ -30,7 +30,7 @@ export const Urls = (param) => ({
       },
       orders: {
         findAll_Post: `${prefix}orders`,
-        findById_Put_Delete: `${prefix}orders/id/${param}`,
+        findById_Put_Delete: `${prefix}orders/${param}`,
         findByDate: `${prefix}orders/date/${param}`,
         findByRequiredDate: `${prefix}orders/requireddate/${param}`,
         findByShippedDate: `${prefix}orders/shippeddate/${param}`,

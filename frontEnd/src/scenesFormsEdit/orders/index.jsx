@@ -19,11 +19,11 @@ const commentsRegex = /^[\p{L}\p{N}\s.,!?'"()-]+$/u;
 const ordersSchema = yup.object().shape({
   id: yup.number().required(),
   date: yup.date().required(),
-  shippedDate: yup.date(),
+  shippedDate: yup.date().nullable(),
   requiredDate: yup.date(),
   status: yup.string().required(),
   comments: yup.string().matches(commentsRegex, "Accepts only text"),
-  customerId: yup.number().required,
+  customerId: yup.number().required(),
 });
 
 // TODO -- verificar a geração do shippedDate no POST de ORDERS
@@ -40,14 +40,19 @@ const FormEditOrders = () => {
   const navigate = useNavigate();
 
   const initialValues = {
-    id: rowData.id, date: dayjs(rowData.date),
-    shippedDate: dayjs(rowData.shippedDate),
-    requiredDate: dayjs(rowData.requiredDate), status: rowData.status,
+    id: rowData.id,
+    date: dayjs(rowData.date),
+    shippedDate: rowData.shippedDate ? dayjs(rowData.shippedDate) : null,
+    requiredDate: dayjs(rowData.requiredDate),
+    status: rowData.status,
     comments: rowData.comments,
     customerId: rowData.customerId,
   }
 
-  const handleFormSubmit = async (values, { setSubmitting }) => {
+  const handleFormSubmit = async (submitValues, { setSubmitting }) => {
+
+    console.log("body", submitValues);
+
     setStatus('');
     setResponseCode(null);
     try {
@@ -56,7 +61,7 @@ const FormEditOrders = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(values),
+        body: JSON.stringify(submitValues),
       });
       const data = await response.json();
 
@@ -86,9 +91,16 @@ const FormEditOrders = () => {
       <Header title="EDIT ORDER" subtitle="Edit this Order" />
 
       <Formik
-        onSubmit={handleFormSubmit}
         initialValues={initialValues}
         validationSchema={ordersSchema}
+        onSubmit={(values, formikHelpers) => {
+          const submitValues = {
+            shippedDate: values.shippedDate ? values.shippedDate.format('YYYY-MM-DDTHH:mm:ssZ') : null,
+            status: values.status,
+            comments: values.comments,
+          };
+          handleFormSubmit(submitValues, formikHelpers);
+        }}
       >
         {({ values, errors, touched, handleBlur, handleChange, handleSubmit, setFieldValue }) => (
           <form onSubmit={handleSubmit}>
@@ -100,14 +112,8 @@ const FormEditOrders = () => {
                 "& > div": { gridColumn: isNonMobile ? undefined : "span 5" },
               }}
             >
-
               <Divider sx={{ gridColumn: "span 5" }} />
 
-
-              {/* TODO -- criar um FormInput para esse formulário */}
-              {/* <OfficesFormInputs */}
-              {/*   handleBlur={handleBlur} handleChange={handleChange} */}
-              {/*   values={values} touched={touched} errors={errors} isEdit={true} /> */}
               <OrdersFormInput
                 handleBlur={handleBlur} handleChange={handleChange} values={values}
                 touched={touched} errors={errors} ordersSchema={ordersSchema}
@@ -123,7 +129,6 @@ const FormEditOrders = () => {
             </Box>
 
             <Divider sx={{ gridColumn: "span 5" }} />
-
 
           </form>
         )}
