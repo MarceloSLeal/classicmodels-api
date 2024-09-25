@@ -1,6 +1,7 @@
 package com.classicmodels.api.controller;
 
 import com.classicmodels.api.mapper.OrdersMapper;
+import com.classicmodels.api.mapper.OrdersUpdateMapper;
 import com.classicmodels.api.model.OrdersRepModel;
 import com.classicmodels.api.model.input.OrdersInput;
 import com.classicmodels.api.model.input.OrdersInputUpdate;
@@ -29,6 +30,7 @@ public class OrdersController {
 
     private OrdersRepository ordersRepository;
     private OrdersMapper ordersMapper;
+    private OrdersUpdateMapper ordersUpdateMapper;
     private OrdersCatalogService ordersCatalogService;
     private CustomersRepository customersRepository;
 
@@ -144,6 +146,8 @@ public class OrdersController {
     @PutMapping("/{id}")
     public ResponseEntity<OrdersRepModel> atualizar(@PathVariable Long id, @Valid @RequestBody OrdersInputUpdate ordersInputUpdate) {
 
+        System.out.println(ordersInputUpdate.getShippedDate());
+
         try {
             Orders teste = new Orders();
             teste.setStatus(OrdersStatus.valueOf(ordersInputUpdate.getStatus()));
@@ -156,7 +160,7 @@ public class OrdersController {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST,
                         "This Id %s doesn't exist".formatted(id)));
 
-        OrdersRepModel ordersRepModel = ordersMapper.toModel(ordersCatalogService.atualizar(orders, ordersInputUpdate));
+        OrdersRepModel ordersRepModel = ordersUpdateMapper.toModel(ordersCatalogService.atualizar(orders, ordersInputUpdate));
 
         return ResponseEntity.ok(ordersRepModel);
     }

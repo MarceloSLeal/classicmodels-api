@@ -24,28 +24,28 @@ public class Orders {
 
     @PastOrPresent
     @NotNull
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
+    //@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ssXXX")
+    @JsonFormat(pattern = "yyyy-MM-dd@HH:mm:ssXXX")
     private OffsetDateTime date;
 
     @FutureOrPresent
     @NotNull
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
+    //@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ssXXX")
+    @JsonFormat(pattern = "yyyy-MM-dd@HH:mm:ssXXX")
     private OffsetDateTime requiredDate;
 
     @FutureOrPresent
     @Nullable
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
+    //@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ssXXX")
+    @JsonFormat(pattern = "yyyy-MM-dd@HH:mm:ssXXX")
     private OffsetDateTime shippedDate;
 
-//    @Size(max = 15)
-//    @NotBlank
     @Enumerated(EnumType.STRING)
     private OrdersStatus status;
 
     @Nullable
     private String comments;
 
-//    @NotBlank
     @Digits(integer = 10, fraction = 0, message = "Invalid integer value")
     private Long customerId;
 

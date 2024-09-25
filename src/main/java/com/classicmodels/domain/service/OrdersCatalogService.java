@@ -29,9 +29,7 @@ public class OrdersCatalogService {
     @Transactional
     public Orders atualizar(Orders orders, OrdersInputUpdate ordersInputUpdate) {
 
-        if (orders.getShippedDate() == null) {
-            orders.setShippedDate(ordersInputUpdate.getShippedDate());
-        }
+        orders.setShippedDate(ordersInputUpdate.getShippedDate());
 
         orders.setComments(ordersInputUpdate.getComments());
         orders.setStatus(OrdersStatus.valueOf(ordersInputUpdate.getStatus()));

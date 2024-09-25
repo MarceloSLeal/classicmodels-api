@@ -26,7 +26,6 @@ const ordersSchema = yup.object().shape({
   customerId: yup.number().required(),
 });
 
-// TODO -- verificar a geração do shippedDate no POST de ORDERS
 const FormEditOrders = () => {
   const location = useLocation();
   const { rowData } = location.state || {};
@@ -51,7 +50,7 @@ const FormEditOrders = () => {
 
   const handleFormSubmit = async (submitValues, { setSubmitting }) => {
 
-    console.log("body", submitValues);
+    console.log("submitValues", submitValues);
 
     setStatus('');
     setResponseCode(null);
@@ -95,7 +94,10 @@ const FormEditOrders = () => {
         validationSchema={ordersSchema}
         onSubmit={(values, formikHelpers) => {
           const submitValues = {
+            // shippedDate: values.shippedDate ? values.shippedDate.format('YYYY-MM-DDTHH:mm:ssZ') : null,
+            // shippedDate: values.shippedDate ? values.shippedDate.format('yyyy-MM-ddTHH:mm:ss.ssXXX') : null,
             shippedDate: values.shippedDate ? values.shippedDate.format('YYYY-MM-DDTHH:mm:ssZ') : null,
+
             status: values.status,
             comments: values.comments,
           };
@@ -119,7 +121,6 @@ const FormEditOrders = () => {
                 touched={touched} errors={errors} ordersSchema={ordersSchema}
                 setFieldValue={setFieldValue} orderStatus={orderStatus}
               />
-
 
             </Box>
             <Box display="flex" justifyContent="end" mt="20px">

@@ -53,6 +53,11 @@ const Orders = () => {
       headerName: "SHIPPED DATE",
       flex: 1,
       renderCell: (params) => {
+
+        if (!params.value) {
+          return "";
+        }
+
         const date = new Date(params.value);
         return date instanceof Date && !isNaN(date) ? date.toLocaleString() : "Invalid Date";
       },
