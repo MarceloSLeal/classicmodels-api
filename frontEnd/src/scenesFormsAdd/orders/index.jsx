@@ -197,6 +197,8 @@ const FormAddOrders = () => {
       requiredDate: values.requiredDate.date.format('YYYY-MM-DDTHH:mm:ssZ'),
     };
 
+    console.log(values);
+
     try {
       const response = await fetch(url.orders.findAll_Post, {
         method: 'POST',

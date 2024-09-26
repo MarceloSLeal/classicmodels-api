@@ -20,6 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -146,7 +147,11 @@ public class OrdersController {
     @PutMapping("/{id}")
     public ResponseEntity<OrdersRepModel> atualizar(@PathVariable Long id, @Valid @RequestBody OrdersInputUpdate ordersInputUpdate) {
 
-        System.out.println(ordersInputUpdate.getShippedDate());
+        System.out.println(ordersInputUpdate.getShippedDate().toString());  // Verifica o valor diretamente
+        System.out.println(ordersInputUpdate.getShippedDate().getOffset());  // Mostra o offset
+
+        OffsetDateTime shippedDate = ordersInputUpdate.getShippedDate();
+        System.out.println("Received shippedDate: " + shippedDate);  // Verifique o valor recebido no console
 
         try {
             Orders teste = new Orders();
