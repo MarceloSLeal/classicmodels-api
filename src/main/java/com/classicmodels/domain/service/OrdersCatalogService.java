@@ -34,7 +34,8 @@ public class OrdersCatalogService {
         orders.setComments(ordersInputUpdate.getComments());
         orders.setStatus(OrdersStatus.valueOf(ordersInputUpdate.getStatus()));
 
-        return orders;
+        //return orders;
+        return this.salvar(orders);
     }
 
     @Transactional

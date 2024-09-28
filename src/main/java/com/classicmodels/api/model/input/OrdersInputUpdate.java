@@ -6,6 +6,7 @@ import jakarta.annotation.Nullable;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.FutureOrPresent;
+import jakarta.validation.constraints.Null;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -15,9 +16,12 @@ import java.time.OffsetDateTime;
 @Setter
 public class OrdersInputUpdate {
 
-    @FutureOrPresent
-    @JsonProperty("shippedDate")
     //@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ssXXX")
+    //@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ssXXX")
+
+    //@FutureOrPresent
+    @Nullable
+    @JsonProperty("shippedDate")
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ssXXX")
     private OffsetDateTime shippedDate;
 

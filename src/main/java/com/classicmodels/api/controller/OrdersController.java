@@ -134,6 +134,8 @@ public class OrdersController {
     @PostMapping
     public ResponseEntity<OrdersRepModel> adicionar(@Valid @RequestBody OrdersInput ordersInput) {
 
+        System.out.println(ordersInput.getRequiredDate());
+
         customersRepository.findById(ordersInput.getCustomerId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST,
                         "This customer Id %s doesn't exist".formatted(ordersInput.getCustomerId())));
@@ -147,11 +149,7 @@ public class OrdersController {
     @PutMapping("/{id}")
     public ResponseEntity<OrdersRepModel> atualizar(@PathVariable Long id, @Valid @RequestBody OrdersInputUpdate ordersInputUpdate) {
 
-        System.out.println(ordersInputUpdate.getShippedDate().toString());  // Verifica o valor diretamente
-        System.out.println(ordersInputUpdate.getShippedDate().getOffset());  // Mostra o offset
-
-        OffsetDateTime shippedDate = ordersInputUpdate.getShippedDate();
-        System.out.println("Received shippedDate: " + shippedDate);  // Verifique o valor recebido no console
+        System.out.println(ordersInputUpdate.getShippedDate());
 
         try {
             Orders teste = new Orders();

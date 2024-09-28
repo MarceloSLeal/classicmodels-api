@@ -182,6 +182,8 @@ const FormAddOrders = () => {
     setLineCounter((prevCounter) => prevCounter - 1);
   }
 
+  // TODO -- Ao adicionar uma order definir o requiredDate com hora 00:00
+  // TODO -- Padronizar formato de data na exibição no frontEnd, DD-MM-YYYY
   const handleSubmitOrders = async (values, { setSubmitting, resetForm }) => {
     setStatus('');
     setResponseCode(null);
