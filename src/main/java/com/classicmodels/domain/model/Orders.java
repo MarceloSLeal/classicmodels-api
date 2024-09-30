@@ -1,5 +1,6 @@
 package com.classicmodels.domain.model;
 
+import com.classicmodels.domain.validationGroups.OrdersDate;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
@@ -22,7 +23,7 @@ public class Orders {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @PastOrPresent
+    @PastOrPresent(groups = OrdersDate.class)
     @NotNull
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ssXXX")
     private OffsetDateTime date;
