@@ -5,8 +5,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.validation.constraints.FutureOrPresent;
-import jakarta.validation.constraints.Null;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -16,7 +14,6 @@ import java.time.OffsetDateTime;
 @Setter
 public class OrdersInputUpdate {
 
-    //@FutureOrPresent
     @Nullable
     @JsonProperty("shippedDate")
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ssXXX")

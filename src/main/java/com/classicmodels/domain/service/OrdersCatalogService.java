@@ -30,7 +30,6 @@ public class OrdersCatalogService {
     public Orders atualizar(Orders orders, OrdersInputUpdate ordersInputUpdate) {
 
         orders.setShippedDate(ordersInputUpdate.getShippedDate());
-
         orders.setComments(ordersInputUpdate.getComments());
         orders.setStatus(OrdersStatus.valueOf(ordersInputUpdate.getStatus()));
 

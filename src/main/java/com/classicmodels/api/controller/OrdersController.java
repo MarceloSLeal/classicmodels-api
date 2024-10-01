@@ -5,25 +5,21 @@ import com.classicmodels.api.mapper.OrdersUpdateMapper;
 import com.classicmodels.api.model.OrdersRepModel;
 import com.classicmodels.api.model.input.OrdersInput;
 import com.classicmodels.api.model.input.OrdersInputUpdate;
-import com.classicmodels.domain.exception.BusinessException;
-import com.classicmodels.domain.exception.EntityNotFoundException;
 import com.classicmodels.domain.model.Orders;
 import com.classicmodels.domain.model.OrdersStatus;
 import com.classicmodels.domain.repository.CustomersRepository;
 import com.classicmodels.domain.repository.OrdersRepository;
 import com.classicmodels.domain.service.OrdersCatalogService;
-import jakarta.persistence.criteria.Order;
 import jakarta.validation.Valid;
+import jakarta.validation.groups.Default;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.time.OffsetDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @AllArgsConstructor
 @RestController
@@ -149,22 +145,27 @@ public class OrdersController {
 
     @PutMapping("/{id}")
     public ResponseEntity<OrdersRepModel> atualizar(@PathVariable Long id,
-                                                    @Valid @RequestBody OrdersInputUpdate ordersInputUpdate,
-                                                    BindingResult result) {
-
-        System.out.println(ordersInputUpdate.getShippedDate());
-
-        try {
-            Orders teste = new Orders();
-            teste.setStatus(OrdersStatus.valueOf(ordersInputUpdate.getStatus()));
-        } catch (IllegalArgumentException e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                    "Accepted values for status, SHIPPED, RESOLVED, CANCELLED, ON_HOLD, DISPUTED, DISPUTED");
-        }
+                                                    @Validated({Default.class}) @RequestBody OrdersInputUpdate ordersInputUpdate) {
 
         Orders orders = ordersRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST,
                         "This Id %s doesn't exist".formatted(id)));
+
+        try {
+            orders.setStatus(OrdersStatus.valueOf(ordersInputUpdate.getStatus()));
+        } catch (IllegalArgumentException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "Accepted values for status, SHIPPED, RESOLVED, CANCELLED, ON_HOLD, DISPUTED");
+        }
+
+        boolean comparaData = true;
+        if (ordersInputUpdate.getShippedDate() != null) {
+            comparaData = ordersInputUpdate.getShippedDate().isAfter(orders.getDate());
+        }
+        if (!comparaData) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "The value for shippedDate must be after the order start date");
+        }
 
         OrdersRepModel ordersRepModel = ordersUpdateMapper.toModel(ordersCatalogService.atualizar(orders, ordersInputUpdate));
 

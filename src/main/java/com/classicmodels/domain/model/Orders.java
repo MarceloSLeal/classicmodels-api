@@ -23,17 +23,16 @@ public class Orders {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @PastOrPresent(groups = OrdersDate.class)
     @NotNull
+    @PastOrPresent(groups = OrdersDate.class)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ssXXX")
     private OffsetDateTime date;
 
-    @FutureOrPresent
     @NotNull
+    @FutureOrPresent(groups = OrdersDate.class)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ssXXX")
     private OffsetDateTime requiredDate;
 
-    //@FutureOrPresent
     @Nullable
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ssXXX")
     private OffsetDateTime shippedDate;

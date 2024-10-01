@@ -41,19 +41,15 @@ const FormEditOrders = () => {
   const initialValues = {
     id: rowData.id,
     date: dayjs(rowData.date),
-    // shippedDate: dayjs(rowData.shippedDate),
-    shippedDate: rowData.shippedDate ? dayjs(rowData.shippedDate) : null,
+    shippedDate: dayjs(rowData.shippedDate),
+    // shippedDate: rowData.shippedDate ? dayjs(rowData.shippedDate) : null,
     requiredDate: dayjs(rowData.requiredDate),
     status: rowData.status,
     comments: rowData.comments,
     customerId: rowData.customerId,
   }
 
-  console.log(rowData);
-
   const handleFormSubmit = async (submitValues, { setSubmitting }) => {
-
-    console.log("submitValues", submitValues);
 
     setStatus('');
     setResponseCode(null);
@@ -72,7 +68,7 @@ const FormEditOrders = () => {
       if (response.ok) {
         setStatus('Order updated successfully!');
       } else {
-        setStatus(`Error: ${data.title || 'Failed to update Order'}`);
+        setStatus(`Error: ${data.title || 'Failed to update Order'} - ${data.detail || ''}`);
       }
     } catch (error) {
       setStatus(`Error: ${error.message || 'Failed to update Order'}`);
