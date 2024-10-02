@@ -58,7 +58,7 @@ const OrdersAddFormInputs = ({ handleBlur, handleChange, values, touched,
             <DatePicker
               label="Required Date"
               disablePast
-              value={values.requiredDate.date} // Objeto dayjs é esperado aqui
+              value={values.requiredDate.date}
               onChange={(newValue) => {
                 if (dayjs.isDayjs(newValue)) {
                   setFieldValue('requiredDate', { date: newValue });
@@ -66,6 +66,7 @@ const OrdersAddFormInputs = ({ handleBlur, handleChange, values, touched,
                   console.error("newValue is not a dayjs object", newValue);
                 }
               }}
+              format="DD/MM/YYYY"
             />
           </DemoContainer>
         </LocalizationProvider>

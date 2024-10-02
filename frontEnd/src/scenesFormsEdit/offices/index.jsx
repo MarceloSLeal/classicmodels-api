@@ -66,7 +66,7 @@ const FormEditOffices = () => {
       if (response.ok) {
         setStatus('Office updated successfully!');
       } else {
-        setStatus(`Error: ${data.title || 'Failed to update Office'}`);
+        setStatus(`Error: ${data.title || 'Failed to update Office'} - ${data.detail || ''}`);
       }
     } catch (error) {
       setStatus(`Error: ${error.message || 'Failed to update Office'}`);

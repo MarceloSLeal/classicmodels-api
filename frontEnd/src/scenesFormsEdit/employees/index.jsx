@@ -67,7 +67,7 @@ const FormEditEmployee = () => {
       if (response.ok) {
         setStatus('Employee updated successfully!');
       } else {
-        setStatus(`Error: ${data.title || 'Failed to update Employee'}`);
+        setStatus(`Error: ${data.title || 'Failed to update Employee'} - ${data.detail || ''}`);
       }
     } catch (error) {
       setStatus(`Error: ${error.message || 'Failed to update Employee'}`);

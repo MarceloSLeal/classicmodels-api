@@ -41,8 +41,7 @@ const FormEditOrders = () => {
   const initialValues = {
     id: rowData.id,
     date: dayjs(rowData.date),
-    shippedDate: dayjs(rowData.shippedDate),
-    // shippedDate: rowData.shippedDate ? dayjs(rowData.shippedDate) : null,
+    shippedDate: rowData.shippedDate ? dayjs(rowData.shippedDate) : null,
     requiredDate: dayjs(rowData.requiredDate),
     status: rowData.status,
     comments: rowData.comments,
@@ -93,7 +92,6 @@ const FormEditOrders = () => {
         validationSchema={ordersSchema}
         onSubmit={(values, formikHelpers) => {
           const submitValues = {
-            // shippedDate: values.shippedDate ? values.shippedDate.format('YYYY-MM-DDTHH:mm:ssZ') : null,
             shippedDate: values.shippedDate ? values.shippedDate.format('YYYY-MM-DDTHH:mm:ssZ') : null,
             status: values.status,
             comments: values.comments,

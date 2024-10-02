@@ -64,7 +64,7 @@ const FormAddEmployee = () => {
         setStatus('Employee created successfully!');
         setResetFormFn(() => resetForm);
       } else {
-        setStatus(`Error: ${data.title || 'Failed to create Employee'}`);
+        setStatus(`Error: ${data.title || 'Failed to create Employee'} - ${data.detail || ''}`);
       }
     } catch (error) {
       setStatus(`Error: ${error.message || 'Failed to create Employee'}`);

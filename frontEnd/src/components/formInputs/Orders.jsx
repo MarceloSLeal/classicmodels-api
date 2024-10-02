@@ -36,6 +36,7 @@ const OrdersFormInput = ({ handleBlur, handleChange, values, touched,
               disabled
               label="Date"
               value={values.date}
+              format="DD/MM/YYYY"
             />
           </DemoContainer>
         </LocalizationProvider>
@@ -62,6 +63,7 @@ const OrdersFormInput = ({ handleBlur, handleChange, values, touched,
                   setFieldValue('shippedDate', null);
                 }
               }}
+              format="DD/MM/YYYY"
             />
           </DemoContainer>
         </LocalizationProvider>
@@ -85,6 +87,7 @@ const OrdersFormInput = ({ handleBlur, handleChange, values, touched,
               disabled
               label="Required Date"
               value={values.requiredDate}
+              format="DD/MM/YYYY"
             />
           </DemoContainer>
         </LocalizationProvider>

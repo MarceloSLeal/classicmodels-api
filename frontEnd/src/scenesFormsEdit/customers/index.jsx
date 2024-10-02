@@ -75,7 +75,7 @@ const FormEditCustomer = () => {
       if (response.ok) {
         setStatus('Customer updated successfully!');
       } else {
-        setStatus(`Error: ${data.title || 'Failed to update Customer'}`);
+        setStatus(`Error: ${data.title || 'Failed to update Customer'} - ${data.detail || ''}`);
       }
     } catch (error) {
       setStatus(`Error: ${error.message || 'Failed to update Customer'}`);

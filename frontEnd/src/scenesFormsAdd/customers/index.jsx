@@ -72,7 +72,7 @@ const FormAddCustomer = () => {
         setStatus('Customer created successfully!');
         setResetFormFn(() => resetForm);
       } else {
-        setStatus(`Error: ${data.title || 'Failed to create Customer'}`);
+        setStatus(`Error: ${data.title || 'Failed to create Customer'} - ${data.detail || ''}`);
       }
     } catch (error) {
       setStatus(`Error: ${error.message || 'Failed to create Customer'}`);

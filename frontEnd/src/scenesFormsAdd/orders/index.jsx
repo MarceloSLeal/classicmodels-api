@@ -19,7 +19,12 @@ import OrdersDetailsFormInputs from "../../components/formInputs/OrdersDetails";
 import dayjs from 'dayjs';
 import OperationStatusDialog from "../../components/dialogs/OperationStatusDialog"
 
-const tomorrow = dayjs().add(1, 'day');
+const currentTime = dayjs();
+let tomorrow = dayjs().add(1, 'day');
+tomorrow = tomorrow
+  .set('hour', currentTime.hour())
+  .set('minute', currentTime.minute())
+  .set('second', currentTime.second());
 const ordersInitialValues = {
   customerId: "",
   requiredDate: { date: tomorrow },
@@ -182,8 +187,6 @@ const FormAddOrders = () => {
     setLineCounter((prevCounter) => prevCounter - 1);
   }
 
-  // TODO -- Ao adicionar uma order definir o requiredDate com hora 00:00
-  // TODO -- Padronizar formato de data na exibição no frontEnd, DD-MM-YYYY
   const handleSubmitOrders = async (values, { setSubmitting, resetForm }) => {
     setStatus('');
     setResponseCode(null);
@@ -198,8 +201,6 @@ const FormAddOrders = () => {
       ...values,
       requiredDate: values.requiredDate.date.format('YYYY-MM-DDTHH:mm:ssZ'),
     };
-
-    console.log(values);
 
     try {
       const response = await fetch(url.orders.findAll_Post, {
@@ -230,7 +231,7 @@ const FormAddOrders = () => {
         setLineCounter(0);
         resetForm();
       } else {
-        setStatus(`Error: ${data.title || 'Failed to create Order'}`);
+        setStatus(`Error: ${data.title || 'Failed to create Order'} - ${data.detail || ''}`);
       }
     } catch (error) {
       setStatus(`Error: ${error.message || 'Failed to create Order'}`);
