@@ -30,8 +30,9 @@ public class PaymentsController {
     private CustomersRepository customersRepository;
 
     @GetMapping
-    public List<Payments> listar() {
-        return paymentsRepository.findAll();
+    public List<PaymentsRepModel> listar() {
+
+        return paymentsMapper.toCollectionModel(paymentsRepository.findAll());
     }
 
     @GetMapping("/customerid/{id}")

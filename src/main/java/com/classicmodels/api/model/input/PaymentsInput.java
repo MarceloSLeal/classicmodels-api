@@ -15,6 +15,9 @@ public class PaymentsInput {
     @NotNull
     private Long customerId;
 
+    @NotNull
+    private Integer orderId;
+
     @FutureOrPresent
     private OffsetDateTime paymentDate;
 

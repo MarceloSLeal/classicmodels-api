@@ -5,8 +5,8 @@ Queries variadas.
 #aos order_id da tabela orders, apenas o amount de cada pedido, tive que fazer algumas verificacoes para achar os valores
 #certo somando o valor total dos pedidos na tabela orderdetails com o campo amount em payments
 #da pra inserir uma lista de check_number e fazer essas verificacoes, o ideal seria inserir um select ali mas nao consegui
-# e acabei inserindo uma lista manualmente, tive que inserir todas a tabela, só deixei algums registros aqui de exemplo
-#caso preciso fazer isso novamente.
+# e acabei inserindo uma lista manualmente, tive que inserir toda a tabela, só deixei algums registros aqui de exemplo
+#caso precise fazer isso novamente.
 UPDATE payments p
 JOIN (
     SELECT

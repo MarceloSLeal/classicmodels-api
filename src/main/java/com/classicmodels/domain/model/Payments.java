@@ -1,6 +1,7 @@
 package com.classicmodels.domain.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Digits;
@@ -24,6 +25,10 @@ import java.util.UUID;
 @Entity
 @Table(name = "payments")
 public class Payments {
+
+    @EqualsAndHashCode.Include
+    @NotNull
+    private Integer orderId;
 
     @EqualsAndHashCode.Include
     @NotNull
