@@ -10,8 +10,7 @@ import java.util.UUID;
 @Setter
 public class PaymentsRepModel {
 
-    private Integer orderId;
-    private long customerId;
+    private Long orderId;
     private UUID checkNumber;
     private OffsetDateTime paymentDate;
     private Double amount;

@@ -28,11 +28,7 @@ public class Payments {
 
     @EqualsAndHashCode.Include
     @NotNull
-    private Integer orderId;
-
-    @EqualsAndHashCode.Include
-    @NotNull
-    private Long customerId;
+    private Long orderId;
 
     @EqualsAndHashCode.Include
     @Id

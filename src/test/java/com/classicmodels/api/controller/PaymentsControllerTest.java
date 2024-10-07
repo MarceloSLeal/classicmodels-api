@@ -58,19 +58,19 @@ public class PaymentsControllerTest {
         payments1.setPaymentDate(OffsetDateTime.now());
         payments1.setAmount(1001.0);
         payments1.setCheckNumber(UUID.fromString("1a1c07e0-a04c-46ed-805f-290d573d5e40"));
-        payments1.setCustomerId(1L);
+        payments1.setOrderId(1L);
         Payments payments2 = new Payments();
         payments2.setPaymentDate(OffsetDateTime.now());
         payments2.setAmount(1002.0);
         payments2.setCheckNumber(UUID.fromString("40688a64-5125-11ee-8eaa-0242ac120002"));
-        payments2.setCustomerId(2L);
+        payments2.setOrderId(2L);
 
         mockPaymentsList.add(payments1);
         mockPaymentsList.add(payments2);
 
         when(paymentsRepository.findAll()).thenReturn(mockPaymentsList);
 
-        List<Payments> result = paymentsController.listar();
+        List<PaymentsRepModel> result = paymentsController.listar();
 
         verify(paymentsRepository, times(1)).findAll();
         assertEquals(mockPaymentsList, result);
@@ -87,27 +87,27 @@ public class PaymentsControllerTest {
         payments1.setPaymentDate(OffsetDateTime.now());
         payments1.setAmount(1001.0);
         payments1.setCheckNumber(UUID.fromString("1a1c07e0-a04c-46ed-805f-290d573d5e40"));
-        payments1.setCustomerId(1L);
+        payments1.setOrderId(1L);
         Payments payments2 = new Payments();
         payments2.setPaymentDate(OffsetDateTime.now());
         payments2.setAmount(1002.0);
         payments2.setCheckNumber(UUID.fromString("40688a64-5125-11ee-8eaa-0242ac120002"));
-        payments2.setCustomerId(1L);
+        payments2.setOrderId(1L);
 
         mockPaymentsList.add(payments1);
         mockPaymentsList.add(payments2);
 
-        when(paymentsRepository.findByCustomerId(customerId)).thenReturn(mockPaymentsList);
+        when(paymentsRepository.findByOrderId(customerId)).thenReturn(mockPaymentsList);
         when(paymentsMapper.toModel(any(Payments.class))).thenAnswer(invocation -> new PaymentsRepModel());
 
-        ResponseEntity<List<PaymentsRepModel>> response = paymentsController.buscarPorCustomerId(customerId);
+        ResponseEntity<List<PaymentsRepModel>> response = paymentsController.buscarPorOrderId(customerId);
 
         assertEquals(response.getStatusCode(), HttpStatus.OK);
 
         List<PaymentsRepModel> responseBody = response.getBody();
         assert responseBody != null;
         assertEquals(mockPaymentsList.size(), responseBody.size());
-        verify(paymentsRepository, times(1)).findByCustomerId(customerId);
+        verify(paymentsRepository, times(1)).findByOrderId(customerId);
         verify(paymentsMapper, times(mockPaymentsList.size())).toModel(any(Payments.class));
         verifyNoMoreInteractions(paymentsRepository, paymentsMapper);
 
@@ -117,12 +117,12 @@ public class PaymentsControllerTest {
     public void testBuscarPorCustomerIdSemPagamentosEncontrados() {
         Long customerId = 1L;
 
-        when(paymentsRepository.findByCustomerId(customerId)).thenReturn(new ArrayList<>());
+        when(paymentsRepository.findByOrderId(customerId)).thenReturn(new ArrayList<>());
 
-        ResponseEntity<List<PaymentsRepModel>> response = paymentsController.buscarPorCustomerId(customerId);
+        ResponseEntity<List<PaymentsRepModel>> response = paymentsController.buscarPorOrderId(customerId);
 
         assertThat(response.getStatusCode(), Matchers.is(HttpStatus.NOT_FOUND));
-        verify(paymentsRepository, times(1)).findByCustomerId(customerId);
+        verify(paymentsRepository, times(1)).findByOrderId(customerId);
         verifyNoMoreInteractions(paymentsRepository);
         verifyNoInteractions(paymentsMapper);
     }
@@ -134,7 +134,7 @@ public class PaymentsControllerTest {
         payments1.setPaymentDate(OffsetDateTime.now());
         payments1.setAmount(1001.0);
         payments1.setCheckNumber(UUID.fromString("1a1c07e0-a04c-46ed-805f-290d573d5e40"));
-        payments1.setCustomerId(1L);
+        payments1.setOrderId(1L);
 
         when(paymentsRepository.findByCheckNumber(payments1.getCheckNumber())).thenReturn(Optional.of(payments1));
         when(paymentsMapper.toModel(any(Payments.class))).thenAnswer(invocation -> new PaymentsRepModel());
@@ -153,7 +153,7 @@ public class PaymentsControllerTest {
     public void testAdicionarComSucesso() {
 
         PaymentsInput paymentsInput = new PaymentsInput();
-        paymentsInput.setCustomerId(1L);
+        paymentsInput.setOrderId(1L);
         paymentsInput.setPaymentDate(OffsetDateTime.now());
         paymentsInput.setAmount(1000.1);
 
@@ -173,21 +173,21 @@ public class PaymentsControllerTest {
         payments.setPaymentDate(OffsetDateTime.now());
         payments.setAmount(1001.0);
         payments.setCheckNumber(UUID.fromString("1a1c07e0-a04c-46ed-805f-290d573d5e40"));
-        payments.setCustomerId(1L);
+        payments.setOrderId(1L);
 
         PaymentsRepModel paymentsRepModel = new PaymentsRepModel();
         paymentsRepModel.setCheckNumber(payments.getCheckNumber());
-        paymentsRepModel.setCustomerId(1L);
+        paymentsRepModel.setOrderId(1L);
         paymentsRepModel.setAmount(1000.1);
         paymentsRepModel.setPaymentDate(OffsetDateTime.now());
 
-        when(customersRepository.findById(paymentsInput.getCustomerId())).thenReturn(Optional.of(customer));
+        when(customersRepository.findById(paymentsInput.getOrderId())).thenReturn(Optional.of(customer));
         when(paymentsMapper.toEntity(paymentsInput)).thenReturn(payments);
         when(paymentsCatalogService.salvar(payments)).thenReturn(payments);
 
         ResponseEntity<PaymentsRepModel> responseEntity = paymentsController.adicionar(paymentsInput);
         assertEquals(HttpStatus.CREATED, responseEntity.getStatusCode());
-        verify(customersRepository, times(1)).findById(paymentsInput.getCustomerId());
+        verify(customersRepository, times(1)).findById(paymentsInput.getOrderId());
         verify(paymentsMapper, times(1)).toEntity(paymentsInput);
         verify(paymentsCatalogService, times(1)).salvar(payments);
     }
@@ -196,17 +196,17 @@ public class PaymentsControllerTest {
     public void testAdicionarComCustomerIdNaoEncontrado() {
 
         PaymentsInput paymentsInput = new PaymentsInput();
-        paymentsInput.setCustomerId(1L);
+        paymentsInput.setOrderId(1L);
         paymentsInput.setPaymentDate(OffsetDateTime.now());
         paymentsInput.setAmount(1000.1);
 
-        when(customersRepository.findById(paymentsInput.getCustomerId())).thenReturn(Optional.empty());
+        when(customersRepository.findById(paymentsInput.getOrderId())).thenReturn(Optional.empty());
 
         ResponseStatusException exception = assertThrows(ResponseStatusException.class, () -> paymentsController.adicionar(paymentsInput));
 
         assertEquals(HttpStatus.BAD_REQUEST, exception.getStatusCode());
         assertEquals("There is no customer with that Id", exception.getReason());
-        verify(customersRepository, times(1)).findById(paymentsInput.getCustomerId());
+        verify(customersRepository, times(1)).findById(paymentsInput.getOrderId());
         verifyNoInteractions(paymentsMapper);
         verifyNoInteractions(paymentsCatalogService);
     }
@@ -216,11 +216,11 @@ public class PaymentsControllerTest {
 
         UUID checkNumber = UUID.fromString("0db46a97-6af8-4470-a285-3e01e7053bab");
         PaymentsInput paymentsInput = new PaymentsInput();
-        paymentsInput.setCustomerId(1L);
+        paymentsInput.setOrderId(1L);
         paymentsInput.setPaymentDate(OffsetDateTime.now());
         paymentsInput.setAmount(1002.1);
 
-        when(customersRepository.findById(paymentsInput.getCustomerId())).thenReturn(Optional.of(new Customer()));
+        when(customersRepository.findById(paymentsInput.getOrderId())).thenReturn(Optional.of(new Customer()));
         when(paymentsRepository.findByCheckNumber(checkNumber)).thenReturn(Optional.of(new Payments()));
         when(paymentsMapper.toEntity(paymentsInput)).thenReturn(new Payments());
         when(paymentsCatalogService.salvar(any())).thenReturn(new Payments());
@@ -235,11 +235,11 @@ public class PaymentsControllerTest {
 
         UUID checkNumber = UUID.randomUUID();
         PaymentsInput paymentsInput = new PaymentsInput();
-        paymentsInput.setCustomerId(1L);
+        paymentsInput.setOrderId(1L);
         paymentsInput.setPaymentDate(OffsetDateTime.now());
         paymentsInput.setAmount(1002.1);
 
-        when(customersRepository.findById(paymentsInput.getCustomerId())).thenReturn(Optional.empty());
+        when(customersRepository.findById(paymentsInput.getOrderId())).thenReturn(Optional.empty());
 
         assertThrows(EntityNotFoundException.class, () -> paymentsController.atualizar(checkNumber, paymentsInput));
     }
@@ -249,11 +249,11 @@ public class PaymentsControllerTest {
 
         UUID checkNumber = UUID.randomUUID();
         PaymentsInput paymentsInput = new PaymentsInput();
-        paymentsInput.setCustomerId(1L);
+        paymentsInput.setOrderId(1L);
         paymentsInput.setPaymentDate(OffsetDateTime.now());
         paymentsInput.setAmount(1002.1);
 
-        when(customersRepository.findById(paymentsInput.getCustomerId())).thenReturn(Optional.of(new Customer()));
+        when(customersRepository.findById(paymentsInput.getOrderId())).thenReturn(Optional.of(new Customer()));
         when(paymentsRepository.findByCheckNumber(checkNumber)).thenReturn(Optional.empty());
 
         assertThrows(EntityNotFoundException.class, () -> paymentsController.atualizar(checkNumber, paymentsInput));

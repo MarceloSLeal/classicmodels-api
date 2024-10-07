@@ -13,10 +13,7 @@ import java.time.OffsetDateTime;
 public class PaymentsInput {
 
     @NotNull
-    private Long customerId;
-
-    @NotNull
-    private Integer orderId;
+    private Long orderId;
 
     @FutureOrPresent
     private OffsetDateTime paymentDate;

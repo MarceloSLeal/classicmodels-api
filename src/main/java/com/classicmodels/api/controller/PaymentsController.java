@@ -6,6 +6,7 @@ import com.classicmodels.api.model.input.PaymentsInput;
 import com.classicmodels.domain.exception.EntityNotFoundException;
 import com.classicmodels.domain.model.Payments;
 import com.classicmodels.domain.repository.CustomersRepository;
+import com.classicmodels.domain.repository.OrdersRepository;
 import com.classicmodels.domain.repository.PaymentsRepository;
 import com.classicmodels.domain.service.PaymentsCatalogService;
 import jakarta.validation.Valid;
@@ -27,7 +28,7 @@ public class PaymentsController {
     private PaymentsRepository paymentsRepository;
     private PaymentsMapper paymentsMapper;
     private PaymentsCatalogService paymentsCatalogService;
-    private CustomersRepository customersRepository;
+    private OrdersRepository ordersRepository;
 
     @GetMapping
     public List<PaymentsRepModel> listar() {
@@ -35,10 +36,10 @@ public class PaymentsController {
         return paymentsMapper.toCollectionModel(paymentsRepository.findAll());
     }
 
-    @GetMapping("/customerid/{id}")
-    public ResponseEntity<List<PaymentsRepModel>> buscarPorCustomerId(@PathVariable Long id) {
+    @GetMapping("/orderid/{id}")
+    public ResponseEntity<List<PaymentsRepModel>> buscarPorOrderId(@PathVariable Long id) {
 
-        List<Payments> payments = paymentsRepository.findByCustomerId(id);
+        List<Payments> payments = paymentsRepository.findByOrderId(id);
 
         if (!payments.isEmpty()) {
             List<PaymentsRepModel> paymentsRepModels = payments.stream()
@@ -64,9 +65,13 @@ public class PaymentsController {
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<PaymentsRepModel> adicionar(@Valid @RequestBody PaymentsInput paymentsInput) {
 
-        customersRepository.findById(paymentsInput.getCustomerId())
-//                .orElseThrow(() -> new EntityNotFoundException("There is no customer with that Id"));
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "There is no customer with that Id"));
+//        customersRepository.findById(paymentsInput.getCustomerId())
+////                .orElseThrow(() -> new EntityNotFoundException("There is no customer with that Id"));
+//                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "There is no customer with that Id"));
+
+        ordersRepository.findById(paymentsInput.getOrderId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "There is no order with that Id"));
+
 
         Payments payments = paymentsMapper.toEntity(paymentsInput);
         Payments savedPayment = paymentsCatalogService.salvar(payments);
@@ -78,8 +83,11 @@ public class PaymentsController {
     @PutMapping("/{checkNumber}")
     public ResponseEntity<PaymentsRepModel> atualizar(@PathVariable UUID checkNumber, @Valid @RequestBody PaymentsInput paymentsInput) {
 
-        customersRepository.findById(paymentsInput.getCustomerId())
-                .orElseThrow(() -> new EntityNotFoundException("There is no customer with that Id"));
+//        customersRepository.findById(paymentsInput.getCustomerId())
+//                .orElseThrow(() -> new EntityNotFoundException("There is no customer with that Id"));
+
+        ordersRepository.findById(paymentsInput.getOrderId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "There is no order with that Id"));
 
         Payments payments = paymentsRepository.findByCheckNumber(checkNumber)
                 .orElseThrow(() -> new EntityNotFoundException("There is no payment with that ckeckNumber"));
