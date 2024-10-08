@@ -4,7 +4,7 @@ import AddIcon from '@mui/icons-material/Add';
 import Button from '@mui/material/Button';
 import { useNavigate } from "react-router-dom";
 
-const BoxDataGrid = ({ colors, rows, columns, path }) => {
+const BoxDataGrid = ({ colors, rows, columns, path, rowId }) => {
   const navigateAdd = useNavigate();
 
   const EditToolbar = () => {
@@ -66,6 +66,7 @@ const BoxDataGrid = ({ colors, rows, columns, path }) => {
         slots={{
           toolbar: EditToolbar,
         }}
+        {...(rowId ? { getRowId: (row) => row[rowId] } : {})}
       />
     </Box>
 
