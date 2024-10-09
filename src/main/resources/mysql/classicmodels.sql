@@ -23,9 +23,9 @@ Version 2.0
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-CREATE DATABASE /*!32312 IF NOT EXISTS*/`classicmodels` /*!40100 DEFAULT CHARACTER SET latin1 */;
+CREATE DATABASE /*!32312 IF NOT EXISTS*/`classicmodels_api` /*!40100 DEFAULT CHARACTER SET latin1 */;
 
-USE `classicmodels`;
+USE `classicmodels_api`;
 
 /*Table structure for table `customers` */
 
@@ -33,7 +33,7 @@ DROP TABLE IF EXISTS `customers`;
 
 CREATE TABLE `customers` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `email` varchar(50),
+  `email` varchar(50) NOT NULL UNIQUE,
   `name` varchar(50) NOT NULL,
   `contact_last_name` varchar(50) NOT NULL,
   `contact_first_name` varchar(50) NOT NULL,
@@ -44,12 +44,13 @@ CREATE TABLE `customers` (
   `state` varchar(50) DEFAULT NULL,
   `postal_code` varchar(15) DEFAULT NULL,
   `country` varchar(50) NOT NULL,
-  `employee_id` int DEFAULT NULL,
   `credit_limit` decimal(10,2) DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `employee_id` (`employee_id`),
-  CONSTRAINT `customers_ibfk_1` FOREIGN KEY (`employee_id`) REFERENCES `employees` (`id`) ON DELETE SET NULL
-) engine=InnoDB default charset=UTF8MB4;
+  `employee_id` int DEFAULT NULL,
+  PRIMARY KEY (`id`) );
+  
+Alter table customers ADD KEY `employee_id` (`employee_id`),
+ADD CONSTRAINT `customers_ibfk_1` FOREIGN KEY (`employee_id`) REFERENCES `employees` (`id`)
+ON DELETE SET NULL;
 
 /*Data for the table `customers` */
 
@@ -304,7 +305,7 @@ insert  into `customers`(`id`,`email`, `name`,`contact_last_name`,`contact_first
 DROP TABLE IF EXISTS `employees`;
 
 CREATE TABLE `employees` (
-  `id` int NOT NULL,
+  `id` int NOT NULL AUTO_INCREMENT,
   `last_name` varchar(50) NOT NULL,
   `first_name` varchar(50) NOT NULL,
   `extension` varchar(10) NOT NULL,
@@ -313,11 +314,14 @@ CREATE TABLE `employees` (
   `reports_to` int DEFAULT NULL,
   `job_title` varchar(50) NOT NULL,
   PRIMARY KEY (`id`),
-  KEY `reports_to` (`reports_to`),
-  KEY `office_id` (`office_id`),
-  CONSTRAINT `employees_ibfk_1` FOREIGN KEY (`reports_to`) REFERENCES `employees` (`id`) ON DELETE SET NULL,
-  CONSTRAINT `employees_ibfk_2` FOREIGN KEY (`office_id`) REFERENCES `offices` (`id`)
-) engine=InnoDB default charset=UTF8MB4;
+  UNIQUE KEY `email` (`email`),
+  KEY `reportsTo` (`reports_to`),
+  CONSTRAINT `employees_ibfk_1` FOREIGN KEY (`reports_to`) REFERENCES `employees` (`id`)
+  on update CASCADE);
+  
+alter table employees add KEY `office_id` (`office_id`),
+add CONSTRAINT `employees_ibfk_2` FOREIGN KEY (`office_id`) REFERENCES `offices` (`id`)
+on update CASCADE;
 
 /*Data for the table `employees` */
 
@@ -331,7 +335,7 @@ insert  into `employees`(`id`,`last_name`,`first_name`,`extension`,`email`,`offi
 
 (1088,'Patterson','William','x4871','wpatterson@classicmodelcars.com','6',1056,'Sales Manager (APAC)'),
 
-(1102,'Bondur','Gerard','x5408','gbondur@classicmodelcars.com','4',1056,'Sales Manager (EMEA)'),
+(1102,'Bondur','Gerard','x5408','gbondur@classicmodelcars.com','4',1056,'Sale Manager (EMEA)'),
 
 (1143,'Bow','Anthony','x5428','abow@classicmodelcars.com','1',1056,'Sales Manager (NA)'),
 
@@ -384,7 +388,7 @@ CREATE TABLE `offices` (
   `postal_code` varchar(15) NOT NULL,
   `territory` varchar(10) NOT NULL,
   PRIMARY KEY (`id`)
-) engine=InnoDB default charset=UTF8MB4;
+);
 
 /*Data for the table `offices` */
 
@@ -416,9 +420,12 @@ CREATE TABLE `orderdetails` (
   `order_line_number` smallint NOT NULL,
   PRIMARY KEY (`order_id`,`product_id`),
   KEY `product_id` (`product_id`),
-  CONSTRAINT `orderdetails_ibfk_1` FOREIGN KEY (`order_id`) REFERENCES `orders` (`id`),
-  CONSTRAINT `orderdetails_ibfk_2` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`)
-) engine=InnoDB default charset=UTF8MB4;
+  CONSTRAINT `orderdetails_ibfk_1` FOREIGN KEY (`order_id`) REFERENCES `orders` (`id`)
+  on update CASCADE);
+  
+alter table orderdetails add CONSTRAINT `orderdetails_ibfk_2`
+FOREIGN KEY (`product_id`) REFERENCES `products` (`id`)
+on update CASCADE;
 
 /*Data for the table `orderdetails` */
 
@@ -6421,942 +6428,1239 @@ insert  into `orderdetails`(`order_id`,`product_id`,`quantity_ordered`,`price_ea
 DROP TABLE IF EXISTS `orders`;
 
 CREATE TABLE `orders` (
-  `id` int NOT NULL,
+  `id` int NOT NULL AUTO_INCREMENT,
   `date` datetime NOT NULL,
   `required_date` datetime NOT NULL,
   `shipped_date` datetime DEFAULT NULL,
   `status` varchar(15) NOT NULL,
   `comments` text,
   `customer_id` int NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `customer_id` (`customer_id`),
-  CONSTRAINT `orders_ibfk_1` FOREIGN KEY (`customer_id`) REFERENCES `customers` (`id`)
-) engine=InnoDB default charset=UTF8MB4;
+  PRIMARY KEY (`id`));
+  
+alter table orders add KEY `customer_id` (`customer_id`),
+add CONSTRAINT `orders_ibfk_1` FOREIGN KEY (`customer_id`) REFERENCES `customers` (`id`)
+on update CASCADE;
 
 /*Data for the table `orders` */
 
 insert  into `orders`(`id`,`date`,`required_date`,`shipped_date`,`status`,`comments`,`customer_id`) values
 
-(10100,'2003-01-06','2003-01-13','2003-01-10','Shipped',NULL,363),
+(10100,'2003-01-06','2003-01-13','2003-01-10','SHIPPED',NULL,363),
 
-(10101,'2003-01-09','2003-01-18','2003-01-11','Shipped','Check on availability.',128),
+(10101,'2003-01-09','2003-01-18','2003-01-11','SHIPPED','Check on availability.',128),
 
-(10102,'2003-01-10','2003-01-18','2003-01-14','Shipped',NULL,181),
+(10102,'2003-01-10','2003-01-18','2003-01-14','SHIPPED',NULL,181),
 
-(10103,'2003-01-29','2003-02-07','2003-02-02','Shipped',NULL,121),
+(10103,'2003-01-29','2003-02-07','2003-02-02','SHIPPED',NULL,121),
 
-(10104,'2003-01-31','2003-02-09','2003-02-01','Shipped',NULL,141),
+(10104,'2003-01-31','2003-02-09','2003-02-01','SHIPPED',NULL,141),
 
-(10105,'2003-02-11','2003-02-21','2003-02-12','Shipped',NULL,145),
+(10105,'2003-02-11','2003-02-21','2003-02-12','SHIPPED',NULL,145),
 
-(10106,'2003-02-17','2003-02-24','2003-02-21','Shipped',NULL,278),
+(10106,'2003-02-17','2003-02-24','2003-02-21','SHIPPED',NULL,278),
 
-(10107,'2003-02-24','2003-03-03','2003-02-26','Shipped','Difficult to negotiate with customer. We need more marketing materials',131),
+(10107,'2003-02-24','2003-03-03','2003-02-26','SHIPPED','Difficult to negotiate with customer. We need more marketing materials',131),
 
-(10108,'2003-03-03','2003-03-12','2003-03-08','Shipped',NULL,385),
+(10108,'2003-03-03','2003-03-12','2003-03-08','SHIPPED',NULL,385),
 
-(10109,'2003-03-10','2003-03-19','2003-03-11','Shipped','Customer requested that FedEx Ground is used for this shipping',486),
+(10109,'2003-03-10','2003-03-19','2003-03-11','SHIPPED','Customer requested that FedEx Ground is used for this shipping',486),
 
-(10110,'2003-03-18','2003-03-24','2003-03-20','Shipped',NULL,187),
+(10110,'2003-03-18','2003-03-24','2003-03-20','SHIPPED',NULL,187),
 
-(10111,'2003-03-25','2003-03-31','2003-03-30','Shipped',NULL,129),
+(10111,'2003-03-25','2003-03-31','2003-03-30','SHIPPED',NULL,129),
 
-(10112,'2003-03-24','2003-04-03','2003-03-29','Shipped','Customer requested that ad materials (such as posters, pamphlets) be included in the shippment',144),
+(10112,'2003-03-24','2003-04-03','2003-03-29','SHIPPED','Customer requested that ad materials (such as posters, pamphlets) be included in the shippment',144),
 
-(10113,'2003-03-26','2003-04-02','2003-03-27','Shipped',NULL,124),
+(10113,'2003-03-26','2003-04-02','2003-03-27','SHIPPED',NULL,124),
 
-(10114,'2003-04-01','2003-04-07','2003-04-02','Shipped',NULL,172),
+(10114,'2003-04-01','2003-04-07','2003-04-02','SHIPPED',NULL,172),
 
-(10115,'2003-04-04','2003-04-12','2003-04-07','Shipped',NULL,424),
+(10115,'2003-04-04','2003-04-12','2003-04-07','SHIPPED',NULL,424),
 
-(10116,'2003-04-11','2003-04-19','2003-04-13','Shipped',NULL,381),
+(10116,'2003-04-11','2003-04-19','2003-04-13','SHIPPED',NULL,381),
 
-(10117,'2003-04-16','2003-04-24','2003-04-17','Shipped',NULL,148),
+(10117,'2003-04-16','2003-04-24','2003-04-17','SHIPPED',NULL,148),
 
-(10118,'2003-04-21','2003-04-29','2003-04-26','Shipped','Customer has worked with some of our vendors in the past and is aware of their MSRP',216),
+(10118,'2003-04-21','2003-04-29','2003-04-26','SHIPPED','Customer has worked with some of our vendors in the past and is aware of their MSRP',216),
 
-(10119,'2003-04-28','2003-05-05','2003-05-02','Shipped',NULL,382),
+(10119,'2003-04-28','2003-05-05','2003-05-02','SHIPPED',NULL,382),
 
-(10120,'2003-04-29','2003-05-08','2003-05-01','Shipped',NULL,114),
+(10120,'2003-04-29','2003-05-08','2003-05-01','SHIPPED',NULL,114),
 
-(10121,'2003-05-07','2003-05-13','2003-05-13','Shipped',NULL,353),
+(10121,'2003-05-07','2003-05-13','2003-05-13','SHIPPED',NULL,353),
 
-(10122,'2003-05-08','2003-05-16','2003-05-13','Shipped',NULL,350),
+(10122,'2003-05-08','2003-05-16','2003-05-13','SHIPPED',NULL,350),
 
-(10123,'2003-05-20','2003-05-29','2003-05-22','Shipped',NULL,103),
+(10123,'2003-05-20','2003-05-29','2003-05-22','SHIPPED',NULL,103),
 
-(10124,'2003-05-21','2003-05-29','2003-05-25','Shipped','Customer very concerned about the exact color of the models. There is high risk that he may dispute the order because there is a slight color mismatch',112),
+(10124,'2003-05-21','2003-05-29','2003-05-25','SHIPPED','Customer very concerned about the exact color of the models. There is high risk that he may dispute the order because there is a slight color mismatch',112),
 
-(10125,'2003-05-21','2003-05-27','2003-05-24','Shipped',NULL,114),
+(10125,'2003-05-21','2003-05-27','2003-05-24','SHIPPED',NULL,114),
 
-(10126,'2003-05-28','2003-06-07','2003-06-02','Shipped',NULL,458),
+(10126,'2003-05-28','2003-06-07','2003-06-02','SHIPPED',NULL,458),
 
-(10127,'2003-06-03','2003-06-09','2003-06-06','Shipped','Customer requested special shippment. The instructions were passed along to the warehouse',151),
+(10127,'2003-06-03','2003-06-09','2003-06-06','SHIPPED','Customer requested special shippment. The instructions were passed along to the warehouse',151),
 
-(10128,'2003-06-06','2003-06-12','2003-06-11','Shipped',NULL,141),
+(10128,'2003-06-06','2003-06-12','2003-06-11','SHIPPED',NULL,141),
 
-(10129,'2003-06-12','2003-06-18','2003-06-14','Shipped',NULL,324),
+(10129,'2003-06-12','2003-06-18','2003-06-14','SHIPPED',NULL,324),
 
-(10130,'2003-06-16','2003-06-24','2003-06-21','Shipped',NULL,198),
+(10130,'2003-06-16','2003-06-24','2003-06-21','SHIPPED',NULL,198),
 
-(10131,'2003-06-16','2003-06-25','2003-06-21','Shipped',NULL,447),
+(10131,'2003-06-16','2003-06-25','2003-06-21','SHIPPED',NULL,447),
 
-(10132,'2003-06-25','2003-07-01','2003-06-28','Shipped',NULL,323),
+(10132,'2003-06-25','2003-07-01','2003-06-28','SHIPPED',NULL,323),
 
-(10133,'2003-06-27','2003-07-04','2003-07-03','Shipped',NULL,141),
+(10133,'2003-06-27','2003-07-04','2003-07-03','SHIPPED',NULL,141),
 
-(10134,'2003-07-01','2003-07-10','2003-07-05','Shipped',NULL,250),
+(10134,'2003-07-01','2003-07-10','2003-07-05','SHIPPED',NULL,250),
 
-(10135,'2003-07-02','2003-07-12','2003-07-03','Shipped',NULL,124),
+(10135,'2003-07-02','2003-07-12','2003-07-03','SHIPPED',NULL,124),
 
-(10136,'2003-07-04','2003-07-14','2003-07-06','Shipped','Customer is interested in buying more Ferrari models',242),
+(10136,'2003-07-04','2003-07-14','2003-07-06','SHIPPED','Customer is interested in buying more Ferrari models',242),
 
-(10137,'2003-07-10','2003-07-20','2003-07-14','Shipped',NULL,353),
+(10137,'2003-07-10','2003-07-20','2003-07-14','SHIPPED',NULL,353),
 
-(10138,'2003-07-07','2003-07-16','2003-07-13','Shipped',NULL,496),
+(10138,'2003-07-07','2003-07-16','2003-07-13','SHIPPED',NULL,496),
 
-(10139,'2003-07-16','2003-07-23','2003-07-21','Shipped',NULL,282),
+(10139,'2003-07-16','2003-07-23','2003-07-21','SHIPPED',NULL,282),
 
-(10140,'2003-07-24','2003-08-02','2003-07-30','Shipped',NULL,161),
+(10140,'2003-07-24','2003-08-02','2003-07-30','SHIPPED',NULL,161),
 
-(10141,'2003-08-01','2003-08-09','2003-08-04','Shipped',NULL,334),
+(10141,'2003-08-01','2003-08-09','2003-08-04','SHIPPED',NULL,334),
 
-(10142,'2003-08-08','2003-08-16','2003-08-13','Shipped',NULL,124),
+(10142,'2003-08-08','2003-08-16','2003-08-13','SHIPPED',NULL,124),
 
-(10143,'2003-08-10','2003-08-18','2003-08-12','Shipped','Can we deliver the new Ford Mustang models by end-of-quarter?',320),
+(10143,'2003-08-10','2003-08-18','2003-08-12','SHIPPED','Can we deliver the new Ford Mustang models by end-of-quarter?',320),
 
-(10144,'2003-08-13','2003-08-21','2003-08-14','Shipped',NULL,381),
+(10144,'2003-08-13','2003-08-21','2003-08-14','SHIPPED',NULL,381),
 
-(10145,'2003-08-25','2003-09-02','2003-08-31','Shipped',NULL,205),
+(10145,'2003-08-25','2003-09-02','2003-08-31','SHIPPED',NULL,205),
 
-(10146,'2003-09-03','2003-09-13','2003-09-06','Shipped',NULL,447),
+(10146,'2003-09-03','2003-09-13','2003-09-06','SHIPPED',NULL,447),
 
-(10147,'2003-09-05','2003-09-12','2003-09-09','Shipped',NULL,379),
+(10147,'2003-09-05','2003-09-12','2003-09-09','SHIPPED',NULL,379),
 
-(10148,'2003-09-11','2003-09-21','2003-09-15','Shipped','They want to reevaluate their terms agreement with Finance.',276),
+(10148,'2003-09-11','2003-09-21','2003-09-15','SHIPPED','They want to reevaluate their terms agreement with Finance.',276),
 
-(10149,'2003-09-12','2003-09-18','2003-09-17','Shipped',NULL,487),
+(10149,'2003-09-12','2003-09-18','2003-09-17','SHIPPED',NULL,487),
 
-(10150,'2003-09-19','2003-09-27','2003-09-21','Shipped','They want to reevaluate their terms agreement with Finance.',148),
+(10150,'2003-09-19','2003-09-27','2003-09-21','SHIPPED','They want to reevaluate their terms agreement with Finance.',148),
 
-(10151,'2003-09-21','2003-09-30','2003-09-24','Shipped',NULL,311),
+(10151,'2003-09-21','2003-09-30','2003-09-24','SHIPPED',NULL,311),
 
-(10152,'2003-09-25','2003-10-03','2003-10-01','Shipped',NULL,333),
+(10152,'2003-09-25','2003-10-03','2003-10-01','SHIPPED',NULL,333),
 
-(10153,'2003-09-28','2003-10-05','2003-10-03','Shipped',NULL,141),
+(10153,'2003-09-28','2003-10-05','2003-10-03','SHIPPED',NULL,141),
 
-(10154,'2003-10-02','2003-10-12','2003-10-08','Shipped',NULL,219),
+(10154,'2003-10-02','2003-10-12','2003-10-08','SHIPPED',NULL,219),
 
-(10155,'2003-10-06','2003-10-13','2003-10-07','Shipped',NULL,186),
+(10155,'2003-10-06','2003-10-13','2003-10-07','SHIPPED',NULL,186),
 
-(10156,'2003-10-08','2003-10-17','2003-10-11','Shipped',NULL,141),
+(10156,'2003-10-08','2003-10-17','2003-10-11','SHIPPED',NULL,141),
 
-(10157,'2003-10-09','2003-10-15','2003-10-14','Shipped',NULL,473),
+(10157,'2003-10-09','2003-10-15','2003-10-14','SHIPPED',NULL,473),
 
-(10158,'2003-10-10','2003-10-18','2003-10-15','Shipped',NULL,121),
+(10158,'2003-10-10','2003-10-18','2003-10-15','SHIPPED',NULL,121),
 
-(10159,'2003-10-10','2003-10-19','2003-10-16','Shipped',NULL,321),
+(10159,'2003-10-10','2003-10-19','2003-10-16','SHIPPED',NULL,321),
 
-(10160,'2003-10-11','2003-10-17','2003-10-17','Shipped',NULL,347),
+(10160,'2003-10-11','2003-10-17','2003-10-17','SHIPPED',NULL,347),
 
-(10161,'2003-10-17','2003-10-25','2003-10-20','Shipped',NULL,227),
+(10161,'2003-10-17','2003-10-25','2003-10-20','SHIPPED',NULL,227),
 
-(10162,'2003-10-18','2003-10-26','2003-10-19','Shipped',NULL,321),
+(10162,'2003-10-18','2003-10-26','2003-10-19','SHIPPED',NULL,321),
 
-(10163,'2003-10-20','2003-10-27','2003-10-24','Shipped',NULL,424),
+(10163,'2003-10-20','2003-10-27','2003-10-24','SHIPPED',NULL,424),
 
-(10164,'2003-10-21','2003-10-30','2003-10-23','Resolved','This order was disputed, but resolved on 11/1/2003; Customer doesn\'t like the colors and precision of the models.',452),
+(10164,'2003-10-21','2003-10-30','2003-10-23','RESOLVED','This order was disputed, but resolved on 11/1/2003; Customer doesn\'t like the colors and precision of the models.',452),
 
-(10165,'2003-10-22','2003-10-31','2003-12-26','Shipped','This order was on hold because customers\'s credit limit had been exceeded. Order will ship when payment is received',148),
+(10165,'2003-10-22','2003-10-31','2003-12-26','SHIPPED','This order was on hold because customers\'s credit limit had been exceeded. Order will ship when payment is received',148),
 
-(10166,'2003-10-21','2003-10-30','2003-10-27','Shipped',NULL,462),
+(10166,'2003-10-21','2003-10-30','2003-10-27','SHIPPED',NULL,462),
 
-(10167,'2003-10-23','2003-10-30',NULL,'Cancelled','Customer called to cancel. The warehouse was notified in time and the order didn\'t ship. They have a new VP of Sales and are shifting their sales model. Our VP of Sales should contact them.',448),
+(10167,'2003-10-23','2003-10-30',NULL,'CANCELLED','Customer called to cancel. The warehouse was notified in time and the order didn\'t ship. They have a new VP of Sales and are shifting their sales model. Our VP of Sales should contact them.',448),
 
-(10168,'2003-10-28','2003-11-03','2003-11-01','Shipped',NULL,161),
+(10168,'2003-10-28','2003-11-03','2003-11-01','SHIPPED',NULL,161),
 
-(10169,'2003-11-04','2003-11-14','2003-11-09','Shipped',NULL,276),
+(10169,'2003-11-04','2003-11-14','2003-11-09','SHIPPED',NULL,276),
 
-(10170,'2003-11-04','2003-11-12','2003-11-07','Shipped',NULL,452),
+(10170,'2003-11-04','2003-11-12','2003-11-07','SHIPPED',NULL,452),
 
-(10171,'2003-11-05','2003-11-13','2003-11-07','Shipped',NULL,233),
+(10171,'2003-11-05','2003-11-13','2003-11-07','SHIPPED',NULL,233),
 
-(10172,'2003-11-05','2003-11-14','2003-11-11','Shipped',NULL,175),
+(10172,'2003-11-05','2003-11-14','2003-11-11','SHIPPED',NULL,175),
 
-(10173,'2003-11-05','2003-11-15','2003-11-09','Shipped','Cautious optimism. We have happy customers here, if we can keep them well stocked.  I need all the information I can get on the planned shippments of Porches',278),
+(10173,'2003-11-05','2003-11-15','2003-11-09','SHIPPED','Cautious optimism. We have happy customers here, if we can keep them well stocked.  I need all the information I can get on the planned shippments of Porches',278),
 
-(10174,'2003-11-06','2003-11-15','2003-11-10','Shipped',NULL,333),
+(10174,'2003-11-06','2003-11-15','2003-11-10','SHIPPED',NULL,333),
 
-(10175,'2003-11-06','2003-11-14','2003-11-09','Shipped',NULL,324),
+(10175,'2003-11-06','2003-11-14','2003-11-09','SHIPPED',NULL,324),
 
-(10176,'2003-11-06','2003-11-15','2003-11-12','Shipped',NULL,386),
+(10176,'2003-11-06','2003-11-15','2003-11-12','SHIPPED',NULL,386),
 
-(10177,'2003-11-07','2003-11-17','2003-11-12','Shipped',NULL,344),
+(10177,'2003-11-07','2003-11-17','2003-11-12','SHIPPED',NULL,344),
 
-(10178,'2003-11-08','2003-11-16','2003-11-10','Shipped','Custom shipping instructions sent to warehouse',242),
+(10178,'2003-11-08','2003-11-16','2003-11-10','SHIPPED','Custom shipping instructions sent to warehouse',242),
 
-(10179,'2003-11-11','2003-11-17','2003-11-13','Cancelled','Customer cancelled due to urgent budgeting issues. Must be cautious when dealing with them in the future. Since order shipped already we must discuss who would cover the shipping charges.',496),
+(10179,'2003-11-11','2003-11-17','2003-11-13','CANCELLED','Customer cancelled due to urgent budgeting issues. Must be cautious when dealing with them in the future. Since order shipped already we must discuss who would cover the shipping charges.',496),
 
-(10180,'2003-11-11','2003-11-19','2003-11-14','Shipped',NULL,171),
+(10180,'2003-11-11','2003-11-19','2003-11-14','SHIPPED',NULL,171),
 
-(10181,'2003-11-12','2003-11-19','2003-11-15','Shipped',NULL,167),
+(10181,'2003-11-12','2003-11-19','2003-11-15','SHIPPED',NULL,167),
 
-(10182,'2003-11-12','2003-11-21','2003-11-18','Shipped',NULL,124),
+(10182,'2003-11-12','2003-11-21','2003-11-18','SHIPPED',NULL,124),
 
-(10183,'2003-11-13','2003-11-22','2003-11-15','Shipped','We need to keep in close contact with their Marketing VP. He is the decision maker for all their purchases.',339),
+(10183,'2003-11-13','2003-11-22','2003-11-15','SHIPPED','We need to keep in close contact with their Marketing VP. He is the decision maker for all their purchases.',339),
 
-(10184,'2003-11-14','2003-11-22','2003-11-20','Shipped',NULL,484),
+(10184,'2003-11-14','2003-11-22','2003-11-20','SHIPPED',NULL,484),
 
-(10185,'2003-11-14','2003-11-21','2003-11-20','Shipped',NULL,320),
+(10185,'2003-11-14','2003-11-21','2003-11-20','SHIPPED',NULL,320),
 
-(10186,'2003-11-14','2003-11-20','2003-11-18','Shipped','They want to reevaluate their terms agreement with the VP of Sales',489),
+(10186,'2003-11-14','2003-11-20','2003-11-18','SHIPPED','They want to reevaluate their terms agreement with the VP of Sales',489),
 
-(10187,'2003-11-15','2003-11-24','2003-11-16','Shipped',NULL,211),
+(10187,'2003-11-15','2003-11-24','2003-11-16','SHIPPED',NULL,211),
 
-(10188,'2003-11-18','2003-11-26','2003-11-24','Shipped',NULL,167),
+(10188,'2003-11-18','2003-11-26','2003-11-24','SHIPPED',NULL,167),
 
-(10189,'2003-11-18','2003-11-25','2003-11-24','Shipped','They want to reevaluate their terms agreement with Finance.',205),
+(10189,'2003-11-18','2003-11-25','2003-11-24','SHIPPED','They want to reevaluate their terms agreement with Finance.',205),
 
-(10190,'2003-11-19','2003-11-29','2003-11-20','Shipped',NULL,141),
+(10190,'2003-11-19','2003-11-29','2003-11-20','SHIPPED',NULL,141),
 
-(10191,'2003-11-20','2003-11-30','2003-11-24','Shipped','We must be cautions with this customer. Their VP of Sales resigned. Company may be heading down.',259),
+(10191,'2003-11-20','2003-11-30','2003-11-24','SHIPPED','We must be cautions with this customer. Their VP of Sales resigned. Company may be heading down.',259),
 
-(10192,'2003-11-20','2003-11-29','2003-11-25','Shipped',NULL,363),
+(10192,'2003-11-20','2003-11-29','2003-11-25','SHIPPED',NULL,363),
 
-(10193,'2003-11-21','2003-11-28','2003-11-27','Shipped',NULL,471),
+(10193,'2003-11-21','2003-11-28','2003-11-27','SHIPPED',NULL,471),
 
-(10194,'2003-11-25','2003-12-02','2003-11-26','Shipped',NULL,146),
+(10194,'2003-11-25','2003-12-02','2003-11-26','SHIPPED',NULL,146),
 
-(10195,'2003-11-25','2003-12-01','2003-11-28','Shipped',NULL,319),
+(10195,'2003-11-25','2003-12-01','2003-11-28','SHIPPED',NULL,319),
 
-(10196,'2003-11-26','2003-12-03','2003-12-01','Shipped',NULL,455),
+(10196,'2003-11-26','2003-12-03','2003-12-01','SHIPPED',NULL,455),
 
-(10197,'2003-11-26','2003-12-02','2003-12-01','Shipped','Customer inquired about remote controlled models and gold models.',216),
+(10197,'2003-11-26','2003-12-02','2003-12-01','SHIPPED','Customer inquired about remote controlled models and gold models.',216),
 
-(10198,'2003-11-27','2003-12-06','2003-12-03','Shipped',NULL,385),
+(10198,'2003-11-27','2003-12-06','2003-12-03','SHIPPED',NULL,385),
 
-(10199,'2003-12-01','2003-12-10','2003-12-06','Shipped',NULL,475),
+(10199,'2003-12-01','2003-12-10','2003-12-06','SHIPPED',NULL,475),
 
-(10200,'2003-12-01','2003-12-09','2003-12-06','Shipped',NULL,211),
+(10200,'2003-12-01','2003-12-09','2003-12-06','SHIPPED',NULL,211),
 
-(10201,'2003-12-01','2003-12-11','2003-12-02','Shipped',NULL,129),
+(10201,'2003-12-01','2003-12-11','2003-12-02','SHIPPED',NULL,129),
 
-(10202,'2003-12-02','2003-12-09','2003-12-06','Shipped',NULL,357),
+(10202,'2003-12-02','2003-12-09','2003-12-06','SHIPPED',NULL,357),
 
-(10203,'2003-12-02','2003-12-11','2003-12-07','Shipped',NULL,141),
+(10203,'2003-12-02','2003-12-11','2003-12-07','SHIPPED',NULL,141),
 
-(10204,'2003-12-02','2003-12-10','2003-12-04','Shipped',NULL,151),
+(10204,'2003-12-02','2003-12-10','2003-12-04','SHIPPED',NULL,151),
 
-(10205,'2003-12-03','2003-12-09','2003-12-07','Shipped',' I need all the information I can get on our competitors.',141),
+(10205,'2003-12-03','2003-12-09','2003-12-07','SHIPPED',' I need all the information I can get on our competitors.',141),
 
-(10206,'2003-12-05','2003-12-13','2003-12-08','Shipped','Can we renegotiate this one?',202),
+(10206,'2003-12-05','2003-12-13','2003-12-08','SHIPPED','Can we renegotiate this one?',202),
 
-(10207,'2003-12-09','2003-12-17','2003-12-11','Shipped','Check on availability.',495),
+(10207,'2003-12-09','2003-12-17','2003-12-11','SHIPPED','Check on availability.',495),
 
-(10208,'2004-01-02','2004-01-11','2004-01-04','Shipped',NULL,146),
+(10208,'2004-01-02','2004-01-11','2004-01-04','SHIPPED',NULL,146),
 
-(10209,'2004-01-09','2004-01-15','2004-01-12','Shipped',NULL,347),
+(10209,'2004-01-09','2004-01-15','2004-01-12','SHIPPED',NULL,347),
 
-(10210,'2004-01-12','2004-01-22','2004-01-20','Shipped',NULL,177),
+(10210,'2004-01-12','2004-01-22','2004-01-20','SHIPPED',NULL,177),
 
-(10211,'2004-01-15','2004-01-25','2004-01-18','Shipped',NULL,406),
+(10211,'2004-01-15','2004-01-25','2004-01-18','SHIPPED',NULL,406),
 
-(10212,'2004-01-16','2004-01-24','2004-01-18','Shipped',NULL,141),
+(10212,'2004-01-16','2004-01-24','2004-01-18','SHIPPED',NULL,141),
 
-(10213,'2004-01-22','2004-01-28','2004-01-27','Shipped','Difficult to negotiate with customer. We need more marketing materials',489),
+(10213,'2004-01-22','2004-01-28','2004-01-27','SHIPPED','Difficult to negotiate with customer. We need more marketing materials',489),
 
-(10214,'2004-01-26','2004-02-04','2004-01-29','Shipped',NULL,458),
+(10214,'2004-01-26','2004-02-04','2004-01-29','SHIPPED',NULL,458),
 
-(10215,'2004-01-29','2004-02-08','2004-02-01','Shipped','Customer requested that FedEx Ground is used for this shipping',475),
+(10215,'2004-01-29','2004-02-08','2004-02-01','SHIPPED','Customer requested that FedEx Ground is used for this shipping',475),
 
-(10216,'2004-02-02','2004-02-10','2004-02-04','Shipped',NULL,256),
+(10216,'2004-02-02','2004-02-10','2004-02-04','SHIPPED',NULL,256),
 
-(10217,'2004-02-04','2004-02-14','2004-02-06','Shipped',NULL,166),
+(10217,'2004-02-04','2004-02-14','2004-02-06','SHIPPED',NULL,166),
 
-(10218,'2004-02-09','2004-02-16','2004-02-11','Shipped','Customer requested that ad materials (such as posters, pamphlets) be included in the shippment',473),
+(10218,'2004-02-09','2004-02-16','2004-02-11','SHIPPED','Customer requested that ad materials (such as posters, pamphlets) be included in the shippment',473),
 
-(10219,'2004-02-10','2004-02-17','2004-02-12','Shipped',NULL,487),
+(10219,'2004-02-10','2004-02-17','2004-02-12','SHIPPED',NULL,487),
 
-(10220,'2004-02-12','2004-02-19','2004-02-16','Shipped',NULL,189),
+(10220,'2004-02-12','2004-02-19','2004-02-16','SHIPPED',NULL,189),
 
-(10221,'2004-02-18','2004-02-26','2004-02-19','Shipped',NULL,314),
+(10221,'2004-02-18','2004-02-26','2004-02-19','SHIPPED',NULL,314),
 
-(10222,'2004-02-19','2004-02-27','2004-02-20','Shipped',NULL,239),
+(10222,'2004-02-19','2004-02-27','2004-02-20','SHIPPED',NULL,239),
 
-(10223,'2004-02-20','2004-02-29','2004-02-24','Shipped',NULL,114),
+(10223,'2004-02-20','2004-02-29','2004-02-24','SHIPPED',NULL,114),
 
-(10224,'2004-02-21','2004-03-02','2004-02-26','Shipped','Customer has worked with some of our vendors in the past and is aware of their MSRP',171),
+(10224,'2004-02-21','2004-03-02','2004-02-26','SHIPPED','Customer has worked with some of our vendors in the past and is aware of their MSRP',171),
 
-(10225,'2004-02-22','2004-03-01','2004-02-24','Shipped',NULL,298),
+(10225,'2004-02-22','2004-03-01','2004-02-24','SHIPPED',NULL,298),
 
-(10226,'2004-02-26','2004-03-06','2004-03-02','Shipped',NULL,239),
+(10226,'2004-02-26','2004-03-06','2004-03-02','SHIPPED',NULL,239),
 
-(10227,'2004-03-02','2004-03-12','2004-03-08','Shipped',NULL,146),
+(10227,'2004-03-02','2004-03-12','2004-03-08','SHIPPED',NULL,146),
 
-(10228,'2004-03-10','2004-03-18','2004-03-13','Shipped',NULL,173),
+(10228,'2004-03-10','2004-03-18','2004-03-13','SHIPPED',NULL,173),
 
-(10229,'2004-03-11','2004-03-20','2004-03-12','Shipped',NULL,124),
+(10229,'2004-03-11','2004-03-20','2004-03-12','SHIPPED',NULL,124),
 
-(10230,'2004-03-15','2004-03-24','2004-03-20','Shipped','Customer very concerned about the exact color of the models. There is high risk that he may dispute the order because there is a slight color mismatch',128),
+(10230,'2004-03-15','2004-03-24','2004-03-20','SHIPPED','Customer very concerned about the exact color of the models. There is high risk that he may dispute the order because there is a slight color mismatch',128),
 
-(10231,'2004-03-19','2004-03-26','2004-03-25','Shipped',NULL,344),
+(10231,'2004-03-19','2004-03-26','2004-03-25','SHIPPED',NULL,344),
 
-(10232,'2004-03-20','2004-03-30','2004-03-25','Shipped',NULL,240),
+(10232,'2004-03-20','2004-03-30','2004-03-25','SHIPPED',NULL,240),
 
-(10233,'2004-03-29','2004-04-04','2004-04-02','Shipped','Customer requested special shippment. The instructions were passed along to the warehouse',328),
+(10233,'2004-03-29','2004-04-04','2004-04-02','SHIPPED','Customer requested special shippment. The instructions were passed along to the warehouse',328),
 
-(10234,'2004-03-30','2004-04-05','2004-04-02','Shipped',NULL,412),
+(10234,'2004-03-30','2004-04-05','2004-04-02','SHIPPED',NULL,412),
 
-(10235,'2004-04-02','2004-04-12','2004-04-06','Shipped',NULL,260),
+(10235,'2004-04-02','2004-04-12','2004-04-06','SHIPPED',NULL,260),
 
-(10236,'2004-04-03','2004-04-11','2004-04-08','Shipped',NULL,486),
+(10236,'2004-04-03','2004-04-11','2004-04-08','SHIPPED',NULL,486),
 
-(10237,'2004-04-05','2004-04-12','2004-04-10','Shipped',NULL,181),
+(10237,'2004-04-05','2004-04-12','2004-04-10','SHIPPED',NULL,181),
 
-(10238,'2004-04-09','2004-04-16','2004-04-10','Shipped',NULL,145),
+(10238,'2004-04-09','2004-04-16','2004-04-10','SHIPPED',NULL,145),
 
-(10239,'2004-04-12','2004-04-21','2004-04-17','Shipped',NULL,311),
+(10239,'2004-04-12','2004-04-21','2004-04-17','SHIPPED',NULL,311),
 
-(10240,'2004-04-13','2004-04-20','2004-04-20','Shipped',NULL,177),
+(10240,'2004-04-13','2004-04-20','2004-04-20','SHIPPED',NULL,177),
 
-(10241,'2004-04-13','2004-04-20','2004-04-19','Shipped',NULL,209),
+(10241,'2004-04-13','2004-04-20','2004-04-19','SHIPPED',NULL,209),
 
-(10242,'2004-04-20','2004-04-28','2004-04-25','Shipped','Customer is interested in buying more Ferrari models',456),
+(10242,'2004-04-20','2004-04-28','2004-04-25','SHIPPED','Customer is interested in buying more Ferrari models',456),
 
-(10243,'2004-04-26','2004-05-03','2004-04-28','Shipped',NULL,495),
+(10243,'2004-04-26','2004-05-03','2004-04-28','SHIPPED',NULL,495),
 
-(10244,'2004-04-29','2004-05-09','2004-05-04','Shipped',NULL,141),
+(10244,'2004-04-29','2004-05-09','2004-05-04','SHIPPED',NULL,141),
 
-(10245,'2004-05-04','2004-05-12','2004-05-09','Shipped',NULL,455),
+(10245,'2004-05-04','2004-05-12','2004-05-09','SHIPPED',NULL,455),
 
-(10246,'2004-05-05','2004-05-13','2004-05-06','Shipped',NULL,141),
+(10246,'2004-05-05','2004-05-13','2004-05-06','SHIPPED',NULL,141),
 
-(10247,'2004-05-05','2004-05-11','2004-05-08','Shipped',NULL,334),
+(10247,'2004-05-05','2004-05-11','2004-05-08','SHIPPED',NULL,334),
 
-(10248,'2004-05-07','2004-05-14',NULL,'Cancelled','Order was mistakenly placed. The warehouse noticed the lack of documentation.',131),
+(10248,'2004-05-07','2004-05-14',NULL,'CANCELLED','Order was mistakenly placed. The warehouse noticed the lack of documentation.',131),
 
-(10249,'2004-05-08','2004-05-17','2004-05-11','Shipped','Can we deliver the new Ford Mustang models by end-of-quarter?',173),
+(10249,'2004-05-08','2004-05-17','2004-05-11','SHIPPED','Can we deliver the new Ford Mustang models by end-of-quarter?',173),
 
-(10250,'2004-05-11','2004-05-19','2004-05-15','Shipped',NULL,450),
+(10250,'2004-05-11','2004-05-19','2004-05-15','SHIPPED',NULL,450),
 
-(10251,'2004-05-18','2004-05-24','2004-05-24','Shipped',NULL,328),
+(10251,'2004-05-18','2004-05-24','2004-05-24','SHIPPED',NULL,328),
 
-(10252,'2004-05-26','2004-06-04','2004-05-29','Shipped',NULL,406),
+(10252,'2004-05-26','2004-06-04','2004-05-29','SHIPPED',NULL,406),
 
-(10253,'2004-06-01','2004-06-09','2004-06-02','Cancelled','Customer disputed the order and we agreed to cancel it. We must be more cautions with this customer going forward, since they are very hard to please. We must cover the shipping fees.',201),
+(10253,'2004-06-01','2004-06-09','2004-06-02','CANCELLED','Customer disputed the order and we agreed to cancel it. We must be more cautions with this customer going forward, since they are very hard to please. We must cover the shipping fees.',201),
 
-(10254,'2004-06-03','2004-06-13','2004-06-04','Shipped','Customer requested that DHL is used for this shipping',323),
+(10254,'2004-06-03','2004-06-13','2004-06-04','SHIPPED','Customer requested that DHL is used for this shipping',323),
 
-(10255,'2004-06-04','2004-06-12','2004-06-09','Shipped',NULL,209),
+(10255,'2004-06-04','2004-06-12','2004-06-09','SHIPPED',NULL,209),
 
-(10256,'2004-06-08','2004-06-16','2004-06-10','Shipped',NULL,145),
+(10256,'2004-06-08','2004-06-16','2004-06-10','SHIPPED',NULL,145),
 
-(10257,'2004-06-14','2004-06-24','2004-06-15','Shipped',NULL,450),
+(10257,'2004-06-14','2004-06-24','2004-06-15','SHIPPED',NULL,450),
 
-(10258,'2004-06-15','2004-06-25','2004-06-23','Shipped',NULL,398),
+(10258,'2004-06-15','2004-06-25','2004-06-23','SHIPPED',NULL,398),
 
-(10259,'2004-06-15','2004-06-22','2004-06-17','Shipped',NULL,166),
+(10259,'2004-06-15','2004-06-22','2004-06-17','SHIPPED',NULL,166),
 
-(10260,'2004-06-16','2004-06-22',NULL,'Cancelled','Customer heard complaints from their customers and called to cancel this order. Will notify the Sales Manager.',357),
+(10260,'2004-06-16','2004-06-22',NULL,'CANCELLED','Customer heard complaints from their customers and called to cancel this order. Will notify the Sales Manager.',357),
 
-(10261,'2004-06-17','2004-06-25','2004-06-22','Shipped',NULL,233),
+(10261,'2004-06-17','2004-06-25','2004-06-22','SHIPPED',NULL,233),
 
-(10262,'2004-06-24','2004-07-01',NULL,'Cancelled','This customer found a better offer from one of our competitors. Will call back to renegotiate.',141),
+(10262,'2004-06-24','2004-07-01',NULL,'CANCELLED','This customer found a better offer from one of our competitors. Will call back to renegotiate.',141),
 
-(10263,'2004-06-28','2004-07-04','2004-07-02','Shipped',NULL,175),
+(10263,'2004-06-28','2004-07-04','2004-07-02','SHIPPED',NULL,175),
 
-(10264,'2004-06-30','2004-07-06','2004-07-01','Shipped','Customer will send a truck to our local warehouse on 7/1/2004',362),
+(10264,'2004-06-30','2004-07-06','2004-07-01','SHIPPED','Customer will send a truck to our local warehouse on 7/1/2004',362),
 
-(10265,'2004-07-02','2004-07-09','2004-07-07','Shipped',NULL,471),
+(10265,'2004-07-02','2004-07-09','2004-07-07','SHIPPED',NULL,471),
 
-(10266,'2004-07-06','2004-07-14','2004-07-10','Shipped',NULL,386),
+(10266,'2004-07-06','2004-07-14','2004-07-10','SHIPPED',NULL,386),
 
-(10267,'2004-07-07','2004-07-17','2004-07-09','Shipped',NULL,151),
+(10267,'2004-07-07','2004-07-17','2004-07-09','SHIPPED',NULL,151),
 
-(10268,'2004-07-12','2004-07-18','2004-07-14','Shipped',NULL,412),
+(10268,'2004-07-12','2004-07-18','2004-07-14','SHIPPED',NULL,412),
 
-(10269,'2004-07-16','2004-07-22','2004-07-18','Shipped',NULL,382),
+(10269,'2004-07-16','2004-07-22','2004-07-18','SHIPPED',NULL,382),
 
-(10270,'2004-07-19','2004-07-27','2004-07-24','Shipped','Can we renegotiate this one?',282),
+(10270,'2004-07-19','2004-07-27','2004-07-24','SHIPPED','Can we renegotiate this one?',282),
 
-(10271,'2004-07-20','2004-07-29','2004-07-23','Shipped',NULL,124),
+(10271,'2004-07-20','2004-07-29','2004-07-23','SHIPPED',NULL,124),
 
-(10272,'2004-07-20','2004-07-26','2004-07-22','Shipped',NULL,157),
+(10272,'2004-07-20','2004-07-26','2004-07-22','SHIPPED',NULL,157),
 
-(10273,'2004-07-21','2004-07-28','2004-07-22','Shipped',NULL,314),
+(10273,'2004-07-21','2004-07-28','2004-07-22','SHIPPED',NULL,314),
 
-(10274,'2004-07-21','2004-07-29','2004-07-22','Shipped',NULL,379),
+(10274,'2004-07-21','2004-07-29','2004-07-22','SHIPPED',NULL,379),
 
-(10275,'2004-07-23','2004-08-02','2004-07-29','Shipped',NULL,119),
+(10275,'2004-07-23','2004-08-02','2004-07-29','SHIPPED',NULL,119),
 
-(10276,'2004-08-02','2004-08-11','2004-08-08','Shipped',NULL,204),
+(10276,'2004-08-02','2004-08-11','2004-08-08','SHIPPED',NULL,204),
 
-(10277,'2004-08-04','2004-08-12','2004-08-05','Shipped',NULL,148),
+(10277,'2004-08-04','2004-08-12','2004-08-05','SHIPPED',NULL,148),
 
-(10278,'2004-08-06','2004-08-16','2004-08-09','Shipped',NULL,112),
+(10278,'2004-08-06','2004-08-16','2004-08-09','SHIPPED',NULL,112),
 
-(10279,'2004-08-09','2004-08-19','2004-08-15','Shipped','Cautious optimism. We have happy customers here, if we can keep them well stocked.  I need all the information I can get on the planned shippments of Porches',141),
+(10279,'2004-08-09','2004-08-19','2004-08-15','SHIPPED','Cautious optimism. We have happy customers here, if we can keep them well stocked.  I need all the information I can get on the planned shippments of Porches',141),
 
-(10280,'2004-08-17','2004-08-27','2004-08-19','Shipped',NULL,249),
+(10280,'2004-08-17','2004-08-27','2004-08-19','SHIPPED',NULL,249),
 
-(10281,'2004-08-19','2004-08-28','2004-08-23','Shipped',NULL,157),
+(10281,'2004-08-19','2004-08-28','2004-08-23','SHIPPED',NULL,157),
 
-(10282,'2004-08-20','2004-08-26','2004-08-22','Shipped',NULL,124),
+(10282,'2004-08-20','2004-08-26','2004-08-22','SHIPPED',NULL,124),
 
-(10283,'2004-08-20','2004-08-30','2004-08-23','Shipped',NULL,260),
+(10283,'2004-08-20','2004-08-30','2004-08-23','SHIPPED',NULL,260),
 
-(10284,'2004-08-21','2004-08-29','2004-08-26','Shipped','Custom shipping instructions sent to warehouse',299),
+(10284,'2004-08-21','2004-08-29','2004-08-26','SHIPPED','Custom shipping instructions sent to warehouse',299),
 
-(10285,'2004-08-27','2004-09-04','2004-08-31','Shipped',NULL,286),
+(10285,'2004-08-27','2004-09-04','2004-08-31','SHIPPED',NULL,286),
 
-(10286,'2004-08-28','2004-09-06','2004-09-01','Shipped',NULL,172),
+(10286,'2004-08-28','2004-09-06','2004-09-01','SHIPPED',NULL,172),
 
-(10287,'2004-08-30','2004-09-06','2004-09-01','Shipped',NULL,298),
+(10287,'2004-08-30','2004-09-06','2004-09-01','SHIPPED',NULL,298),
 
-(10288,'2004-09-01','2004-09-11','2004-09-05','Shipped',NULL,166),
+(10288,'2004-09-01','2004-09-11','2004-09-05','SHIPPED',NULL,166),
 
-(10289,'2004-09-03','2004-09-13','2004-09-04','Shipped','We need to keep in close contact with their Marketing VP. He is the decision maker for all their purchases.',167),
+(10289,'2004-09-03','2004-09-13','2004-09-04','SHIPPED','We need to keep in close contact with their Marketing VP. He is the decision maker for all their purchases.',167),
 
-(10290,'2004-09-07','2004-09-15','2004-09-13','Shipped',NULL,198),
+(10290,'2004-09-07','2004-09-15','2004-09-13','SHIPPED',NULL,198),
 
-(10291,'2004-09-08','2004-09-17','2004-09-14','Shipped',NULL,448),
+(10291,'2004-09-08','2004-09-17','2004-09-14','SHIPPED',NULL,448),
 
-(10292,'2004-09-08','2004-09-18','2004-09-11','Shipped','They want to reevaluate their terms agreement with Finance.',131),
+(10292,'2004-09-08','2004-09-18','2004-09-11','SHIPPED','They want to reevaluate their terms agreement with Finance.',131),
 
-(10293,'2004-09-09','2004-09-18','2004-09-14','Shipped',NULL,249),
+(10293,'2004-09-09','2004-09-18','2004-09-14','SHIPPED',NULL,249),
 
-(10294,'2004-09-10','2004-09-17','2004-09-14','Shipped',NULL,204),
+(10294,'2004-09-10','2004-09-17','2004-09-14','SHIPPED',NULL,204),
 
-(10295,'2004-09-10','2004-09-17','2004-09-14','Shipped','They want to reevaluate their terms agreement with Finance.',362),
+(10295,'2004-09-10','2004-09-17','2004-09-14','SHIPPED','They want to reevaluate their terms agreement with Finance.',362),
 
-(10296,'2004-09-15','2004-09-22','2004-09-16','Shipped',NULL,415),
+(10296,'2004-09-15','2004-09-22','2004-09-16','SHIPPED',NULL,415),
 
-(10297,'2004-09-16','2004-09-22','2004-09-21','Shipped','We must be cautions with this customer. Their VP of Sales resigned. Company may be heading down.',189),
+(10297,'2004-09-16','2004-09-22','2004-09-21','SHIPPED','We must be cautions with this customer. Their VP of Sales resigned. Company may be heading down.',189),
 
-(10298,'2004-09-27','2004-10-05','2004-10-01','Shipped',NULL,103),
+(10298,'2004-09-27','2004-10-05','2004-10-01','SHIPPED',NULL,103),
 
-(10299,'2004-09-30','2004-10-10','2004-10-01','Shipped',NULL,186),
+(10299,'2004-09-30','2004-10-10','2004-10-01','SHIPPED',NULL,186),
 
-(10300,'2003-10-04','2003-10-13','2003-10-09','Shipped',NULL,128),
+(10300,'2003-10-04','2003-10-13','2003-10-09','SHIPPED',NULL,128),
 
-(10301,'2003-10-05','2003-10-15','2003-10-08','Shipped',NULL,299),
+(10301,'2003-10-05','2003-10-15','2003-10-08','SHIPPED',NULL,299),
 
-(10302,'2003-10-06','2003-10-16','2003-10-07','Shipped',NULL,201),
+(10302,'2003-10-06','2003-10-16','2003-10-07','SHIPPED',NULL,201),
 
-(10303,'2004-10-06','2004-10-14','2004-10-09','Shipped','Customer inquired about remote controlled models and gold models.',484),
+(10303,'2004-10-06','2004-10-14','2004-10-09','SHIPPED','Customer inquired about remote controlled models and gold models.',484),
 
-(10304,'2004-10-11','2004-10-20','2004-10-17','Shipped',NULL,256),
+(10304,'2004-10-11','2004-10-20','2004-10-17','SHIPPED',NULL,256),
 
-(10305,'2004-10-13','2004-10-22','2004-10-15','Shipped','Check on availability.',286),
+(10305,'2004-10-13','2004-10-22','2004-10-15','SHIPPED','Check on availability.',286),
 
-(10306,'2004-10-14','2004-10-21','2004-10-17','Shipped',NULL,187),
+(10306,'2004-10-14','2004-10-21','2004-10-17','SHIPPED',NULL,187),
 
-(10307,'2004-10-14','2004-10-23','2004-10-20','Shipped',NULL,339),
+(10307,'2004-10-14','2004-10-23','2004-10-20','SHIPPED',NULL,339),
 
-(10308,'2004-10-15','2004-10-24','2004-10-20','Shipped','Customer requested that FedEx Ground is used for this shipping',319),
+(10308,'2004-10-15','2004-10-24','2004-10-20','SHIPPED','Customer requested that FedEx Ground is used for this shipping',319),
 
-(10309,'2004-10-15','2004-10-24','2004-10-18','Shipped',NULL,121),
+(10309,'2004-10-15','2004-10-24','2004-10-18','SHIPPED',NULL,121),
 
-(10310,'2004-10-16','2004-10-24','2004-10-18','Shipped',NULL,259),
+(10310,'2004-10-16','2004-10-24','2004-10-18','SHIPPED',NULL,259),
 
-(10311,'2004-10-16','2004-10-23','2004-10-20','Shipped','Difficult to negotiate with customer. We need more marketing materials',141),
+(10311,'2004-10-16','2004-10-23','2004-10-20','SHIPPED','Difficult to negotiate with customer. We need more marketing materials',141),
 
-(10312,'2004-10-21','2004-10-27','2004-10-23','Shipped',NULL,124),
+(10312,'2004-10-21','2004-10-27','2004-10-23','SHIPPED',NULL,124),
 
-(10313,'2004-10-22','2004-10-28','2004-10-25','Shipped','Customer requested that FedEx Ground is used for this shipping',202),
+(10313,'2004-10-22','2004-10-28','2004-10-25','SHIPPED','Customer requested that FedEx Ground is used for this shipping',202),
 
-(10314,'2004-10-22','2004-11-01','2004-10-23','Shipped',NULL,227),
+(10314,'2004-10-22','2004-11-01','2004-10-23','SHIPPED',NULL,227),
 
-(10315,'2004-10-29','2004-11-08','2004-10-30','Shipped',NULL,119),
+(10315,'2004-10-29','2004-11-08','2004-10-30','SHIPPED',NULL,119),
 
-(10316,'2004-11-01','2004-11-09','2004-11-07','Shipped','Customer requested that ad materials (such as posters, pamphlets) be included in the shippment',240),
+(10316,'2004-11-01','2004-11-09','2004-11-07','SHIPPED','Customer requested that ad materials (such as posters, pamphlets) be included in the shippment',240),
 
-(10317,'2004-11-02','2004-11-12','2004-11-08','Shipped',NULL,161),
+(10317,'2004-11-02','2004-11-12','2004-11-08','SHIPPED',NULL,161),
 
-(10318,'2004-11-02','2004-11-09','2004-11-07','Shipped',NULL,157),
+(10318,'2004-11-02','2004-11-09','2004-11-07','SHIPPED',NULL,157),
 
-(10319,'2004-11-03','2004-11-11','2004-11-06','Shipped','Customer requested that DHL is used for this shipping',456),
+(10319,'2004-11-03','2004-11-11','2004-11-06','SHIPPED','Customer requested that DHL is used for this shipping',456),
 
-(10320,'2004-11-03','2004-11-13','2004-11-07','Shipped',NULL,144),
+(10320,'2004-11-03','2004-11-13','2004-11-07','SHIPPED',NULL,144),
 
-(10321,'2004-11-04','2004-11-12','2004-11-07','Shipped',NULL,462),
+(10321,'2004-11-04','2004-11-12','2004-11-07','SHIPPED',NULL,462),
 
-(10322,'2004-11-04','2004-11-12','2004-11-10','Shipped','Customer has worked with some of our vendors in the past and is aware of their MSRP',363),
+(10322,'2004-11-04','2004-11-12','2004-11-10','SHIPPED','Customer has worked with some of our vendors in the past and is aware of their MSRP',363),
 
-(10323,'2004-11-05','2004-11-12','2004-11-09','Shipped',NULL,128),
+(10323,'2004-11-05','2004-11-12','2004-11-09','SHIPPED',NULL,128),
 
-(10324,'2004-11-05','2004-11-11','2004-11-08','Shipped',NULL,181),
+(10324,'2004-11-05','2004-11-11','2004-11-08','SHIPPED',NULL,181),
 
-(10325,'2004-11-05','2004-11-13','2004-11-08','Shipped',NULL,121),
+(10325,'2004-11-05','2004-11-13','2004-11-08','SHIPPED',NULL,121),
 
-(10326,'2004-11-09','2004-11-16','2004-11-10','Shipped',NULL,144),
+(10326,'2004-11-09','2004-11-16','2004-11-10','SHIPPED',NULL,144),
 
-(10327,'2004-11-10','2004-11-19','2004-11-13','Resolved','Order was disputed and resolved on 12/1/04. The Sales Manager was involved. Customer claims the scales of the models don\'t match what was discussed.',145),
+(10327,'2004-11-10','2004-11-19','2004-11-13','RESOLVED','Order was disputed and resolved on 12/1/04. The Sales Manager was involved. Customer claims the scales of the models don\'t match what was discussed.',145),
 
-(10328,'2004-11-12','2004-11-21','2004-11-18','Shipped','Customer very concerned about the exact color of the models. There is high risk that he may dispute the order because there is a slight color mismatch',278),
+(10328,'2004-11-12','2004-11-21','2004-11-18','SHIPPED','Customer very concerned about the exact color of the models. There is high risk that he may dispute the order because there is a slight color mismatch',278),
 
-(10329,'2004-11-15','2004-11-24','2004-11-16','Shipped',NULL,131),
+(10329,'2004-11-15','2004-11-24','2004-11-16','SHIPPED',NULL,131),
 
-(10330,'2004-11-16','2004-11-25','2004-11-21','Shipped',NULL,385),
+(10330,'2004-11-16','2004-11-25','2004-11-21','SHIPPED',NULL,385),
 
-(10331,'2004-11-17','2004-11-23','2004-11-23','Shipped','Customer requested special shippment. The instructions were passed along to the warehouse',486),
+(10331,'2004-11-17','2004-11-23','2004-11-23','SHIPPED','Customer requested special shippment. The instructions were passed along to the warehouse',486),
 
-(10332,'2004-11-17','2004-11-25','2004-11-18','Shipped',NULL,187),
+(10332,'2004-11-17','2004-11-25','2004-11-18','SHIPPED',NULL,187),
 
-(10333,'2004-11-18','2004-11-27','2004-11-20','Shipped',NULL,129),
+(10333,'2004-11-18','2004-11-27','2004-11-20','SHIPPED',NULL,129),
 
-(10334,'2004-11-19','2004-11-28',NULL,'On Hold','The outstaniding balance for this customer exceeds their credit limit. Order will be shipped when a payment is received.',144),
+(10334,'2004-11-19','2004-11-28',NULL,'ON_HOLD','The outstaniding balance for this customer exceeds their credit limit. Order will be shipped when a payment is received.',144),
 
-(10335,'2004-11-19','2004-11-29','2004-11-23','Shipped',NULL,124),
+(10335,'2004-11-19','2004-11-29','2004-11-23','SHIPPED',NULL,124),
 
-(10336,'2004-11-20','2004-11-26','2004-11-24','Shipped','Customer requested that DHL is used for this shipping',172),
+(10336,'2004-11-20','2004-11-26','2004-11-24','SHIPPED','Customer requested that DHL is used for this shipping',172),
 
-(10337,'2004-11-21','2004-11-30','2004-11-26','Shipped',NULL,424),
+(10337,'2004-11-21','2004-11-30','2004-11-26','SHIPPED',NULL,424),
 
-(10338,'2004-11-22','2004-12-02','2004-11-27','Shipped',NULL,381),
+(10338,'2004-11-22','2004-12-02','2004-11-27','SHIPPED',NULL,381),
 
-(10339,'2004-11-23','2004-11-30','2004-11-30','Shipped',NULL,398),
+(10339,'2004-11-23','2004-11-30','2004-11-30','SHIPPED',NULL,398),
 
-(10340,'2004-11-24','2004-12-01','2004-11-25','Shipped','Customer is interested in buying more Ferrari models',216),
+(10340,'2004-11-24','2004-12-01','2004-11-25','SHIPPED','Customer is interested in buying more Ferrari models',216),
 
-(10341,'2004-11-24','2004-12-01','2004-11-29','Shipped',NULL,382),
+(10341,'2004-11-24','2004-12-01','2004-11-29','SHIPPED',NULL,382),
 
-(10342,'2004-11-24','2004-12-01','2004-11-29','Shipped',NULL,114),
+(10342,'2004-11-24','2004-12-01','2004-11-29','SHIPPED',NULL,114),
 
-(10343,'2004-11-24','2004-12-01','2004-11-26','Shipped',NULL,353),
+(10343,'2004-11-24','2004-12-01','2004-11-26','SHIPPED',NULL,353),
 
-(10344,'2004-11-25','2004-12-02','2004-11-29','Shipped',NULL,350),
+(10344,'2004-11-25','2004-12-02','2004-11-29','SHIPPED',NULL,350),
 
-(10345,'2004-11-25','2004-12-01','2004-11-26','Shipped',NULL,103),
+(10345,'2004-11-25','2004-12-01','2004-11-26','SHIPPED',NULL,103),
 
-(10346,'2004-11-29','2004-12-05','2004-11-30','Shipped',NULL,112),
+(10346,'2004-11-29','2004-12-05','2004-11-30','SHIPPED',NULL,112),
 
-(10347,'2004-11-29','2004-12-07','2004-11-30','Shipped','Can we deliver the new Ford Mustang models by end-of-quarter?',114),
+(10347,'2004-11-29','2004-12-07','2004-11-30','SHIPPED','Can we deliver the new Ford Mustang models by end-of-quarter?',114),
 
-(10348,'2004-11-01','2004-11-08','2004-11-05','Shipped',NULL,458),
+(10348,'2004-11-01','2004-11-08','2004-11-05','SHIPPED',NULL,458),
 
-(10349,'2004-12-01','2004-12-07','2004-12-03','Shipped',NULL,151),
+(10349,'2004-12-01','2004-12-07','2004-12-03','SHIPPED',NULL,151),
 
-(10350,'2004-12-02','2004-12-08','2004-12-05','Shipped',NULL,141),
+(10350,'2004-12-02','2004-12-08','2004-12-05','SHIPPED',NULL,141),
 
-(10351,'2004-12-03','2004-12-11','2004-12-07','Shipped',NULL,324),
+(10351,'2004-12-03','2004-12-11','2004-12-07','SHIPPED',NULL,324),
 
-(10352,'2004-12-03','2004-12-12','2004-12-09','Shipped',NULL,198),
+(10352,'2004-12-03','2004-12-12','2004-12-09','SHIPPED',NULL,198),
 
-(10353,'2004-12-04','2004-12-11','2004-12-05','Shipped',NULL,447),
+(10353,'2004-12-04','2004-12-11','2004-12-05','SHIPPED',NULL,447),
 
-(10354,'2004-12-04','2004-12-10','2004-12-05','Shipped',NULL,323),
+(10354,'2004-12-04','2004-12-10','2004-12-05','SHIPPED',NULL,323),
 
-(10355,'2004-12-07','2004-12-14','2004-12-13','Shipped',NULL,141),
+(10355,'2004-12-07','2004-12-14','2004-12-13','SHIPPED',NULL,141),
 
-(10356,'2004-12-09','2004-12-15','2004-12-12','Shipped',NULL,250),
+(10356,'2004-12-09','2004-12-15','2004-12-12','SHIPPED',NULL,250),
 
-(10357,'2004-12-10','2004-12-16','2004-12-14','Shipped',NULL,124),
+(10357,'2004-12-10','2004-12-16','2004-12-14','SHIPPED',NULL,124),
 
-(10358,'2004-12-10','2004-12-16','2004-12-16','Shipped','Customer requested that DHL is used for this shipping',141),
+(10358,'2004-12-10','2004-12-16','2004-12-16','SHIPPED','Customer requested that DHL is used for this shipping',141),
 
-(10359,'2004-12-15','2004-12-23','2004-12-18','Shipped',NULL,353),
+(10359,'2004-12-15','2004-12-23','2004-12-18','SHIPPED',NULL,353),
 
-(10360,'2004-12-16','2004-12-22','2004-12-18','Shipped',NULL,496),
+(10360,'2004-12-16','2004-12-22','2004-12-18','SHIPPED',NULL,496),
 
-(10361,'2004-12-17','2004-12-24','2004-12-20','Shipped',NULL,282),
+(10361,'2004-12-17','2004-12-24','2004-12-20','SHIPPED',NULL,282),
 
-(10362,'2005-01-05','2005-01-16','2005-01-10','Shipped',NULL,161),
+(10362,'2005-01-05','2005-01-16','2005-01-10','SHIPPED',NULL,161),
 
-(10363,'2005-01-06','2005-01-12','2005-01-10','Shipped',NULL,334),
+(10363,'2005-01-06','2005-01-12','2005-01-10','SHIPPED',NULL,334),
 
-(10364,'2005-01-06','2005-01-17','2005-01-09','Shipped',NULL,350),
+(10364,'2005-01-06','2005-01-17','2005-01-09','SHIPPED',NULL,350),
 
-(10365,'2005-01-07','2005-01-18','2005-01-11','Shipped',NULL,320),
+(10365,'2005-01-07','2005-01-18','2005-01-11','SHIPPED',NULL,320),
 
-(10366,'2005-01-10','2005-01-19','2005-01-12','Shipped',NULL,381),
+(10366,'2005-01-10','2005-01-19','2005-01-12','SHIPPED',NULL,381),
 
-(10367,'2005-01-12','2005-01-21','2005-01-16','Resolved','This order was disputed and resolved on 2/1/2005. Customer claimed that container with shipment was damaged. FedEx\'s investigation proved this wrong.',205),
+(10367,'2005-01-12','2005-01-21','2005-01-16','RESOLVED','This order was disputed and resolved on 2/1/2005. Customer claimed that container with shipment was damaged. FedEx\'s investigation proved this wrong.',205),
 
-(10368,'2005-01-19','2005-01-27','2005-01-24','Shipped','Can we renegotiate this one?',124),
+(10368,'2005-01-19','2005-01-27','2005-01-24','SHIPPED','Can we renegotiate this one?',124),
 
-(10369,'2005-01-20','2005-01-28','2005-01-24','Shipped',NULL,379),
+(10369,'2005-01-20','2005-01-28','2005-01-24','SHIPPED',NULL,379),
 
-(10370,'2005-01-20','2005-02-01','2005-01-25','Shipped',NULL,276),
+(10370,'2005-01-20','2005-02-01','2005-01-25','SHIPPED',NULL,276),
 
-(10371,'2005-01-23','2005-02-03','2005-01-25','Shipped',NULL,124),
+(10371,'2005-01-23','2005-02-03','2005-01-25','SHIPPED',NULL,124),
 
-(10372,'2005-01-26','2005-02-05','2005-01-28','Shipped',NULL,398),
+(10372,'2005-01-26','2005-02-05','2005-01-28','SHIPPED',NULL,398),
 
-(10373,'2005-01-31','2005-02-08','2005-02-06','Shipped',NULL,311),
+(10373,'2005-01-31','2005-02-08','2005-02-06','SHIPPED',NULL,311),
 
-(10374,'2005-02-02','2005-02-09','2005-02-03','Shipped',NULL,333),
+(10374,'2005-02-02','2005-02-09','2005-02-03','SHIPPED',NULL,333),
 
-(10375,'2005-02-03','2005-02-10','2005-02-06','Shipped',NULL,119),
+(10375,'2005-02-03','2005-02-10','2005-02-06','SHIPPED',NULL,119),
 
-(10376,'2005-02-08','2005-02-18','2005-02-13','Shipped',NULL,219),
+(10376,'2005-02-08','2005-02-18','2005-02-13','SHIPPED',NULL,219),
 
-(10377,'2005-02-09','2005-02-21','2005-02-12','Shipped','Cautious optimism. We have happy customers here, if we can keep them well stocked.  I need all the information I can get on the planned shippments of Porches',186),
+(10377,'2005-02-09','2005-02-21','2005-02-12','SHIPPED','Cautious optimism. We have happy customers here, if we can keep them well stocked.  I need all the information I can get on the planned shippments of Porches',186),
 
-(10378,'2005-02-10','2005-02-18','2005-02-11','Shipped',NULL,141),
+(10378,'2005-02-10','2005-02-18','2005-02-11','SHIPPED',NULL,141),
 
-(10379,'2005-02-10','2005-02-18','2005-02-11','Shipped',NULL,141),
+(10379,'2005-02-10','2005-02-18','2005-02-11','SHIPPED',NULL,141),
 
-(10380,'2005-02-16','2005-02-24','2005-02-18','Shipped',NULL,141),
+(10380,'2005-02-16','2005-02-24','2005-02-18','SHIPPED',NULL,141),
 
-(10381,'2005-02-17','2005-02-25','2005-02-18','Shipped',NULL,321),
+(10381,'2005-02-17','2005-02-25','2005-02-18','SHIPPED',NULL,321),
 
-(10382,'2005-02-17','2005-02-23','2005-02-18','Shipped','Custom shipping instructions sent to warehouse',124),
+(10382,'2005-02-17','2005-02-23','2005-02-18','SHIPPED','Custom shipping instructions sent to warehouse',124),
 
-(10383,'2005-02-22','2005-03-02','2005-02-25','Shipped',NULL,141),
+(10383,'2005-02-22','2005-03-02','2005-02-25','SHIPPED',NULL,141),
 
-(10384,'2005-02-23','2005-03-06','2005-02-27','Shipped',NULL,321),
+(10384,'2005-02-23','2005-03-06','2005-02-27','SHIPPED',NULL,321),
 
-(10385,'2005-02-28','2005-03-09','2005-03-01','Shipped',NULL,124),
+(10385,'2005-02-28','2005-03-09','2005-03-01','SHIPPED',NULL,124),
 
-(10386,'2005-03-01','2005-03-09','2005-03-06','Resolved','Disputed then Resolved on 3/15/2005. Customer doesn\'t like the craftsmaship of the models.',141),
+(10386,'2005-03-01','2005-03-09','2005-03-06','RESOLVED','DISPUTED then RESOLVED on 3/15/2005. Customer doesn\'t like the craftsmaship of the models.',141),
 
-(10387,'2005-03-02','2005-03-09','2005-03-06','Shipped','We need to keep in close contact with their Marketing VP. He is the decision maker for all their purchases.',148),
+(10387,'2005-03-02','2005-03-09','2005-03-06','SHIPPED','We need to keep in close contact with their Marketing VP. He is the decision maker for all their purchases.',148),
 
-(10388,'2005-03-03','2005-03-11','2005-03-09','Shipped',NULL,462),
+(10388,'2005-03-03','2005-03-11','2005-03-09','SHIPPED',NULL,462),
 
-(10389,'2005-03-03','2005-03-09','2005-03-08','Shipped',NULL,448),
+(10389,'2005-03-03','2005-03-09','2005-03-08','SHIPPED',NULL,448),
 
-(10390,'2005-03-04','2005-03-11','2005-03-07','Shipped','They want to reevaluate their terms agreement with Finance.',124),
+(10390,'2005-03-04','2005-03-11','2005-03-07','SHIPPED','They want to reevaluate their terms agreement with Finance.',124),
 
-(10391,'2005-03-09','2005-03-20','2005-03-15','Shipped',NULL,276),
+(10391,'2005-03-09','2005-03-20','2005-03-15','SHIPPED',NULL,276),
 
-(10392,'2005-03-10','2005-03-18','2005-03-12','Shipped',NULL,452),
+(10392,'2005-03-10','2005-03-18','2005-03-12','SHIPPED',NULL,452),
 
-(10393,'2005-03-11','2005-03-22','2005-03-14','Shipped','They want to reevaluate their terms agreement with Finance.',323),
+(10393,'2005-03-11','2005-03-22','2005-03-14','SHIPPED','They want to reevaluate their terms agreement with Finance.',323),
 
-(10394,'2005-03-15','2005-03-25','2005-03-19','Shipped',NULL,141),
+(10394,'2005-03-15','2005-03-25','2005-03-19','SHIPPED',NULL,141),
 
-(10395,'2005-03-17','2005-03-24','2005-03-23','Shipped','We must be cautions with this customer. Their VP of Sales resigned. Company may be heading down.',250),
+(10395,'2005-03-17','2005-03-24','2005-03-23','SHIPPED','We must be cautions with this customer. Their VP of Sales resigned. Company may be heading down.',250),
 
-(10396,'2005-03-23','2005-04-02','2005-03-28','Shipped',NULL,124),
+(10396,'2005-03-23','2005-04-02','2005-03-28','SHIPPED',NULL,124),
 
-(10397,'2005-03-28','2005-04-09','2005-04-01','Shipped',NULL,242),
+(10397,'2005-03-28','2005-04-09','2005-04-01','SHIPPED',NULL,242),
 
-(10398,'2005-03-30','2005-04-09','2005-03-31','Shipped',NULL,353),
+(10398,'2005-03-30','2005-04-09','2005-03-31','SHIPPED',NULL,353),
 
-(10399,'2005-04-01','2005-04-12','2005-04-03','Shipped',NULL,496),
+(10399,'2005-04-01','2005-04-12','2005-04-03','SHIPPED',NULL,496),
 
-(10400,'2005-04-01','2005-04-11','2005-04-04','Shipped','Customer requested that DHL is used for this shipping',450),
+(10400,'2005-04-01','2005-04-11','2005-04-04','SHIPPED','Customer requested that DHL is used for this shipping',450),
 
-(10401,'2005-04-03','2005-04-14',NULL,'On Hold','Customer credit limit exceeded. Will ship when a payment is received.',328),
+(10401,'2005-04-03','2005-04-14',NULL,'ON_HOLD','Customer credit limit exceeded. Will ship when a payment is received.',328),
 
-(10402,'2005-04-07','2005-04-14','2005-04-12','Shipped',NULL,406),
+(10402,'2005-04-07','2005-04-14','2005-04-12','SHIPPED',NULL,406),
 
-(10403,'2005-04-08','2005-04-18','2005-04-11','Shipped',NULL,201),
+(10403,'2005-04-08','2005-04-18','2005-04-11','SHIPPED',NULL,201),
 
-(10404,'2005-04-08','2005-04-14','2005-04-11','Shipped',NULL,323),
+(10404,'2005-04-08','2005-04-14','2005-04-11','SHIPPED',NULL,323),
 
-(10405,'2005-04-14','2005-04-24','2005-04-20','Shipped',NULL,209),
+(10405,'2005-04-14','2005-04-24','2005-04-20','SHIPPED',NULL,209),
 
-(10406,'2005-04-15','2005-04-25','2005-04-21','Disputed','Customer claims container with shipment was damaged during shipping and some items were missing. I am talking to FedEx about this.',145),
+(10406,'2005-04-15','2005-04-25','2005-04-21','DISPUTED','Customer claims container with shipment was damaged during shipping and some items were missing. I am talking to FedEx about this.',145),
 
-(10407,'2005-04-22','2005-05-04',NULL,'On Hold','Customer credit limit exceeded. Will ship when a payment is received.',450),
+(10407,'2005-04-22','2005-05-04',NULL,'ON_HOLD','Customer credit limit exceeded. Will ship when a payment is received.',450),
 
-(10408,'2005-04-22','2005-04-29','2005-04-27','Shipped',NULL,398),
+(10408,'2005-04-22','2005-04-29','2005-04-27','SHIPPED',NULL,398),
 
-(10409,'2005-04-23','2005-05-05','2005-04-24','Shipped',NULL,166),
+(10409,'2005-04-23','2005-05-05','2005-04-24','SHIPPED',NULL,166),
 
-(10410,'2005-04-29','2005-05-10','2005-04-30','Shipped',NULL,357),
+(10410,'2005-04-29','2005-05-10','2005-04-30','SHIPPED',NULL,357),
 
-(10411,'2005-05-01','2005-05-08','2005-05-06','Shipped',NULL,233),
+(10411,'2005-05-01','2005-05-08','2005-05-06','SHIPPED',NULL,233),
 
-(10412,'2005-05-03','2005-05-13','2005-05-05','Shipped',NULL,141),
+(10412,'2005-05-03','2005-05-13','2005-05-05','SHIPPED',NULL,141),
 
-(10413,'2005-05-05','2005-05-14','2005-05-09','Shipped','Customer requested that DHL is used for this shipping',175),
+(10413,'2005-05-05','2005-05-14','2005-05-09','SHIPPED','Customer requested that DHL is used for this shipping',175),
 
-(10414,'2005-05-06','2005-05-13',NULL,'On Hold','Customer credit limit exceeded. Will ship when a payment is received.',362),
+(10414,'2005-05-06','2005-05-13',NULL,'ON_HOLD','Customer credit limit exceeded. Will ship when a payment is received.',362),
 
-(10415,'2005-05-09','2005-05-20','2005-05-12','Disputed','Customer claims the scales of the models don\'t match what was discussed. I keep all the paperwork though to prove otherwise',471),
+(10415,'2005-05-09','2005-05-20','2005-05-12','DISPUTED','Customer claims the scales of the models don\'t match what was discussed. I keep all the paperwork though to prove otherwise',471),
 
-(10416,'2005-05-10','2005-05-16','2005-05-14','Shipped',NULL,386),
+(10416,'2005-05-10','2005-05-16','2005-05-14','SHIPPED',NULL,386),
 
-(10417,'2005-05-13','2005-05-19','2005-05-19','Disputed','Customer doesn\'t like the colors and precision of the models.',141),
+(10417,'2005-05-13','2005-05-19','2005-05-19','DISPUTED','Customer doesn\'t like the colors and precision of the models.',141),
 
-(10418,'2005-05-16','2005-05-24','2005-05-20','Shipped',NULL,412),
+(10418,'2005-05-16','2005-05-24','2005-05-20','SHIPPED',NULL,412),
 
-(10419,'2005-05-17','2005-05-28','2005-05-19','Shipped',NULL,382),
+(10419,'2005-05-17','2005-05-28','2005-05-19','SHIPPED',NULL,382),
 
-(10420,'2005-05-29','2005-06-07',NULL,'In Process',NULL,282),
+(10420,'2005-05-29','2005-06-07',NULL,'IN_PROCESS',NULL,282),
 
-(10421,'2005-05-29','2005-06-06',NULL,'In Process','Custom shipping instructions were sent to warehouse',124),
+(10421,'2005-05-29','2005-06-06',NULL,'IN_PROCESS','Custom shipping instructions were sent to warehouse',124),
 
-(10422,'2005-05-30','2005-06-11',NULL,'In Process',NULL,157),
+(10422,'2005-05-30','2005-06-11',NULL,'IN_PROCESS',NULL,157),
 
-(10423,'2005-05-30','2005-06-05',NULL,'In Process',NULL,314),
+(10423,'2005-05-30','2005-06-05',NULL,'IN_PROCESS',NULL,314),
 
-(10424,'2005-05-31','2005-06-08',NULL,'In Process',NULL,141),
+(10424,'2005-05-31','2005-06-08',NULL,'IN_PROCESS',NULL,141),
 
-(10425,'2005-05-31','2005-06-07',NULL,'In Process',NULL,119);
+(10425,'2005-05-31','2005-06-07',NULL,'IN_PROCESS',NULL,119);
 
 /*Table structure for table `payments` */
 
 DROP TABLE IF EXISTS `payments`;
 
 CREATE TABLE `payments` (
-  `order_id` int NOT NULL,
-  `check_number` varchar(36) NOT NULL,
+  `customer_id` int NOT NULL,
+  `check_number` varchar(36) default (uuid()),
   `payment_date` datetime NOT NULL,
   `amount` decimal(10,2) NOT NULL,
-  PRIMARY KEY (`customer_id`,`check_number`),
-  CONSTRAINT `payments_ibfk_1` FOREIGN KEY (`order_id`) REFERENCES `orders` (`id`)
-) engine=InnoDB default charset=UTF8MB4;
+  PRIMARY KEY (`check_number`));
+  
+alter table payments add CONSTRAINT `payments_ibfk_1`
+FOREIGN KEY (`customer_id`) REFERENCES `customers` (`id`)
+on update CASCADE;
 
 /*Data for the table `payments` */
 
-insert  into `payments`(`order_id`,`check_number`,`payment_date`,`amount`) values
+insert  into `payments`(`customer_id`,`check_number`,`payment_date`,`amount`) values
 
-(10168, '40688a64-5125-11ee-8eaa-0242ac120002', '2003-11-18 00:00:00', '50743.65'),
-(10298, '65886ca4-5120-11ee-8eaa-0242ac120002', '2004-10-19 00:00:00', '6066.78'),
-(10123, '65886d28-5120-11ee-8eaa-0242ac120002', '2003-06-05 00:00:00', '14571.44'),
-(10345, '65886d72-5120-11ee-8eaa-0242ac120002', '2004-12-18 00:00:00', '1676.14'),
-(10346, '65886dc1-5120-11ee-8eaa-0242ac120002', '2004-12-17 00:00:00', '14191.12'),
-(10124, '65886e02-5120-11ee-8eaa-0242ac120002', '2003-06-06 00:00:00', '32641.98'),
-(10278, '65886e40-5120-11ee-8eaa-0242ac120002', '2004-08-20 00:00:00', '33347.88'),
-(10120, '65886e8f-5120-11ee-8eaa-0242ac120002', '2003-05-20 00:00:00', '45864.03'),
-(10342, '65886efa-5120-11ee-8eaa-0242ac120002', '2004-12-15 00:00:00', '40265.60'),
-(10125, '65886f64-5120-11ee-8eaa-0242ac120002', '2003-05-31 00:00:00', '7565.08'),
-(10223, '65886fc1-5120-11ee-8eaa-0242ac120002', '2004-03-10 00:00:00', '44894.74'),
-(10315, '65887011-5120-11ee-8eaa-0242ac120002', '2004-11-14 00:00:00', '19501.82'),
-(10275, '65887061-5120-11ee-8eaa-0242ac120002', '2004-08-08 00:00:00', '47924.19'),
-(10375, '658870a5-5120-11ee-8eaa-0242ac120002', '2005-02-22 00:00:00', '49523.67'),
-(10103, '658870e1-5120-11ee-8eaa-0242ac120002', '2003-02-16 00:00:00', '50218.95'),
-(10158, '6588711f-5120-11ee-8eaa-0242ac120002', '2003-10-28 00:00:00', '1491.38'),
-(10309, '65887186-5120-11ee-8eaa-0242ac120002', '2004-11-04 00:00:00', '17876.32'),
-(10325, '658871f2-5120-11ee-8eaa-0242ac120002', '2004-11-28 00:00:00', '34638.14'),
-(10113, '658872e3-5120-11ee-8eaa-0242ac120002', '2003-04-11 00:00:00', '11044.30'),
-(10312, '658873dd-5120-11ee-8eaa-0242ac120002', '2004-11-02 00:00:00', '55639.66'),
-(10229, '65887483-5120-11ee-8eaa-0242ac120002', '2004-03-26 00:00:00', '43369.30'),
-(10182, '658874dd-5120-11ee-8eaa-0242ac120002', '2003-11-25 00:00:00', '45084.38'),
-(10101, '65887530-5120-11ee-8eaa-0242ac120002', '2003-01-28 00:00:00', '10549.01'),
-(10300, '658875a3-5120-11ee-8eaa-0242ac120002', '2003-10-18 00:00:00', '24101.81'),
-(10230, '6588762b-5120-11ee-8eaa-0242ac120002', '2004-03-24 00:00:00', '33820.62'),
-(10323, '6588767c-5120-11ee-8eaa-0242ac120002', '2004-11-18 00:00:00', '7466.32'),
-(10333, '658876cd-5120-11ee-8eaa-0242ac120002', '2004-12-08 00:00:00', '26248.78'),
-(10201, '65887713-5120-11ee-8eaa-0242ac120002', '2003-12-11 00:00:00', '23923.93'),
-(10111, '65887753-5120-11ee-8eaa-0242ac120002', '2003-04-09 00:00:00', '16537.85'),
-(10107, '6588779d-5120-11ee-8eaa-0242ac120002', '2003-03-12 00:00:00', '22292.62'),
-(10329, '65887808-5120-11ee-8eaa-0242ac120002', '2004-12-02 00:00:00', '50025.35'),
-(10292, '6588785c-5120-11ee-8eaa-0242ac120002', '2004-09-11 00:00:00', '35321.97'),
-(10311, '6588790a-5120-11ee-8eaa-0242ac120002', '2004-11-01 00:00:00', '36140.38'),
-(10412, '65887958-5120-11ee-8eaa-0242ac120002', '2005-05-19 00:00:00', '46895.48'),
-(10212, '658879a7-5120-11ee-8eaa-0242ac120002', '2004-01-30 00:00:00', '59830.55'),
-(10104, '65887b2c-5120-11ee-8eaa-0242ac120002', '2003-02-25 00:00:00', '40206.20'),
-(10246, '65887bc4-5120-11ee-8eaa-0242ac120002', '2004-07-09 00:00:00', '35420.74'),
-(10279, '65887c0c-5120-11ee-8eaa-0242ac120002', '2004-08-16 00:00:00', '20009.53'),
-(10244, '65887c4b-5120-11ee-8eaa-0242ac120002', '2004-05-17 00:00:00', '26155.91'),
-(10112, '65887ce5-5120-11ee-8eaa-0242ac120002', '2003-04-09 00:00:00', '7674.94'),
-(10256, '65887d35-5120-11ee-8eaa-0242ac120002', '2004-07-03 00:00:00', '4710.73'),
-(10238, '65887ec0-5120-11ee-8eaa-0242ac120002', '2004-04-26 00:00:00', '28211.70'),
-(10327, '65887f38-5120-11ee-8eaa-0242ac120002', '2004-12-01 00:00:00', '20564.86'),
-(10105, '65887f9a-5120-11ee-8eaa-0242ac120002', '2003-02-20 00:00:00', '53959.21'),
-(10227, '65888010-5120-11ee-8eaa-0242ac120002', '2004-03-18 00:00:00', '40978.53'),
-(10208, '65888062-5120-11ee-8eaa-0242ac120002', '2004-01-16 00:00:00', '49614.72'),
-(10194, '658880b5-5120-11ee-8eaa-0242ac120002', '2003-12-10 00:00:00', '39712.10'),
-(10117, '65888105-5120-11ee-8eaa-0242ac120002', '2003-04-22 00:00:00', '44380.15'),
-(10277, '6588815a-5120-11ee-8eaa-0242ac120002', '2004-08-11 00:00:00', '2611.84'),
-(10387, '65888227-5120-11ee-8eaa-0242ac120002', '2005-03-27 00:00:00', '3516.04'),
-(10204, '65888282-5120-11ee-8eaa-0242ac120002', '2003-12-22 00:00:00', '58793.53'),
-(10267, '658882ca-5120-11ee-8eaa-0242ac120002', '2004-07-26 00:00:00', '20314.44'),
-(10127, '6588831e-5120-11ee-8eaa-0242ac120002', '2003-06-18 00:00:00', '58841.35'),
-(10349, '6588836e-5120-11ee-8eaa-0242ac120002', '2004-12-14 00:00:00', '39964.63'),
-(10318, '658883c7-5120-11ee-8eaa-0242ac120002', '2004-11-19 00:00:00', '35152.12'),
-(10317, '65888483-5120-11ee-8eaa-0242ac120002', '2004-11-14 00:00:00', '2434.25'),
-(10362, '65888549-5120-11ee-8eaa-0242ac120002', '2005-02-02 00:00:00', '12692.19'),
-(10140, '658885a4-5120-11ee-8eaa-0242ac120002', '2003-08-05 00:00:00', '38675.13'),
-(10288, '658885f3-5120-11ee-8eaa-0242ac120002', '2004-09-16 00:00:00', '38785.48'),
-(10259, '65888641-5120-11ee-8eaa-0242ac120002', '2004-07-07 00:00:00', '44160.92'),
-(10217, '658886ab-5120-11ee-8eaa-0242ac120002', '2004-02-28 00:00:00', '22474.17'),
-(10289, '65888708-5120-11ee-8eaa-0242ac120002', '2004-09-19 00:00:00', '12538.01'),
-(10224, '658887c3-5120-11ee-8eaa-0242ac120002', '2004-03-15 00:00:00', '18997.89'),
-(10180, '65888822-5120-11ee-8eaa-0242ac120002', '2003-11-22 00:00:00', '42783.81'),
-(10286, '6588886f-5120-11ee-8eaa-0242ac120002', '2004-09-09 00:00:00', '1960.80'),
-(10336, '658888ca-5120-11ee-8eaa-0242ac120002', '2004-12-04 00:00:00', '51209.58'),
-(10114, '6588893c-5120-11ee-8eaa-0242ac120002', '2003-04-20 00:00:00', '33383.14'),
-(10249, '65888997-5120-11ee-8eaa-0242ac120002', '2004-05-13 00:00:00', '11843.45'),
-(10228, '658889db-5120-11ee-8eaa-0242ac120002', '2004-03-29 00:00:00', '20355.24'),
-(10413, '65888a17-5120-11ee-8eaa-0242ac120002', '2005-05-19 00:00:00', '28500.78'),
-(10172, '65888a6a-5120-11ee-8eaa-0242ac120002', '2003-11-19 00:00:00', '24879.08'),
-(10263, '65888aec-5120-11ee-8eaa-0242ac120002', '2004-07-10 00:00:00', '42044.77'),
-(10240, '65888b57-5120-11ee-8eaa-0242ac120002', '2004-04-17 00:00:00', '15183.63'),
-(10210, '65888bb2-5120-11ee-8eaa-0242ac120002', '2004-01-19 00:00:00', '47177.59'),
-(10237, '65888c17-5120-11ee-8eaa-0242ac120002', '2004-04-25 00:00:00', '22602.36'),
-(10102, '65888c7c-5120-11ee-8eaa-0242ac120002', '2003-01-30 00:00:00', '5494.78'),
-(10324, '65888cdf-5120-11ee-8eaa-0242ac120002', '2004-11-16 00:00:00', '44400.50'),
-(10377, '65888d2e-5120-11ee-8eaa-0242ac120002', '2005-03-10 00:00:00', '23602.90'),
-(10155, '65888d79-5120-11ee-8eaa-0242ac120002', '2003-10-27 00:00:00', '37602.48'),
-(10299, '65888dc3-5120-11ee-8eaa-0242ac120002', '2004-10-21 00:00:00', '34341.08'),
-(10306, '65888e0f-5120-11ee-8eaa-0242ac120002', '2004-11-03 00:00:00', '52825.29'),
-(10332, '65888e5a-5120-11ee-8eaa-0242ac120002', '2004-12-08 00:00:00', '47159.11'),
-(10110, '65888ea3-5120-11ee-8eaa-0242ac120002', '2003-03-27 00:00:00', '48425.69'),
-(10297, '65888ef3-5120-11ee-8eaa-0242ac120002', '2004-10-03 00:00:00', '17359.53'),
-(10220, '65888f4b-5120-11ee-8eaa-0242ac120002', '2004-03-01 00:00:00', '32538.74'),
-(10352, '65888faa-5120-11ee-8eaa-0242ac120002', '2004-12-06 00:00:00', '9658.74'),
-(10130, '65888fff-5120-11ee-8eaa-0242ac120002', '2003-07-06 00:00:00', '6036.96'),
-(10290, '65889061-5120-11ee-8eaa-0242ac120002', '2004-09-21 00:00:00', '5858.56'),
-(10302, '658890c7-5120-11ee-8eaa-0242ac120002', '2003-10-20 00:00:00', '23908.24'),
-(10403, '6588912d-5120-11ee-8eaa-0242ac120002', '2004-06-15 00:00:00', '37258.94'),
-(10206, '65889189-5120-11ee-8eaa-0242ac120002', '2003-12-18 00:00:00', '36527.61'),
-(10313, '658891e1-5120-11ee-8eaa-0242ac120002', '2004-11-08 00:00:00', '33594.58'),
-(10276, '65889246-5120-11ee-8eaa-0242ac120002', '2004-08-13 00:00:00', '51152.86'),
-(10294, '658892b1-5120-11ee-8eaa-0242ac120002', '2004-09-24 00:00:00', '4424.40'),
-(10189, '65889311-5120-11ee-8eaa-0242ac120002', '2003-12-04 00:00:00', '3879.96'),
-(10145, '6588936c-5120-11ee-8eaa-0242ac120002', '2003-09-05 00:00:00', '50342.74'),
-(10367, '658893c8-5120-11ee-8eaa-0242ac120002', '2005-02-06 00:00:00', '39580.60'),
-(10405, '65889430-5120-11ee-8eaa-0242ac120002', '2005-05-03 00:00:00', '35157.75'),
-(10255, '65889495-5120-11ee-8eaa-0242ac120002', '2004-06-21 00:00:00', '4632.31'),
-(10241, '658894e8-5120-11ee-8eaa-0242ac120002', '2004-05-04 00:00:00', '36069.26'),
-(10118, '658895ac-5120-11ee-8eaa-0242ac120002', '2003-05-09 00:00:00', '3101.40'),
-(10340, '6588961c-5120-11ee-8eaa-0242ac120002', '2004-12-06 00:00:00', '24945.21'),
-(10197, '6588967d-5120-11ee-8eaa-0242ac120002', '2003-12-14 00:00:00', '40473.86'),
-(10376, '658896e0-5120-11ee-8eaa-0242ac120002', '2005-03-02 00:00:00', '3452.75'),
-(10154, '65889740-5120-11ee-8eaa-0242ac120002', '2003-10-18 00:00:00', '4465.85'),
-(10161, '658897ac-5120-11ee-8eaa-0242ac120002', '2003-10-31 00:00:00', '36164.46'),
-(10314, '65889811-5120-11ee-8eaa-0242ac120002', '2004-11-02 00:00:00', '53745.34'),
-(10411, '65889873-5120-11ee-8eaa-0242ac120002', '2005-05-20 00:00:00', '29070.38'),
-(10261, '658898d8-5120-11ee-8eaa-0242ac120002', '2004-07-01 00:00:00', '22997.45'),
-(10171, '6588992d-5120-11ee-8eaa-0242ac120002', '2003-11-18 00:00:00', '16909.84'),
-(10316, '658899bf-5120-11ee-8eaa-0242ac120002', '2004-11-16 00:00:00', '46788.14'),
-(10232, '65889a06-5120-11ee-8eaa-0242ac120002', '2004-03-28 00:00:00', '24995.61'),
-(10178, '65889a51-5120-11ee-8eaa-0242ac120002', '2003-11-22 00:00:00', '33818.34'),
-(10397, '65889ab7-5120-11ee-8eaa-0242ac120002', '2005-06-03 00:00:00', '12432.32'),
-(10136, '65889b20-5120-11ee-8eaa-0242ac120002', '2003-07-21 00:00:00', '14232.70'),
-(10293, '65889b87-5120-11ee-8eaa-0242ac120002', '2004-09-19 00:00:00', '33924.24'),
-(10280, '65889bec-5120-11ee-8eaa-0242ac120002', '2004-09-04 00:00:00', '48298.99'),
-(10395, '65889c48-5120-11ee-8eaa-0242ac120002', '2005-05-17 00:00:00', '17928.09'),
-(10356, '65889ca0-5120-11ee-8eaa-0242ac120002', '2004-12-30 00:00:00', '26311.63'),
-(10134, '65889cf6-5120-11ee-8eaa-0242ac120002', '2003-07-18 00:00:00', '23419.47'),
-(10216, '65889d48-5120-11ee-8eaa-0242ac120002', '2004-02-10 00:00:00', '5759.42'),
-(10304, '65889d99-5120-11ee-8eaa-0242ac120002', '2004-10-22 00:00:00', '53116.99'),
-(10310, '65889df1-5120-11ee-8eaa-0242ac120002', '2004-11-06 00:00:00', '61234.67'),
-(10191, '65889e3e-5120-11ee-8eaa-0242ac120002', '2003-12-07 00:00:00', '27988.47'),
-(10283, '65889e87-5120-11ee-8eaa-0242ac120002', '2004-08-30 00:00:00', '37527.58'),
-(10235, '65889ee7-5120-11ee-8eaa-0242ac120002', '2004-04-24 00:00:00', '29284.42'),
-(10370, '65889f31-5120-11ee-8eaa-0242ac120002', '2005-02-09 00:00:00', '27083.78'),
-(10169, '65889f75-5120-11ee-8eaa-0242ac120002', '2003-11-13 00:00:00', '38547.19'),
-(10148, '65889fdd-5120-11ee-8eaa-0242ac120002', '2003-09-28 00:00:00', '41554.73'),
-(10391, '6588a04b-5120-11ee-8eaa-0242ac120002', '2005-04-30 00:00:00', '29848.52'),
-(10328, '6588a0a4-5120-11ee-8eaa-0242ac120002', '2004-12-05 00:00:00', '37654.09'),
-(10106, '6588a0f5-5120-11ee-8eaa-0242ac120002', '2003-03-02 00:00:00', '52151.81'),
-(10173, '6588a13f-5120-11ee-8eaa-0242ac120002', '2003-11-24 00:00:00', '37723.79'),
-(10139, '6588a187-5120-11ee-8eaa-0242ac120002', '2003-08-03 00:00:00', '24013.52'),
-(10270, '6588a1cf-5120-11ee-8eaa-0242ac120002', '2004-08-02 00:00:00', '35806.73'),
-(10361, '6588a218-5120-11ee-8eaa-0242ac120002', '2005-01-03 00:00:00', '31835.36'),
-(10305, '6588a286-5120-11ee-8eaa-0242ac120002', '2004-10-28 00:00:00', '47411.33'),
-(10285, '6588a2eb-5120-11ee-8eaa-0242ac120002', '2004-09-05 00:00:00', '43134.04'),
-(10225, '6588a359-5120-11ee-8eaa-0242ac120002', '2004-03-13 00:00:00', '47375.92'),
-(10287, '6588a3ab-5120-11ee-8eaa-0242ac120002', '2004-09-18 00:00:00', '61402.00'),
-(10301, '6588a401-5120-11ee-8eaa-0242ac120002', '2003-10-24 00:00:00', '36798.88'),
-(10284, '6588a454-5120-11ee-8eaa-0242ac120002', '2004-09-05 00:00:00', '32260.16'),
-(10373, '6588a5c3-5120-11ee-8eaa-0242ac120002', '2005-02-15 00:00:00', '46770.52'),
-(10151, '6588a644-5120-11ee-8eaa-0242ac120002', '2003-10-06 00:00:00', '32723.04'),
-(10239, '6588a6a4-5120-11ee-8eaa-0242ac120002', '2004-04-25 00:00:00', '16212.59'),
-(10273, '6588a707-5120-11ee-8eaa-0242ac120002', '2004-08-09 00:00:00', '45352.47'),
-(10221, '6588a76c-5120-11ee-8eaa-0242ac120002', '2004-03-03 00:00:00', '16901.38'),
-(10308, '6588a7d1-5120-11ee-8eaa-0242ac120002', '2004-11-06 00:00:00', '42339.76'),
-(10195, '6588a821-5120-11ee-8eaa-0242ac120002', '2003-12-07 00:00:00', '36092.40'),
-(10365, '6588a86f-5120-11ee-8eaa-0242ac120002', '2005-01-18 00:00:00', '8307.28'),
-(10143, '6588a8b1-5120-11ee-8eaa-0242ac120002', '2003-08-20 00:00:00', '41016.75'),
-(10185, '6588a8fa-5120-11ee-8eaa-0242ac120002', '2003-11-24 00:00:00', '52548.49'),
-(10254, '6588aa68-5120-11ee-8eaa-0242ac120002', '2004-06-24 00:00:00', '37281.36'),
-(10132, '6588aabf-5120-11ee-8eaa-0242ac120002', '2003-07-05 00:00:00', '2880.00'),
-(10354, '6588ab0e-5120-11ee-8eaa-0242ac120002', '2004-12-24 00:00:00', '39440.59'),
-(10351, '6588ac22-5120-11ee-8eaa-0242ac120002', '2004-12-13 00:00:00', '13671.82'),
-(10129, '6588add2-5120-11ee-8eaa-0242ac120002', '2003-07-07 00:00:00', '29429.14'),
-(10175, '6588ae4d-5120-11ee-8eaa-0242ac120002', '2003-11-23 00:00:00', '37455.77'),
-(10233, '6588aeb1-5120-11ee-8eaa-0242ac120002', '2004-04-16 00:00:00', '7178.66'),
-(10251, '6588af0c-5120-11ee-8eaa-0242ac120002', '2004-05-30 00:00:00', '31102.85'),
-(10174, '6588af6c-5120-11ee-8eaa-0242ac120002', '2003-11-15 00:00:00', '23936.53'),
-(10152, '6588afbe-5120-11ee-8eaa-0242ac120002', '2003-10-17 00:00:00', '9821.32'),
-(10374, '6588b022-5120-11ee-8eaa-0242ac120002', '2005-03-01 00:00:00', '21432.31'),
-(10363, '6588b146-5120-11ee-8eaa-0242ac120002', '2005-01-27 00:00:00', '45785.34'),
-(10141, '6588b1ce-5120-11ee-8eaa-0242ac120002', '2003-08-16 00:00:00', '29716.86'),
-(10247, '6588b227-5120-11ee-8eaa-0242ac120002', '2004-05-22 00:00:00', '28394.54'),
-(10307, '6588b27a-5120-11ee-8eaa-0242ac120002', '2004-10-24 00:00:00', '23333.06'),
-(10183, '6588b2c9-5120-11ee-8eaa-0242ac120002', '2003-11-28 00:00:00', '34606.28'),
-(10177, '6588b319-5120-11ee-8eaa-0242ac120002', '2003-11-24 00:00:00', '31428.21'),
-(10231, '6588b363-5120-11ee-8eaa-0242ac120002', '2004-04-02 00:00:00', '15322.93'),
-(10209, '6588b3b2-5120-11ee-8eaa-0242ac120002', '2004-01-18 00:00:00', '21053.69'),
-(10160, '6588b403-5120-11ee-8eaa-0242ac120002', '2003-10-24 00:00:00', '20452.50'),
-(10344, '6588b450-5120-11ee-8eaa-0242ac120002', '2004-12-11 00:00:00', '18888.31'),
-(10122, '6588b4a4-5120-11ee-8eaa-0242ac120002', '2003-05-25 00:00:00', '50824.66'),
-(10364, '6588b4f5-5120-11ee-8eaa-0242ac120002', '2005-01-29 00:00:00', '1834.56'),
-(10137, '6588b59b-5120-11ee-8eaa-0242ac120002', '2003-07-21 00:00:00', '13920.26'),
-(10121, '6588b5ea-5120-11ee-8eaa-0242ac120002', '2003-05-21 00:00:00', '16700.47'),
-(10398, '6588b634-5120-11ee-8eaa-0242ac120002', '2005-06-09 00:00:00', '46656.94'),
-(10202, '6588b683-5120-11ee-8eaa-0242ac120002', '2003-12-16 00:00:00', '20220.04'),
-(10410, '6588b6d6-5120-11ee-8eaa-0242ac120002', '2004-05-15 00:00:00', '36442.34'),
-(10264, '6588b72b-5120-11ee-8eaa-0242ac120002', '2004-07-11 00:00:00', '18473.71'),
-(10295, '6588b779-5120-11ee-8eaa-0242ac120002', '2004-09-21 00:00:00', '15059.76'),
-(10322, '6588b7cb-5120-11ee-8eaa-0242ac120002', '2004-11-17 00:00:00', '50799.69'),
-(10100, '6588b817-5120-11ee-8eaa-0242ac120002', '2003-01-16 00:00:00', '10223.83'),
-(10192, '6588b866-5120-11ee-8eaa-0242ac120002', '2003-12-05 00:00:00', '55425.77'),
-(10369, '6588b8b6-5120-11ee-8eaa-0242ac120002', '2005-02-12 00:00:00', '28322.83'),
-(10147, '6588b907-5120-11ee-8eaa-0242ac120002', '2003-09-16 00:00:00', '32680.31'),
-(10274, '6588b959-5120-11ee-8eaa-0242ac120002', '2004-08-02 00:00:00', '12530.51'),
-(10338, '6588b9a7-5120-11ee-8eaa-0242ac120002', '2004-12-03 00:00:00', '12081.52'),
-(10116, '6588b9ff-5120-11ee-8eaa-0242ac120002', '2003-04-19 00:00:00', '1627.56'),
-(10366, '6588ba4b-5120-11ee-8eaa-0242ac120002', '2005-02-03 00:00:00', '14379.90'),
-(10144, '6588baac-5120-11ee-8eaa-0242ac120002', '2003-08-22 00:00:00', '1128.20'),
-(10119, '6588bbc3-5120-11ee-8eaa-0242ac120002', '2003-05-12 00:00:00', '35826.33'),
-(10269, '6588bd79-5120-11ee-8eaa-0242ac120002', '2004-08-01 00:00:00', '6419.84'),
-(10341, '6588bf1a-5120-11ee-8eaa-0242ac120002', '2004-11-27 00:00:00', '42813.83'),
-(10198, '6588c0c1-5120-11ee-8eaa-0242ac120002', '2003-12-02 00:00:00', '20644.24'),
-(10330, '6588c267-5120-11ee-8eaa-0242ac120002', '2004-11-19 00:00:00', '15822.84'),
-(10108, '6588c40c-5120-11ee-8eaa-0242ac120002', '2003-03-09 00:00:00', '51001.22'),
-(10176, '6588c5ae-5120-11ee-8eaa-0242ac120002', '2003-11-18 00:00:00', '38524.29'),
-(10266, '6588c74f-5120-11ee-8eaa-0242ac120002', '2004-07-18 00:00:00', '51619.02'),
-(10372, '6588c865-5120-11ee-8eaa-0242ac120002', '2005-02-14 00:00:00', '33967.73'),
-(10258, '6588c982-5120-11ee-8eaa-0242ac120002', '2004-06-21 00:00:00', '22037.91'),
-(10408, '6588c9e1-5120-11ee-8eaa-0242ac120002', '2005-05-18 00:00:00', '615.45'),
-(10339, '6588ca46-5120-11ee-8eaa-0242ac120002', '2004-11-29 00:00:00', '48927.64'),
-(10402, '6588caa3-5120-11ee-8eaa-0242ac120002', '2005-04-23 00:00:00', '12190.85'),
-(10211, '6588cafe-5120-11ee-8eaa-0242ac120002', '2004-01-28 00:00:00', '49165.16'),
-(10252, '6588cb57-5120-11ee-8eaa-0242ac120002', '2004-06-17 00:00:00', '25080.96'),
-(10268, '6588cc6e-5120-11ee-8eaa-0242ac120002', '2004-07-25 00:00:00', '35034.57'),
-(10234, '6588cda5-5120-11ee-8eaa-0242ac120002', '2004-04-14 00:00:00', '31670.37'),
-(10296, '6588ce23-5120-11ee-8eaa-0242ac120002', '2004-09-28 00:00:00', '31310.09'),
-(10337, '6588ce92-5120-11ee-8eaa-0242ac120002', '2004-12-07 00:00:00', '25505.98'),
-(10115, '6588cefb-5120-11ee-8eaa-0242ac120002', '2003-04-16 00:00:00', '21665.98'),
-(10163, '6588cf53-5120-11ee-8eaa-0242ac120002', '2003-10-31 00:00:00', '22042.37'),
-(10146, '6588cfa3-5120-11ee-8eaa-0242ac120002', '2003-09-15 00:00:00', '6631.36'),
-(10131, '6588cfef-5120-11ee-8eaa-0242ac120002', '2003-06-25 00:00:00', '17032.29'),
-(10353, '6588d03e-5120-11ee-8eaa-0242ac120002', '2004-12-17 00:00:00', '26304.13'),
-(10389, '6588d086-5120-11ee-8eaa-0242ac120002', '2005-04-18 00:00:00', '27966.54'),
-(10291, '6588d0d4-5120-11ee-8eaa-0242ac120002', '2004-09-30 00:00:00', '48809.90'),
-(10164, '6588d15d-5120-11ee-8eaa-0242ac120002', '2003-11-15 00:00:00', '27121.90'),
-(10170, '6588d1b1-5120-11ee-8eaa-0242ac120002', '2003-11-20 00:00:00', '15130.97'),
-(10392, '6588d210-5120-11ee-8eaa-0242ac120002', '2005-05-03 00:00:00', '8807.12'),
-(10196, '6588d261-5120-11ee-8eaa-0242ac120002', '2003-12-05 00:00:00', '38139.18'),
-(10245, '6588d2b2-5120-11ee-8eaa-0242ac120002', '2004-05-12 00:00:00', '32239.47'),
-(10319, '6588d30f-5120-11ee-8eaa-0242ac120002', '2004-11-13 00:00:00', '27550.51'),
-(10242, '6588d357-5120-11ee-8eaa-0242ac120002', '2004-04-30 00:00:00', '1679.92'),
-(10348, '6588d39d-5120-11ee-8eaa-0242ac120002', '2004-11-15 00:00:00', '33145.56'),
-(10214, '6588d3e7-5120-11ee-8eaa-0242ac120002', '2004-02-06 00:00:00', '22162.61'),
-(10126, '6588d43a-5120-11ee-8eaa-0242ac120002', '2003-06-13 00:00:00', '57131.92'),
-(10388, '6588d487-5120-11ee-8eaa-0242ac120002', '2005-04-15 00:00:00', '30293.77'),
-(10166, '6588d4cb-5120-11ee-8eaa-0242ac120002', '2003-11-08 00:00:00', '9977.85'),
-(10321, '6588d511-5120-11ee-8eaa-0242ac120002', '2004-11-27 00:00:00', '48355.87'),
-(10265, '6588d57b-5120-11ee-8eaa-0242ac120002', '2004-07-28 00:00:00', '9415.13'),
-(10193, '6588d5e4-5120-11ee-8eaa-0242ac120002', '2003-12-10 00:00:00', '35505.63'),
-(10218, '6588d64a-5120-11ee-8eaa-0242ac120002', '2004-02-17 00:00:00', '7612.06'),
-(10157, '6588d6a3-5120-11ee-8eaa-0242ac120002', '2003-10-27 00:00:00', '17746.26'),
-(10199, '6588d6f7-5120-11ee-8eaa-0242ac120002', '2003-12-09 00:00:00', '7678.25'),
-(10215, '6588d759-5120-11ee-8eaa-0242ac120002', '2004-02-13 00:00:00', '36070.47'),
-(10303, '6588d866-5120-11ee-8eaa-0242ac120002', '2004-10-26 00:00:00', '3474.66'),
-(10184, '6588d8d3-5120-11ee-8eaa-0242ac120002', '2003-11-29 00:00:00', '47513.19'),
-(10236, '6588d9fb-5120-11ee-8eaa-0242ac120002', '2004-04-14 00:00:00', '5899.38'),
-(10331, '6588da82-5120-11ee-8eaa-0242ac120002', '2004-11-23 00:00:00', '45994.07'),
-(10109, '6588daed-5120-11ee-8eaa-0242ac120002', '2003-03-20 00:00:00', '25833.14'),
-(10149, '6588db49-5120-11ee-8eaa-0242ac120002', '2003-09-28 00:00:00', '29997.09'),
-(10219, '6588db9c-5120-11ee-8eaa-0242ac120002', '2004-02-29 00:00:00', '12573.28'),
-(10186, '6588dbec-5120-11ee-8eaa-0242ac120002', '2003-12-04 00:00:00', '22275.73'),
-(10213, '6588dc2c-5120-11ee-8eaa-0242ac120002', '2004-01-31 00:00:00', '7310.42'),
-(10207, '6588dc6e-5120-11ee-8eaa-0242ac120002', '2003-12-26 00:00:00', '59265.14'),
-(10243, '6588dcd8-5120-11ee-8eaa-0242ac120002', '2004-05-14 00:00:00', '6276.60'),
-(10399, '6588dd46-5120-11ee-8eaa-0242ac120002', '2005-05-25 00:00:00', '30253.75'),
-(10138, '6588dda5-5120-11ee-8eaa-0242ac120002', '2003-07-16 00:00:00', '32077.44'),
-(10360, '6588ddfa-5120-11ee-8eaa-0242ac120002', '2004-12-31 00:00:00', '52166.00');
+(103,'65886ca4-5120-11ee-8eaa-0242ac120002','2004-10-19','6066.78'),
+
+(103,'65886d28-5120-11ee-8eaa-0242ac120002','2003-06-05','14571.44'),
+
+(103,'65886d72-5120-11ee-8eaa-0242ac120002','2004-12-18','1676.14'),
+
+(112,'65886dc1-5120-11ee-8eaa-0242ac120002','2004-12-17','14191.12'),
+
+(112,'65886e02-5120-11ee-8eaa-0242ac120002','2003-06-06','32641.98'),
+
+(112,'65886e40-5120-11ee-8eaa-0242ac120002','2004-08-20','33347.88'),
+
+(114,'65886e8f-5120-11ee-8eaa-0242ac120002','2003-05-20','45864.03'),
+
+(114,'65886efa-5120-11ee-8eaa-0242ac120002','2004-12-15','82261.22'),
+
+(114,'65886f64-5120-11ee-8eaa-0242ac120002','2003-05-31','7565.08'),
+
+(114,'65886fc1-5120-11ee-8eaa-0242ac120002','2004-03-10','44894.74'),
+
+(119,'65887011-5120-11ee-8eaa-0242ac120002','2004-11-14','19501.82'),
+
+(119,'65887061-5120-11ee-8eaa-0242ac120002','2004-08-08','47924.19'),
+
+(119,'658870a5-5120-11ee-8eaa-0242ac120002','2005-02-22','49523.67'),
+
+(121,'658870e1-5120-11ee-8eaa-0242ac120002','2003-02-16','50218.95'),
+
+(121,'6588711f-5120-11ee-8eaa-0242ac120002','2003-10-28','1491.38'),
+
+(121,'65887186-5120-11ee-8eaa-0242ac120002','2004-11-04','17876.32'),
+
+(121,'658871f2-5120-11ee-8eaa-0242ac120002','2004-11-28','34638.14'),
+
+(124,'6588724d-5120-11ee-8eaa-0242ac120002','2005-03-05','101244.59'),
+
+(124,'6588729c-5120-11ee-8eaa-0242ac120002','2004-08-28','85410.87'),
+
+(124,'658872e3-5120-11ee-8eaa-0242ac120002','2003-04-11','11044.30'),
+
+(124,'65887322-5120-11ee-8eaa-0242ac120002','2005-04-16','83598.04'),
+
+(124,'65887379-5120-11ee-8eaa-0242ac120002','2004-12-27','47142.70'),
+
+(124,'658873dd-5120-11ee-8eaa-0242ac120002','2004-11-02','55639.66'),
+
+(124,'6588743b-5120-11ee-8eaa-0242ac120002','2003-08-15','111654.40'),
+
+(124,'65887483-5120-11ee-8eaa-0242ac120002','2004-03-26','43369.30'),
+
+(124,'658874dd-5120-11ee-8eaa-0242ac120002','2003-11-25','45084.38'),
+
+(128,'65887530-5120-11ee-8eaa-0242ac120002','2003-01-28','10549.01'),
+
+(128,'658875a3-5120-11ee-8eaa-0242ac120002','2003-10-18','24101.81'),
+
+(128,'6588762b-5120-11ee-8eaa-0242ac120002','2004-03-24','33820.62'),
+
+(128,'6588767c-5120-11ee-8eaa-0242ac120002','2004-11-18','7466.32'),
+
+(129,'658876cd-5120-11ee-8eaa-0242ac120002','2004-12-08','26248.78'),
+
+(129,'65887713-5120-11ee-8eaa-0242ac120002','2003-12-11','23923.93'),
+
+(129,'65887753-5120-11ee-8eaa-0242ac120002','2003-04-09','16537.85'),
+
+(131,'6588779d-5120-11ee-8eaa-0242ac120002','2003-03-12','22292.62'),
+
+(131,'65887808-5120-11ee-8eaa-0242ac120002','2004-12-02','50025.35'),
+
+(131,'6588785c-5120-11ee-8eaa-0242ac120002','2004-09-11','35321.97'),
+
+(141,'658878b2-5120-11ee-8eaa-0242ac120002','2003-07-19','36251.03'),
+
+(141,'6588790a-5120-11ee-8eaa-0242ac120002','2004-11-01','36140.38'),
+
+(141,'65887958-5120-11ee-8eaa-0242ac120002','2005-05-19','46895.48'),
+
+(141,'658879a7-5120-11ee-8eaa-0242ac120002','2004-01-30','59830.55'),
+
+(141,'658879fb-5120-11ee-8eaa-0242ac120002','2004-12-31','116208.40'),
+
+(141,'65887a56-5120-11ee-8eaa-0242ac120002','2005-03-25','65071.26'),
+
+(141,'65887aa1-5120-11ee-8eaa-0242ac120002','2005-03-18','120166.58'),
+
+(141,'65887ae3-5120-11ee-8eaa-0242ac120002','2003-10-26','49539.37'),
+
+(141,'65887b2c-5120-11ee-8eaa-0242ac120002','2003-02-25','40206.20'),
+
+(141,'65887b79-5120-11ee-8eaa-0242ac120002','2003-12-09','63843.55'),
+
+(141,'65887bc4-5120-11ee-8eaa-0242ac120002','2004-07-09','35420.74'),
+
+(141,'65887c0c-5120-11ee-8eaa-0242ac120002','2004-08-16','20009.53'),
+
+(141,'65887c4b-5120-11ee-8eaa-0242ac120002','2004-05-17','26155.91'),
+
+(144,'65887c98-5120-11ee-8eaa-0242ac120002','2004-12-12','36005.71'),
+
+(144,'65887ce5-5120-11ee-8eaa-0242ac120002','2003-04-09','7674.94'),
+
+(145,'65887d35-5120-11ee-8eaa-0242ac120002','2004-07-03','4710.73'),
+
+(145,'65887ec0-5120-11ee-8eaa-0242ac120002','2004-04-26','28211.70'),
+
+(145,'65887f38-5120-11ee-8eaa-0242ac120002','2004-12-01','20564.86'),
+
+(145,'65887f9a-5120-11ee-8eaa-0242ac120002','2003-02-20','53959.21'),
+
+(146,'65888010-5120-11ee-8eaa-0242ac120002','2004-03-18','40978.53'),
+
+(146,'65888062-5120-11ee-8eaa-0242ac120002','2004-01-16','49614.72'),
+
+(146,'658880b5-5120-11ee-8eaa-0242ac120002','2003-12-10','39712.10'),
+
+(148,'65888105-5120-11ee-8eaa-0242ac120002','2003-04-22','44380.15'),
+
+(148,'6588815a-5120-11ee-8eaa-0242ac120002','2004-08-11','2611.84'),
+
+(148,'658881c0-5120-11ee-8eaa-0242ac120002','2003-12-26','105743.00'),
+
+(148,'65888227-5120-11ee-8eaa-0242ac120002','2005-03-27','3516.04'),
+
+(151,'65888282-5120-11ee-8eaa-0242ac120002','2003-12-22','58793.53'),
+
+(151,'658882ca-5120-11ee-8eaa-0242ac120002','2004-07-26','20314.44'),
+
+(151,'6588831e-5120-11ee-8eaa-0242ac120002','2003-06-18','58841.35'),
+
+(151,'6588836e-5120-11ee-8eaa-0242ac120002','2004-12-14','39964.63'),
+
+(157,'658883c7-5120-11ee-8eaa-0242ac120002','2004-11-19','35152.12'),
+
+(157,'65888420-5120-11ee-8eaa-0242ac120002','2004-09-07','63357.13'),
+
+(161,'65888483-5120-11ee-8eaa-0242ac120002','2004-11-14','2434.25'),
+
+(161,'40688a64-5125-11ee-8eaa-0242ac120002','2003-11-18','50743.65'),
+
+(161,'65888549-5120-11ee-8eaa-0242ac120002','2005-02-02','12692.19'),
+
+(161,'658885a4-5120-11ee-8eaa-0242ac120002','2003-08-05','38675.13'),
+
+(166,'658885f3-5120-11ee-8eaa-0242ac120002','2004-09-16','38785.48'),
+
+(166,'65888641-5120-11ee-8eaa-0242ac120002','2004-07-07','44160.92'),
+
+(166,'658886ab-5120-11ee-8eaa-0242ac120002','2004-02-28','22474.17'),
+
+(167,'65888708-5120-11ee-8eaa-0242ac120002','2004-09-19','12538.01'),
+
+(167,'65888762-5120-11ee-8eaa-0242ac120002','2003-12-03','85024.46'),
+
+(171,'658887c3-5120-11ee-8eaa-0242ac120002','2004-03-15','18997.89'),
+
+(171,'65888822-5120-11ee-8eaa-0242ac120002','2003-11-22','42783.81'),
+
+(172,'6588886f-5120-11ee-8eaa-0242ac120002','2004-09-09','1960.80'),
+
+(172,'658888ca-5120-11ee-8eaa-0242ac120002','2004-12-04','51209.58'),
+
+(172,'6588893c-5120-11ee-8eaa-0242ac120002','2003-04-20','33383.14'),
+
+(173,'65888997-5120-11ee-8eaa-0242ac120002','2004-05-13','11843.45'),
+
+(173,'658889db-5120-11ee-8eaa-0242ac120002','2004-03-29','20355.24'),
+
+(175,'65888a17-5120-11ee-8eaa-0242ac120002','2005-05-19','28500.78'),
+
+(175,'65888a6a-5120-11ee-8eaa-0242ac120002','2003-11-19','24879.08'),
+
+(175,'65888aec-5120-11ee-8eaa-0242ac120002','2004-07-10','42044.77'),
+
+(177,'65888b57-5120-11ee-8eaa-0242ac120002','2004-04-17','15183.63'),
+
+(177,'65888bb2-5120-11ee-8eaa-0242ac120002','2004-01-19','47177.59'),
+
+(181,'65888c17-5120-11ee-8eaa-0242ac120002','2004-04-25','22602.36'),
+
+(181,'65888c7c-5120-11ee-8eaa-0242ac120002','2003-01-30','5494.78'),
+
+(181,'65888cdf-5120-11ee-8eaa-0242ac120002','2004-11-16','44400.50'),
+
+(186,'65888d2e-5120-11ee-8eaa-0242ac120002','2005-03-10','23602.90'),
+
+(186,'65888d79-5120-11ee-8eaa-0242ac120002','2003-10-27','37602.48'),
+
+(186,'65888dc3-5120-11ee-8eaa-0242ac120002','2004-10-21','34341.08'),
+
+(187,'65888e0f-5120-11ee-8eaa-0242ac120002','2004-11-03','52825.29'),
+
+(187,'65888e5a-5120-11ee-8eaa-0242ac120002','2004-12-08','47159.11'),
+
+(187,'65888ea3-5120-11ee-8eaa-0242ac120002','2003-03-27','48425.69'),
+
+(189,'65888ef3-5120-11ee-8eaa-0242ac120002','2004-10-03','17359.53'),
+
+(189,'65888f4b-5120-11ee-8eaa-0242ac120002','2004-03-01','32538.74'),
+
+(198,'65888faa-5120-11ee-8eaa-0242ac120002','2004-12-06','9658.74'),
+
+(198,'65888fff-5120-11ee-8eaa-0242ac120002','2003-07-06','6036.96'),
+
+(198,'65889061-5120-11ee-8eaa-0242ac120002','2004-09-21','5858.56'),
+
+(201,'658890c7-5120-11ee-8eaa-0242ac120002','2003-10-20','23908.24'),
+
+(201,'6588912d-5120-11ee-8eaa-0242ac120002','2004-06-15','37258.94'),
+
+(202,'65889189-5120-11ee-8eaa-0242ac120002','2003-12-18','36527.61'),
+
+(202,'658891e1-5120-11ee-8eaa-0242ac120002','2004-11-08','33594.58'),
+
+(204,'65889246-5120-11ee-8eaa-0242ac120002','2004-08-13','51152.86'),
+
+(204,'658892b1-5120-11ee-8eaa-0242ac120002','2004-09-24','4424.40'),
+
+(205,'65889311-5120-11ee-8eaa-0242ac120002','2003-12-04','3879.96'),
+
+(205,'6588936c-5120-11ee-8eaa-0242ac120002','2003-09-05','50342.74'),
+
+(205,'658893c8-5120-11ee-8eaa-0242ac120002','2005-02-06','39580.60'),
+
+(209,'65889430-5120-11ee-8eaa-0242ac120002','2005-05-03','35157.75'),
+
+(209,'65889495-5120-11ee-8eaa-0242ac120002','2004-06-21','4632.31'),
+
+(209,'658894e8-5120-11ee-8eaa-0242ac120002','2004-05-04','36069.26'),
+
+(211,'65889543-5120-11ee-8eaa-0242ac120002','2003-12-09','45480.79'),
+
+(216,'658895ac-5120-11ee-8eaa-0242ac120002','2003-05-09','3101.40'),
+
+(216,'6588961c-5120-11ee-8eaa-0242ac120002','2004-12-06','24945.21'),
+
+(216,'6588967d-5120-11ee-8eaa-0242ac120002','2003-12-14','40473.86'),
+
+(219,'658896e0-5120-11ee-8eaa-0242ac120002','2005-03-02','3452.75'),
+
+(219,'65889740-5120-11ee-8eaa-0242ac120002','2003-10-18','4465.85'),
+
+(227,'658897ac-5120-11ee-8eaa-0242ac120002','2003-10-31','36164.46'),
+
+(227,'65889811-5120-11ee-8eaa-0242ac120002','2004-11-02','53745.34'),
+
+(233,'65889873-5120-11ee-8eaa-0242ac120002','2005-05-20','29070.38'),
+
+(233,'658898d8-5120-11ee-8eaa-0242ac120002','2004-07-01','22997.45'),
+
+(233,'6588992d-5120-11ee-8eaa-0242ac120002','2003-11-18','16909.84'),
+
+(239,'65889977-5120-11ee-8eaa-0242ac120002','2004-03-15','80375.24'),
+
+(240,'658899bf-5120-11ee-8eaa-0242ac120002','2004-11-16','46788.14'),
+
+(240,'65889a06-5120-11ee-8eaa-0242ac120002','2004-03-28','24995.61'),
+
+(242,'65889a51-5120-11ee-8eaa-0242ac120002','2003-11-22','33818.34'),
+
+(242,'65889ab7-5120-11ee-8eaa-0242ac120002','2005-06-03','12432.32'),
+
+(242,'65889b20-5120-11ee-8eaa-0242ac120002','2003-07-21','14232.70'),
+
+(249,'65889b87-5120-11ee-8eaa-0242ac120002','2004-09-19','33924.24'),
+
+(249,'65889bec-5120-11ee-8eaa-0242ac120002','2004-09-04','48298.99'),
+
+(250,'65889c48-5120-11ee-8eaa-0242ac120002','2005-05-17','17928.09'),
+
+(250,'65889ca0-5120-11ee-8eaa-0242ac120002','2004-12-30','26311.63'),
+
+(250,'65889cf6-5120-11ee-8eaa-0242ac120002','2003-07-18','23419.47'),
+
+(256,'65889d48-5120-11ee-8eaa-0242ac120002','2004-02-10','5759.42'),
+
+(256,'65889d99-5120-11ee-8eaa-0242ac120002','2004-10-22','53116.99'),
+
+(259,'65889df1-5120-11ee-8eaa-0242ac120002','2004-11-06','61234.67'),
+
+(259,'65889e3e-5120-11ee-8eaa-0242ac120002','2003-12-07','27988.47'),
+
+(260,'65889e87-5120-11ee-8eaa-0242ac120002','2004-08-30','37527.58'),
+
+(260,'65889ee7-5120-11ee-8eaa-0242ac120002','2004-04-24','29284.42'),
+
+(276,'65889f31-5120-11ee-8eaa-0242ac120002','2005-02-09','27083.78'),
+
+(276,'65889f75-5120-11ee-8eaa-0242ac120002','2003-11-13','38547.19'),
+
+(276,'65889fdd-5120-11ee-8eaa-0242ac120002','2003-09-28','41554.73'),
+
+(276,'6588a04b-5120-11ee-8eaa-0242ac120002','2005-04-30','29848.52'),
+
+(278,'6588a0a4-5120-11ee-8eaa-0242ac120002','2004-12-05','37654.09'),
+
+(278,'6588a0f5-5120-11ee-8eaa-0242ac120002','2003-03-02','52151.81'),
+
+(278,'6588a13f-5120-11ee-8eaa-0242ac120002','2003-11-24','37723.79'),
+
+(282,'6588a187-5120-11ee-8eaa-0242ac120002','2003-08-03','24013.52'),
+
+(282,'6588a1cf-5120-11ee-8eaa-0242ac120002','2004-08-02','35806.73'),
+
+(282,'6588a218-5120-11ee-8eaa-0242ac120002','2005-01-03','31835.36'),
+
+(286,'6588a286-5120-11ee-8eaa-0242ac120002','2004-10-28','47411.33'),
+
+(286,'6588a2eb-5120-11ee-8eaa-0242ac120002','2004-09-05','43134.04'),
+
+(298,'6588a359-5120-11ee-8eaa-0242ac120002','2004-03-13','47375.92'),
+
+(298,'6588a3ab-5120-11ee-8eaa-0242ac120002','2004-09-18','61402.00'),
+
+(299,'6588a401-5120-11ee-8eaa-0242ac120002','2003-10-24','36798.88'),
+
+(299,'6588a454-5120-11ee-8eaa-0242ac120002','2004-09-05','32260.16'),
+
+(311,'6588a5c3-5120-11ee-8eaa-0242ac120002','2005-02-15','46770.52'),
+
+(311,'6588a644-5120-11ee-8eaa-0242ac120002','2003-10-06','32723.04'),
+
+(311,'6588a6a4-5120-11ee-8eaa-0242ac120002','2004-04-25','16212.59'),
+
+(314,'6588a707-5120-11ee-8eaa-0242ac120002','2004-08-09','45352.47'),
+
+(314,'6588a76c-5120-11ee-8eaa-0242ac120002','2004-03-03','16901.38'),
+
+(319,'6588a7d1-5120-11ee-8eaa-0242ac120002','2004-11-06','42339.76'),
+
+(319,'6588a821-5120-11ee-8eaa-0242ac120002','2003-12-07','36092.40'),
+
+(320,'6588a86f-5120-11ee-8eaa-0242ac120002','2005-01-18','8307.28'),
+
+(320,'6588a8b1-5120-11ee-8eaa-0242ac120002','2003-08-20','41016.75'),
+
+(320,'6588a8fa-5120-11ee-8eaa-0242ac120002','2003-11-24','52548.49'),
+
+(321,'6588a956-5120-11ee-8eaa-0242ac120002','2003-11-03','85559.12'),
+
+(321,'6588a9b3-5120-11ee-8eaa-0242ac120002','2005-03-15','46781.66'),
+
+(323,'6588aa0f-5120-11ee-8eaa-0242ac120002','2005-05-23','75020.13'),
+
+(323,'6588aa68-5120-11ee-8eaa-0242ac120002','2004-06-24','37281.36'),
+
+(323,'6588aabf-5120-11ee-8eaa-0242ac120002','2003-07-05','2880.00'),
+
+(323,'6588ab0e-5120-11ee-8eaa-0242ac120002','2004-12-24','39440.59'),
+
+(324,'6588ac22-5120-11ee-8eaa-0242ac120002','2004-12-13','13671.82'),
+
+(324,'6588add2-5120-11ee-8eaa-0242ac120002','2003-07-07','29429.14'),
+
+(324,'6588ae4d-5120-11ee-8eaa-0242ac120002','2003-11-23','37455.77'),
+
+(328,'6588aeb1-5120-11ee-8eaa-0242ac120002','2004-04-16','7178.66'),
+
+(328,'6588af0c-5120-11ee-8eaa-0242ac120002','2004-05-30','31102.85'),
+
+(333,'6588af6c-5120-11ee-8eaa-0242ac120002','2003-11-15','23936.53'),
+
+(333,'6588afbe-5120-11ee-8eaa-0242ac120002','2003-10-17','9821.32'),
+
+(333,'6588b022-5120-11ee-8eaa-0242ac120002','2005-03-01','21432.31'),
+
+(334,'6588b146-5120-11ee-8eaa-0242ac120002','2005-01-27','45785.34'),
+
+(334,'6588b1ce-5120-11ee-8eaa-0242ac120002','2003-08-16','29716.86'),
+
+(334,'6588b227-5120-11ee-8eaa-0242ac120002','2004-05-22','28394.54'),
+
+(339,'6588b27a-5120-11ee-8eaa-0242ac120002','2004-10-24','23333.06'),
+
+(339,'6588b2c9-5120-11ee-8eaa-0242ac120002','2003-11-28','34606.28'),
+
+(344,'6588b319-5120-11ee-8eaa-0242ac120002','2003-11-24','31428.21'),
+
+(344,'6588b363-5120-11ee-8eaa-0242ac120002','2004-04-02','15322.93'),
+
+(347,'6588b3b2-5120-11ee-8eaa-0242ac120002','2004-01-18','21053.69'),
+
+(347,'6588b403-5120-11ee-8eaa-0242ac120002','2003-10-24','20452.50'),
+
+(350,'6588b450-5120-11ee-8eaa-0242ac120002','2004-12-11','18888.31'),
+
+(350,'6588b4a4-5120-11ee-8eaa-0242ac120002','2003-05-25','50824.66'),
+
+(350,'6588b4f5-5120-11ee-8eaa-0242ac120002','2005-01-29','1834.56'),
+
+(353,'6588b54b-5120-11ee-8eaa-0242ac120002','2005-01-10','49705.52'),
+
+(353,'6588b59b-5120-11ee-8eaa-0242ac120002','2003-07-21','13920.26'),
+
+(353,'6588b5ea-5120-11ee-8eaa-0242ac120002','2003-05-21','16700.47'),
+
+(353,'6588b634-5120-11ee-8eaa-0242ac120002','2005-06-09','46656.94'),
+
+(357,'6588b683-5120-11ee-8eaa-0242ac120002','2003-12-16','20220.04'),
+
+(357,'6588b6d6-5120-11ee-8eaa-0242ac120002','2004-05-15','36442.34'),
+
+(362,'6588b72b-5120-11ee-8eaa-0242ac120002','2004-07-11','18473.71'),
+
+(362,'6588b779-5120-11ee-8eaa-0242ac120002','2004-09-21','15059.76'),
+
+(363,'6588b7cb-5120-11ee-8eaa-0242ac120002','2004-11-17','50799.69'),
+
+(363,'6588b817-5120-11ee-8eaa-0242ac120002','2003-01-16','10223.83'),
+
+(363,'6588b866-5120-11ee-8eaa-0242ac120002','2003-12-05','55425.77'),
+
+(379,'6588b8b6-5120-11ee-8eaa-0242ac120002','2005-02-12','28322.83'),
+
+(379,'6588b907-5120-11ee-8eaa-0242ac120002','2003-09-16','32680.31'),
+
+(379,'6588b959-5120-11ee-8eaa-0242ac120002','2004-08-02','12530.51'),
+
+(381,'6588b9a7-5120-11ee-8eaa-0242ac120002','2004-12-03','12081.52'),
+
+(381,'6588b9ff-5120-11ee-8eaa-0242ac120002','2003-04-19','1627.56'),
+
+(381,'6588ba4b-5120-11ee-8eaa-0242ac120002','2005-02-03','14379.90'),
+
+(381,'6588baac-5120-11ee-8eaa-0242ac120002','2003-08-22','1128.20'),
+
+(382,'6588bbc3-5120-11ee-8eaa-0242ac120002','2003-05-12','35826.33'),
+
+(382,'6588bd79-5120-11ee-8eaa-0242ac120002','2004-08-01','6419.84'),
+
+(382,'6588bf1a-5120-11ee-8eaa-0242ac120002','2004-11-27','42813.83'),
+
+(385,'6588c0c1-5120-11ee-8eaa-0242ac120002','2003-12-02','20644.24'),
+
+(385,'6588c267-5120-11ee-8eaa-0242ac120002','2004-11-19','15822.84'),
+
+(385,'6588c40c-5120-11ee-8eaa-0242ac120002','2003-03-09','51001.22'),
+
+(386,'6588c5ae-5120-11ee-8eaa-0242ac120002','2003-11-18','38524.29'),
+
+(386,'6588c74f-5120-11ee-8eaa-0242ac120002','2004-07-18','51619.02'),
+
+(398,'6588c865-5120-11ee-8eaa-0242ac120002','2005-02-14','33967.73'),
+
+(398,'6588c982-5120-11ee-8eaa-0242ac120002','2004-06-21','22037.91'),
+
+(398,'6588c9e1-5120-11ee-8eaa-0242ac120002','2005-05-18','615.45'),
+
+(398,'6588ca46-5120-11ee-8eaa-0242ac120002','2004-11-29','48927.64'),
+
+(406,'6588caa3-5120-11ee-8eaa-0242ac120002','2005-04-23','12190.85'),
+
+(406,'6588cafe-5120-11ee-8eaa-0242ac120002','2004-01-28','49165.16'),
+
+(406,'6588cb57-5120-11ee-8eaa-0242ac120002','2004-06-17','25080.96'),
+
+(412,'6588cc6e-5120-11ee-8eaa-0242ac120002','2004-07-25','35034.57'),
+
+(412,'6588cda5-5120-11ee-8eaa-0242ac120002','2004-04-14','31670.37'),
+
+(415,'6588ce23-5120-11ee-8eaa-0242ac120002','2004-09-28','31310.09'),
+
+(424,'6588ce92-5120-11ee-8eaa-0242ac120002','2004-12-07','25505.98'),
+
+(424,'6588cefb-5120-11ee-8eaa-0242ac120002','2003-04-16','21665.98'),
+
+(424,'6588cf53-5120-11ee-8eaa-0242ac120002','2003-10-31','22042.37'),
+
+(447,'6588cfa3-5120-11ee-8eaa-0242ac120002','2003-09-15','6631.36'),
+
+(447,'6588cfef-5120-11ee-8eaa-0242ac120002','2003-06-25','17032.29'),
+
+(447,'6588d03e-5120-11ee-8eaa-0242ac120002','2004-12-17','26304.13'),
+
+(448,'6588d086-5120-11ee-8eaa-0242ac120002','2005-04-18','27966.54'),
+
+(448,'6588d0d4-5120-11ee-8eaa-0242ac120002','2004-09-30','48809.90'),
+
+(450,'6588d11b-5120-11ee-8eaa-0242ac120002','2004-06-21','59551.38'),
+
+(452,'6588d15d-5120-11ee-8eaa-0242ac120002','2003-11-15','27121.90'),
+
+(452,'6588d1b1-5120-11ee-8eaa-0242ac120002','2003-11-20','15130.97'),
+
+(452,'6588d210-5120-11ee-8eaa-0242ac120002','2005-05-03','8807.12'),
+
+(455,'6588d261-5120-11ee-8eaa-0242ac120002','2003-12-05','38139.18'),
+
+(455,'6588d2b2-5120-11ee-8eaa-0242ac120002','2004-05-12','32239.47'),
+
+(456,'6588d30f-5120-11ee-8eaa-0242ac120002','2004-11-13','27550.51'),
+
+(456,'6588d357-5120-11ee-8eaa-0242ac120002','2004-04-30','1679.92'),
+
+(458,'6588d39d-5120-11ee-8eaa-0242ac120002','2004-11-15','33145.56'),
+
+(458,'6588d3e7-5120-11ee-8eaa-0242ac120002','2004-02-06','22162.61'),
+
+(458,'6588d43a-5120-11ee-8eaa-0242ac120002','2003-06-13','57131.92'),
+
+(462,'6588d487-5120-11ee-8eaa-0242ac120002','2005-04-15','30293.77'),
+
+(462,'6588d4cb-5120-11ee-8eaa-0242ac120002','2003-11-08','9977.85'),
+
+(462,'6588d511-5120-11ee-8eaa-0242ac120002','2004-11-27','48355.87'),
+
+(471,'6588d57b-5120-11ee-8eaa-0242ac120002','2004-07-28','9415.13'),
+
+(471,'6588d5e4-5120-11ee-8eaa-0242ac120002','2003-12-10','35505.63'),
+
+(473,'6588d64a-5120-11ee-8eaa-0242ac120002','2004-02-17','7612.06'),
+
+(473,'6588d6a3-5120-11ee-8eaa-0242ac120002','2003-10-27','17746.26'),
+
+(475,'6588d6f7-5120-11ee-8eaa-0242ac120002','2003-12-09','7678.25'),
+
+(475,'6588d759-5120-11ee-8eaa-0242ac120002','2004-02-13','36070.47'),
+
+(484,'6588d866-5120-11ee-8eaa-0242ac120002','2004-10-26','3474.66'),
+
+(484,'6588d8d3-5120-11ee-8eaa-0242ac120002','2003-11-29','47513.19'),
+
+(486,'6588d9fb-5120-11ee-8eaa-0242ac120002','2004-04-14','5899.38'),
+
+(486,'6588da82-5120-11ee-8eaa-0242ac120002','2004-11-23','45994.07'),
+
+(486,'6588daed-5120-11ee-8eaa-0242ac120002','2003-03-20','25833.14'),
+
+(487,'6588db49-5120-11ee-8eaa-0242ac120002','2003-09-28','29997.09'),
+
+(487,'6588db9c-5120-11ee-8eaa-0242ac120002','2004-02-29','12573.28'),
+
+(489,'6588dbec-5120-11ee-8eaa-0242ac120002','2003-12-04','22275.73'),
+
+(489,'6588dc2c-5120-11ee-8eaa-0242ac120002','2004-01-31','7310.42'),
+
+(495,'6588dc6e-5120-11ee-8eaa-0242ac120002','2003-12-26','59265.14'),
+
+(495,'6588dcd8-5120-11ee-8eaa-0242ac120002','2004-05-14','6276.60'),
+
+(496,'6588dd46-5120-11ee-8eaa-0242ac120002','2005-05-25','30253.75'),
+
+(496,'6588dda5-5120-11ee-8eaa-0242ac120002','2003-07-16','32077.44'),
+
+(496,'6588ddfa-5120-11ee-8eaa-0242ac120002','2004-12-31','52166.00');
 
 /*Table structure for table `productlines` */
 
@@ -7367,8 +7671,7 @@ CREATE TABLE `productlines` (
   `text_description` varchar(4000) DEFAULT NULL,
   `html_description` mediumtext,
   `image` mediumblob,
-  PRIMARY KEY (`product_line`)
-) engine=InnoDB default charset=UTF8MB4;
+  PRIMARY KEY (`product_line`));
 
 /*Data for the table `productlines` */
 
@@ -7402,10 +7705,11 @@ CREATE TABLE `products` (
   `quantity_in_stock` smallint NOT NULL,
   `buy_price` decimal(10,2) NOT NULL,
   `msrp` decimal(10,2) NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `product_line` (`product_line`),
-  CONSTRAINT `products_ibfk_1` FOREIGN KEY (`product_line`) REFERENCES `productlines` (`product_line`)
-) engine=InnoDB default charset=UTF8MB4;
+  PRIMARY KEY (`id`));
+  
+alter table products add KEY `productLine` (`product_line`),
+add CONSTRAINT `products_ibfk_1` FOREIGN KEY (`product_line`) REFERENCES `productlines` (`product_line`)
+on update CASCADE;
 
 /*Data for the table `products` */
 
