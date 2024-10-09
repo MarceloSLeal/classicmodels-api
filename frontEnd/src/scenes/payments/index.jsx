@@ -20,6 +20,7 @@ const Payments = () => {
   const navigateEdit = useNavigate();
 
   // TODO -- formatar a data no dataGrid
+  // TODO -- mudar retorno do metodo listar em payments controller, retornar um representation model
   const columns = [
     { field: "orderId", headerName: "ORDER ID", flex: 1 },
     { field: "checkNumber", headerName: "CHECK NUMBER", flex: 1 },
@@ -28,6 +29,7 @@ const Payments = () => {
       headerName: "PAYMENT DATE",
       flex: 1,
       renderCell: (params) => {
+        // Formata a data usando dayjs
         return dayjs(params.value).isValid() ? dayjs(params.value).format('DD/MM/YYYY HH:mm:ss') : "Invalid Date";
       },
     },

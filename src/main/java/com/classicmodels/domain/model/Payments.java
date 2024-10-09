@@ -1,5 +1,6 @@
 package com.classicmodels.domain.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -37,6 +38,7 @@ public class Payments {
     private UUID checkNumber;
 
     @FutureOrPresent
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ssXXX")
     private OffsetDateTime paymentDate;
 
     @Digits(integer = 10, fraction = 2, message = "max 10 digits and 2 after the .")
