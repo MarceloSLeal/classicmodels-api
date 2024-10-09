@@ -2,8 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { Box, useTheme } from "@mui/material";
-import { styled } from '@mui/material/styles';
-import dayjs from 'dayjs';
 
 import Header from '../../components/Header';
 import useFetchData from '../../api/getData';
@@ -17,10 +15,7 @@ const Payments = () => {
   const colors = tokens(theme.palette.mode);
   const { data, loading, error } = useFetchData(url.payments.findAll_Post);
   const [rows, setRows] = useState([]);
-  const navigateEdit = useNavigate();
 
-  // TODO -- formatar a data no dataGrid
-  // TODO -- mudar retorno do metodo listar em payments controller, retornar um representation model
   const columns = [
     { field: "orderId", headerName: "ORDER ID", flex: 1 },
     { field: "checkNumber", headerName: "CHECK NUMBER", flex: 1 },
@@ -29,8 +24,8 @@ const Payments = () => {
       headerName: "PAYMENT DATE",
       flex: 1,
       renderCell: (params) => {
-        // Formata a data usando dayjs
-        return dayjs(params.value).isValid() ? dayjs(params.value).format('DD/MM/YYYY HH:mm:ss') : "Invalid Date";
+        const date = new Date(params.value);
+        return date instanceof Date && !isNaN(date) ? date.toLocaleString() : "Invalid Date";
       },
     },
     { field: "amount", headerName: "AMOUNT", flex: 1 },
@@ -71,8 +66,7 @@ const Payments = () => {
         colors={colors}
         rows={rows}
         columns={columns}
-        // path={"/formaddorders"}
-        // TODO -- criar página formaddpayments
+        path={"/formaddpayments"}
         rowId={"checkNumber"}
       />
 

@@ -15,11 +15,6 @@ import Payments from './scenes/payments';
 import SelectOrderId from './scenesSelects/selectOrderId';
 import SelectProductId from './scenesSelects/selectProductId';
 
-
-// import Orders from "./scenes/orders";
-// import Payments from "./scenes/payments";
-// import ProductLines from "./scenes/productlines";
-// import Products from "./scenes/products";
 import FormAddCustomer from './scenesFormsAdd/customers';
 import FormEditCustomer from './scenesFormsEdit/customers';
 import FormAddEmployee from './scenesFormsAdd/employees';
@@ -28,6 +23,7 @@ import FormAddOffices from './scenesFormsAdd/offices';
 import FormEditOffices from './scenesFormsEdit/offices';
 import FormAddOrders from './scenesFormsAdd/orders';
 import FormEditOrders from './scenesFormsEdit/orders';
+import FormAddPayments from './scenesFormsAdd/payments';
 
 import Form from './scenes/form';
 import Calendar from "./scenes/calendar";
@@ -60,13 +56,6 @@ const App = () => {
               <Route path="/selectorderid" element={<SelectOrderId />} />
               <Route path="/selectproductid" element={<SelectProductId />} />
 
-
-              {/* <Route path="/orderdetails" element={<OrderDetails />} /> */}
-              {/* <Route path="/orders" element={<Orders />} /> */}
-              {/* <Route path="/payments" element={<Payments />} /> */}
-              {/* <Route path="/productlines" element={<ProductLines />} /> */}
-              {/* <Route path="/products" element={<Products />} /> */}
-              {/**/}
               <Route path="/formaddcustomer" element={<FormAddCustomer />} />
               <Route path="/formeditcustomer" element={<FormEditCustomer />} />
               <Route path="/formaddemployee" element={<FormAddEmployee />} />
@@ -75,6 +64,7 @@ const App = () => {
               <Route path="/formeditoffices" element={<FormEditOffices />} />
               <Route path="/formaddorders" element={<FormAddOrders />} />
               <Route path="/formeditorders" element={<FormEditOrders />} />
+              <Route path="/formaddpayments" element={<FormAddPayments />} />
 
               <Route path="/form" element={<Form />} />
               <Route path="/calendar" element={<Calendar />} />

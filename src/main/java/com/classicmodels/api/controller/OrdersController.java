@@ -33,8 +33,8 @@ public class OrdersController {
     private CustomersRepository customersRepository;
 
     @GetMapping
-    public List<Orders> listar() {
-        return ordersRepository.findAll();
+    public List<OrdersRepModel> listar() {
+        return ordersMapper.toCollectionModel(ordersRepository.findAll());
     }
 
     @GetMapping("/id/{id}")
