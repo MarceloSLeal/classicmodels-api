@@ -14,6 +14,7 @@ import Header from "../../components/Header";
 import { Urls } from "../../api/Paths";
 import FormListCalls from "../../components/FormsListCalls";
 import { tokens } from "../../theme";
+import PaymentsAddFormInputs from "../../components/formInputs/PaymentsAdd";
 import OrdersAddFormInputs from "../../components/formInputs/OrdersAdd";
 import OrdersDetailsFormInputs from "../../components/formInputs/OrdersDetails";
 import dayjs from 'dayjs';
@@ -25,7 +26,7 @@ const initialValues = {
   amount: 0,
 };
 
-const paymentsSchema = yup.object.shape({
+const paymentsSchema = yup.object().shape({
   orderId: yup.number().required(),
   paymentDate: yup.object().shape({
     date: yup.mixed().required("Payment Date is required").test(
@@ -51,9 +52,11 @@ const FormAddPayments = () => {
   const setOrdersFieldValueRef = useRef(null);
   const [lineCounter, setLineCounter] = useState(0);
 
-  const [dataOrderIdStatus, setDataOrderIdStatus] = useState(null);
+  const [dataOrdersIdStatus, setDataOrdersIdStatus] = useState(null);
   // TODO -- criar um endpoint para esse select
-  FormListCalls(url.products.findByIdNameQuantityInStock, setDataOrderIdStatus);
+  FormListCalls(url.orders.findByIdStatus, setDataOrdersIdStatus);
+
+  console.log(dataOrdersIdStatus);
 
   const GridActionTooltip = styled(({ className, ...props }) => (
     <Tooltip {...props} classes={{ popper: className }} />
@@ -76,10 +79,14 @@ const FormAddPayments = () => {
     { field: "orderLineNumber", headerName: "ORDER LINE NUMBER", flex: 1 },
   ]
 
+  const handleSubmitPayments = () => {
+
+  }
+
   return (
     <Box>
       <Box m="20px">
-        <Header title="CREATE PAYMENT" />
+        <Header title="CREATE PAYMENT" subtitle="Create a new Payment" />
 
         <Formik
           onsubmit={handleSubmitPayments}
@@ -88,24 +95,26 @@ const FormAddPayments = () => {
         >
           {({ values, errors, touched, handleBlur, handleChange, handleSubmit, setFieldValue }) => {
 
-            <form onSubmit={handleSubmit}>
-              <Box
-                display="grid"
-                gap="20px"
-                gridTemplateColumns="repeat(5, minmax(0, 1fr))"
-                sx={{
-                  "& > div": { gridColumn: isNonMobile ? undefined : "span 5" },
-                }}
-              >
+            return (
+              <form onSubmit={handleSubmit}>
+                <Box
+                  display="grid"
+                  gap="20px"
+                  gridTemplateColumns="repeat(5, minmax(0, 1fr))"
+                  sx={{
+                    "& > div": { gridColumn: isNonMobile ? undefined : "span 5" },
+                  }}
+                >
 
-                <Divider sx={{ gridColumn: "span 5" }} />
+                  <PaymentsAddFormInputs
+                    handleBlur={handleBlur} handleChange={handleChange} values={values}
+                    touched={touched} errors={errors} paymentsSchema={paymentsSchema}
+                    setFieldValue={setFieldValue} dataOrdersIdStatus={dataOrdersIdStatus}
+                  />
 
-                {/* TODO -- criar o FormInputs para Payments */}
-                <PaymentsFormInputs
-                />
-
-              </Box>
-            </form>
+                </Box>
+              </form>
+            )
           }}
 
         </Formik>

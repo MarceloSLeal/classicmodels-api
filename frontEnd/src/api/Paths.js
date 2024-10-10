@@ -36,6 +36,7 @@ export const Urls = (param) => ({
         findByShippedDate: `${prefix}orders/shippeddate/${param}`,
         findByStatus: `${prefix}orders/status/${param}`,
         findByCustomerId: `${prefix}orders/customerid/${param}`,
+        findByIdStatus: `${prefix}orders/idstatus`,
       },
       payments: {
         findAll_Post: `${prefix}payments`,

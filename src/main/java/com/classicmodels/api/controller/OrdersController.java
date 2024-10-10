@@ -5,6 +5,8 @@ import com.classicmodels.api.mapper.OrdersUpdateMapper;
 import com.classicmodels.api.model.OrdersRepModel;
 import com.classicmodels.api.model.input.OrdersInput;
 import com.classicmodels.api.model.input.OrdersInputUpdate;
+import com.classicmodels.api.model.lists.OrdersRepModelIdStatus;
+import com.classicmodels.api.model.lists.interfaces.OrdersIdStatusProjection;
 import com.classicmodels.domain.model.Orders;
 import com.classicmodels.domain.model.OrdersStatus;
 import com.classicmodels.domain.repository.CustomersRepository;
@@ -20,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @RestController
@@ -126,6 +129,25 @@ public class OrdersController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
                     "This order shipped date %s doesn't exist".formatted(id));
         }
+    }
+
+    @GetMapping("/idstatus")
+    public ResponseEntity<List<OrdersRepModelIdStatus>> buscarPorIdStatus() {
+
+        List<OrdersIdStatusProjection> projections = ordersRepository.findIdStatus();
+        if (projections.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+
+        List<OrdersRepModelIdStatus> ordersIds = projections.stream()
+                .map(projection -> {
+                    OrdersRepModelIdStatus dto = new OrdersRepModelIdStatus();
+                    dto.setId(projection.getId());
+                    dto.setStatus(projection.getStatus());
+                    return dto;
+                })
+                .collect(Collectors.toList());
+       return ResponseEntity.ok(ordersIds);
     }
 
     @PostMapping
