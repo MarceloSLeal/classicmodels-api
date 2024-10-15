@@ -7,7 +7,7 @@ import dayjs from 'dayjs';
 import Divider from '@mui/material/Divider';
 
 const PaymentsAddFormInputs = ({ handleBlur, handleChange, values, touched,
-  errors, paymentsSchema, setFieldValue, dataOrdersIdStatus, }) => {
+  errors, paymentsSchema, setFieldValue, dataOrdersIdStatus, handleSelectOption }) => {
 
   return (
     <>
@@ -27,8 +27,14 @@ const PaymentsAddFormInputs = ({ handleBlur, handleChange, values, touched,
           id="orderId-select"
           name="orderId"
           value={values.orderId}
-          onChange={(event) => setFieldValue('orderId',
-            event.target.value)}
+          // onChange={(event) => setFieldValue('orderId',
+          //   event.target.value)}
+
+          onChange={(event) => {
+            const selectedValue = event.target.value;
+            setFieldValue('orderId', selectedValue);
+            handleSelectOption(selectedValue);
+          }}
           onBlur={handleBlur}
           label="Order Id"
         >
@@ -61,9 +67,9 @@ const PaymentsAddFormInputs = ({ handleBlur, handleChange, values, touched,
               value={values.paymentDate}
               onChange={(newValue) => {
                 if (dayjs.isDayjs(newValue)) {
-                  setFieldValue('paymentDate', { date: newValue });
+                  setFieldValue('paymentDate', newValue);
                 } else {
-                  console.error("newValue is not a dayjs object", newValue);
+                  setFieldValue('paymentDate', null);
                 }
               }}
               format="DD/MM/YYYY"
@@ -74,6 +80,16 @@ const PaymentsAddFormInputs = ({ handleBlur, handleChange, values, touched,
           {touched.paymentDate && errors.paymentDate}
         </FormHelperText>
       </FormControl>
+
+      <TextField
+        disabled
+        variant="filled"
+        type="text"
+        label="Amount"
+        value={values.amount}
+        name="amount"
+        sx={{ gridColumn: "span 1" }}
+      />
 
     </>
   )

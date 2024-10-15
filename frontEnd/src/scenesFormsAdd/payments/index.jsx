@@ -15,6 +15,7 @@ import { Urls } from "../../api/Paths";
 import FormListCalls from "../../components/FormsListCalls";
 import { tokens } from "../../theme";
 import PaymentsAddFormInputs from "../../components/formInputs/PaymentsAdd";
+import useFetchData from '../../api/getData';
 import OrdersAddFormInputs from "../../components/formInputs/OrdersAdd";
 import OrdersDetailsFormInputs from "../../components/formInputs/OrdersDetails";
 import dayjs from 'dayjs';
@@ -52,11 +53,13 @@ const FormAddPayments = () => {
   const setOrdersFieldValueRef = useRef(null);
   const [lineCounter, setLineCounter] = useState(0);
 
-  const [dataOrdersIdStatus, setDataOrdersIdStatus] = useState(null);
-  // TODO -- criar um endpoint para esse select
-  FormListCalls(url.orders.findByIdStatus, setDataOrdersIdStatus);
+  const [urlSelectState, setUrlSelectState] = useState(null);
 
-  console.log(dataOrdersIdStatus);
+  const urlSelect = Urls(urlSelectState);
+  const { data, loading, error } = useFetchData(urlSelect.orderdetails.findByOrderId);
+
+  const [dataOrdersIdStatus, setDataOrdersIdStatus] = useState(null);
+  FormListCalls(url.orders.findByIdStatus, setDataOrdersIdStatus);
 
   const GridActionTooltip = styled(({ className, ...props }) => (
     <Tooltip {...props} classes={{ popper: className }} />
@@ -82,6 +85,58 @@ const FormAddPayments = () => {
   const handleSubmitPayments = () => {
 
   }
+
+  // TODO -- função quer será chamada após selecionar um ítem no select
+  const handleSelectOption = (selectedValue) => {
+
+    setUrlSelectState(selectedValue);
+    console.log(selectedValue);
+
+    useEffect(() => {
+      if (data) {
+
+        let cumulativeTotal = 0;
+
+        const { orderId, orderList } = data;
+
+        const rows = orderList.map((item) => {
+          const subtotal = item.quantityOrdered * item.priceEach;
+          cumulativeTotal += subtotal;
+
+          return {
+            ...item,
+            orderId: orderId,
+            subtotal: subtotal.toFixed(2),
+            total: cumulativeTotal.toFixed(2),
+          };
+        });
+
+        setRows(rows);
+      }
+    }, [data]);
+
+  }
+
+  if (loading) {
+    return (
+      <Box m="20px">
+        <Header title="CREATE PAYMENT" subtitle="Create a new Payment" />
+        <Box
+          sx={{ fontSize: "2rem" }} >
+          Loading...
+        </Box>
+      </Box>
+    )
+  }
+
+  // if (error) {
+  //   return (
+  //     <Box m="20px">
+  //       <Header title="CREATE PAYMENT" subtitle="Create a new Payment" />
+  //       <Box>Error: {error.message}{ }</Box>
+  //     </Box>
+  //   );
+  // }
 
   return (
     <Box>
@@ -110,6 +165,7 @@ const FormAddPayments = () => {
                     handleBlur={handleBlur} handleChange={handleChange} values={values}
                     touched={touched} errors={errors} paymentsSchema={paymentsSchema}
                     setFieldValue={setFieldValue} dataOrdersIdStatus={dataOrdersIdStatus}
+                    handleSelectOption={handleSelectOption}
                   />
 
                 </Box>
@@ -119,6 +175,46 @@ const FormAddPayments = () => {
 
         </Formik>
       </Box>
+
+      <Box m="20px">
+        <Box
+          m="40px 0 0 0"
+          height="60vh"
+          sx={{
+            "& .MuiDataGrid-root": {
+              border: "none",
+            },
+            "& .MuiDataGrid-cell": {
+              borderBottom: "none",
+            },
+            "& .name-column--cell": {
+              color: colors.greenAccent[300],
+            },
+            "& .MuiDataGrid-columnHeader": {
+              backgroundColor: colors.blueAccent[700],
+              borderBottom: "none",
+              fontSize: 12,
+            },
+            "& .MuiDataGrid-virtualScroller": {
+              backgroundColor: colors.primary[400],
+            },
+            "& .MuiDataGrid-footerContainer": {
+              borderTop: "none",
+              backgroundColor: colors.blueAccent[700],
+            },
+            "& .MuiDataGrid-toolbarContainer .MuiButton-text": {
+              color: `${colors.grey[100]} !important`,
+            },
+          }}
+        >
+          <DataGrid
+            rows={rows}
+            columns={columns}
+          // getRowId={(row) => `${row.orderLineNumber}`}
+          />
+        </Box>
+      </Box>
+
     </Box>
   )
 
