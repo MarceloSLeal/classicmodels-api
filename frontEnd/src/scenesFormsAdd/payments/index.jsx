@@ -1,9 +1,8 @@
 import React, { useEffect, useState, useRef } from "react";
 
-import { DataGrid, GridActionsCellItem } from "@mui/x-data-grid";
-import { Box, Button, Divider, useTheme } from "@mui/material";
+import { DataGrid } from "@mui/x-data-grid";
+import { Box, Button, useTheme } from "@mui/material";
 import useMediaQuery from "@mui/material/useMediaQuery";
-import DeleteIcon from '@mui/icons-material/DeleteOutlined';
 import Tooltip, { tooltipClasses } from '@mui/material/Tooltip';
 import { styled } from '@mui/material/styles';
 
@@ -16,8 +15,6 @@ import FormListCalls from "../../components/FormsListCalls";
 import { tokens } from "../../theme";
 import PaymentsAddFormInputs from "../../components/formInputs/PaymentsAdd";
 import useFetchData from '../../api/getData';
-import OrdersAddFormInputs from "../../components/formInputs/OrdersAdd";
-import OrdersDetailsFormInputs from "../../components/formInputs/OrdersDetails";
 import dayjs from 'dayjs';
 import OperationStatusDialog from "../../components/dialogs/OperationStatusDialog"
 
@@ -49,14 +46,12 @@ const FormAddPayments = () => {
   const [responseCode, setResponseCode] = useState(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [status, setStatus] = useState('');
-  const ordersFormikValuesRef = useRef(null);
-  const setOrdersFieldValueRef = useRef(null);
-  const [lineCounter, setLineCounter] = useState(0);
 
   const [urlSelectState, setUrlSelectState] = useState(null);
 
-  const urlSelect = Urls(urlSelectState);
-  const { data, loading, error } = useFetchData(urlSelect.orderdetails.findByOrderId);
+  const urlSelect = urlSelectState ? Urls(urlSelectState) : null;
+
+  const { data, loading, error } = useFetchData(urlSelect ? urlSelect.orderdetails.findByOrderId : null);
 
   const [dataOrdersIdStatus, setDataOrdersIdStatus] = useState(null);
   FormListCalls(url.orders.findByIdStatus, setDataOrdersIdStatus);
@@ -83,39 +78,35 @@ const FormAddPayments = () => {
   ]
 
   const handleSubmitPayments = () => {
-
+    // TODO -- Fazer o submit do formulário
   }
 
-  // TODO -- função quer será chamada após selecionar um ítem no select
   const handleSelectOption = (selectedValue) => {
-
     setUrlSelectState(selectedValue);
-    console.log(selectedValue);
-
-    useEffect(() => {
-      if (data) {
-
-        let cumulativeTotal = 0;
-
-        const { orderId, orderList } = data;
-
-        const rows = orderList.map((item) => {
-          const subtotal = item.quantityOrdered * item.priceEach;
-          cumulativeTotal += subtotal;
-
-          return {
-            ...item,
-            orderId: orderId,
-            subtotal: subtotal.toFixed(2),
-            total: cumulativeTotal.toFixed(2),
-          };
-        });
-
-        setRows(rows);
-      }
-    }, [data]);
-
   }
+
+  // TODO -- Setar o valor total para o textField Amount
+  useEffect(() => {
+    if (data) {
+      let cumulativeTotal = 0;
+
+      const { orderId, orderList } = data;
+
+      const newRows = orderList.map((item) => {
+        const subtotal = item.quantityOrdered * item.priceEach;
+        cumulativeTotal += subtotal;
+
+        return {
+          ...item,
+          orderId: orderId,
+          subtotal: subtotal.toFixed(2),
+          total: cumulativeTotal.toFixed(2),
+        };
+      });
+
+      setRows(newRows);
+    }
+  }, [data]);
 
   if (loading) {
     return (
@@ -128,15 +119,6 @@ const FormAddPayments = () => {
       </Box>
     )
   }
-
-  // if (error) {
-  //   return (
-  //     <Box m="20px">
-  //       <Header title="CREATE PAYMENT" subtitle="Create a new Payment" />
-  //       <Box>Error: {error.message}{ }</Box>
-  //     </Box>
-  //   );
-  // }
 
   return (
     <Box>
@@ -210,7 +192,7 @@ const FormAddPayments = () => {
           <DataGrid
             rows={rows}
             columns={columns}
-          // getRowId={(row) => `${row.orderLineNumber}`}
+            getRowId={(row) => `${row.orderId}-${row.productId}`}
           />
         </Box>
       </Box>

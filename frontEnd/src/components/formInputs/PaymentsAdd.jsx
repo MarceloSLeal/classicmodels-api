@@ -27,9 +27,6 @@ const PaymentsAddFormInputs = ({ handleBlur, handleChange, values, touched,
           id="orderId-select"
           name="orderId"
           value={values.orderId}
-          // onChange={(event) => setFieldValue('orderId',
-          //   event.target.value)}
-
           onChange={(event) => {
             const selectedValue = event.target.value;
             setFieldValue('orderId', selectedValue);
