@@ -83,6 +83,8 @@ const PaymentsAddFormInputs = ({ handleBlur, handleChange, values, touched,
         variant="filled"
         type="text"
         label="Amount"
+        onChange={(event) => setFieldValue('amount',
+          event.target.value)}
         value={values.amount}
         name="amount"
         sx={{ gridColumn: "span 1" }}

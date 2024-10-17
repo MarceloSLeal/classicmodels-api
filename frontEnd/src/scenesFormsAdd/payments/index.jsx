@@ -46,14 +46,13 @@ const FormAddPayments = () => {
   const [responseCode, setResponseCode] = useState(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [status, setStatus] = useState('');
-
   const [urlSelectState, setUrlSelectState] = useState(null);
-
   const urlSelect = urlSelectState ? Urls(urlSelectState) : null;
-
   const { data, loading, error } = useFetchData(urlSelect ? urlSelect.orderdetails.findByOrderId : null);
-
   const [dataOrdersIdStatus, setDataOrdersIdStatus] = useState(null);
+  const amountFormikValuesRef = useRef(null);
+  const setAmountFieldValueRef = useRef(null);
+
   FormListCalls(url.orders.findByIdStatus, setDataOrdersIdStatus);
 
   const GridActionTooltip = styled(({ className, ...props }) => (
@@ -77,15 +76,15 @@ const FormAddPayments = () => {
     { field: "orderLineNumber", headerName: "ORDER LINE NUMBER", flex: 1 },
   ]
 
-  const handleSubmitPayments = () => {
-    // TODO -- Fazer o submit do formulário
+  // TODO -- Fazer o submit do formulário
+  const handleSubmitPayments = async (values, { setSubmitting, resetForm }) => {
+
   }
 
   const handleSelectOption = (selectedValue) => {
     setUrlSelectState(selectedValue);
   }
 
-  // TODO -- Setar o valor total para o textField Amount
   useEffect(() => {
     if (data) {
       let cumulativeTotal = 0;
@@ -105,6 +104,11 @@ const FormAddPayments = () => {
       });
 
       setRows(newRows);
+
+      if (setAmountFieldValueRef.current) {
+        setAmountFieldValueRef.current("amount", cumulativeTotal.toFixed(2));
+      }
+
     }
   }, [data]);
 
@@ -132,6 +136,11 @@ const FormAddPayments = () => {
         >
           {({ values, errors, touched, handleBlur, handleChange, handleSubmit, setFieldValue }) => {
 
+            useEffect(() => {
+              amountFormikValuesRef.current = values;
+              setAmountFieldValueRef.current = setFieldValue;
+            }, [values, setFieldValue]);
+
             return (
               <form onSubmit={handleSubmit}>
                 <Box
@@ -149,6 +158,11 @@ const FormAddPayments = () => {
                     setFieldValue={setFieldValue} dataOrdersIdStatus={dataOrdersIdStatus}
                     handleSelectOption={handleSelectOption}
                   />
+
+                  <Button type="submit" color="secondary" variant="contained"
+                    sx={{ gridColumn: "span 1" }}>
+                    Create New Payment
+                  </Button>
 
                 </Box>
               </form>
