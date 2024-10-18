@@ -26,13 +26,18 @@ const initialValues = {
 
 const paymentsSchema = yup.object().shape({
   orderId: yup.number().required(),
-  paymentDate: yup.object().shape({
-    date: yup.mixed().required("Payment Date is required").test(
-      "is-dayjs",
-      "Date is not valid",
-      value => dayjs.isDayjs(value)
-    ),
-  }),
+  // paymentDate: yup.object().shape({
+  //   date: yup.mixed().required("Payment Date is required").test(
+  //     "is-dayjs",
+  //     "Date is not valid",
+  //     value => dayjs.isDayjs(value)
+  //   ),
+  // }),
+  paymentDate: yup
+    .mixed()
+    .test("is-dayjs", "Date is not valid", (value) => dayjs.isDayjs(value))
+    .required("Payment Date is required"),
+
   amount: yup.number().required(),
 });
 
@@ -77,12 +82,53 @@ const FormAddPayments = () => {
   ]
 
   // TODO -- Fazer o submit do formulário
-  const handleSubmitPayments = async (values, { setSubmitting, resetForm }) => {
+  // TODO -- parece que a data atual não está cadastrando, coloquei uma outra data
+  // e funcinou, verificar isso
 
+  const handleSubmitPayments = async (values, { setSubmitting, resetForm }) => {
+    setStatus('');
+    setResponseCode(null);
+
+    try {
+      const valuesToSubmit = {
+        ...values,
+        paymentDate: values.paymentDate.format('YYYY-MM-DDTHH:mm:ssZ'),  // Formato ISO 8601 com timezone
+        amount: parseFloat(values.amount),
+      }
+
+      console.log(valuesToSubmit);
+
+      const response = await fetch(url.payments.findAll_Post, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        // body: JSON.stringify(values),
+        body: JSON.stringify(valuesToSubmit),
+      });
+      const data = await response.json();
+
+      setResponseCode(response.status);
+
+      if (response.ok) {
+        setStatus('Payment created successfully!');
+        setResetFormFn(() => resetForm);
+      } else {
+        setStatus(`Error: ${data.title || 'Failed to create Payment'} - ${data.detail || ''}`);
+      }
+    } catch (error) {
+      setStatus(`Error: ${error.message || 'Failed to create Payment'}`);
+    }
+    setSubmitting(false);
+    setDialogOpen(true);
   }
 
   const handleSelectOption = (selectedValue) => {
     setUrlSelectState(selectedValue);
+  }
+
+  const handleClose = () => {
+    setDialogOpen(false);
   }
 
   useEffect(() => {
@@ -130,7 +176,7 @@ const FormAddPayments = () => {
         <Header title="CREATE PAYMENT" subtitle="Create a new Payment" />
 
         <Formik
-          onsubmit={handleSubmitPayments}
+          onSubmit={handleSubmitPayments}
           initialValues={initialValues}
           validationSchema={paymentsSchema}
         >
@@ -210,6 +256,11 @@ const FormAddPayments = () => {
           />
         </Box>
       </Box>
+
+      <OperationStatusDialog
+        dialogOpen={dialogOpen} onClose={handleClose} status={status}
+        responseCode={responseCode} onClick={handleClose}
+      />
 
     </Box>
   )
