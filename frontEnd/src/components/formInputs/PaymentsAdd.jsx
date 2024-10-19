@@ -63,11 +63,12 @@ const PaymentsAddFormInputs = ({ handleBlur, handleChange, values, touched,
               disablePast
               value={values.paymentDate}
               onChange={(newValue) => {
-                if (dayjs.isDayjs(newValue)) {
-                  setFieldValue('paymentDate', newValue);
-                } else {
-                  setFieldValue('paymentDate', null);
-                }
+                // if (dayjs.isDayjs(newValue)) {
+                //   setFieldValue('paymentDate', newValue);
+                // } else {
+                //   setFieldValue('paymentDate', null);
+                // }
+                setFieldValue('paymentDate', newValue);
               }}
               format="DD/MM/YYYY"
             />

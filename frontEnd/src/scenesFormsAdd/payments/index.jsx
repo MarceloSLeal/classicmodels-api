@@ -26,13 +26,6 @@ const initialValues = {
 
 const paymentsSchema = yup.object().shape({
   orderId: yup.number().required(),
-  // paymentDate: yup.object().shape({
-  //   date: yup.mixed().required("Payment Date is required").test(
-  //     "is-dayjs",
-  //     "Date is not valid",
-  //     value => dayjs.isDayjs(value)
-  //   ),
-  // }),
   paymentDate: yup
     .mixed()
     .test("is-dayjs", "Date is not valid", (value) => dayjs.isDayjs(value))
@@ -82,9 +75,8 @@ const FormAddPayments = () => {
   ]
 
   // TODO -- Fazer o submit do formulário
-  // TODO -- parece que a data atual não está cadastrando, coloquei uma outra data
-  // e funcinou, verificar isso
-
+  // TODO -- atualizar o status na tabela orders
+  // talvez criar um novo endpoint para isso
   const handleSubmitPayments = async (values, { setSubmitting, resetForm }) => {
     setStatus('');
     setResponseCode(null);
@@ -92,18 +84,18 @@ const FormAddPayments = () => {
     try {
       const valuesToSubmit = {
         ...values,
-        paymentDate: values.paymentDate.format('YYYY-MM-DDTHH:mm:ssZ'),  // Formato ISO 8601 com timezone
+        paymentDate: dayjs(values.paymentDate).add(1, 'minute').format('YYYY-MM-DDTHH:mm:ssZ'),
         amount: parseFloat(values.amount),
       }
 
       console.log(valuesToSubmit);
+      console.log("OrderId", valuesToSubmit.orderId);
 
       const response = await fetch(url.payments.findAll_Post, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        // body: JSON.stringify(values),
         body: JSON.stringify(valuesToSubmit),
       });
       const data = await response.json();

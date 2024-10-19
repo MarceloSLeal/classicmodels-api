@@ -16,6 +16,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -68,6 +70,12 @@ public class PaymentsController {
 //        customersRepository.findById(paymentsInput.getCustomerId())
 ////                .orElseThrow(() -> new EntityNotFoundException("There is no customer with that Id"));
 //                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "There is no customer with that Id"));
+        System.out.println("OrderId" + paymentsInput.getOrderId());
+        System.out.println("PaymentDate" + paymentsInput.getPaymentDate());
+        System.out.println("Amount" + paymentsInput.getAmount());
+
+        LocalDateTime agora = LocalDateTime.now();
+        System.out.println(agora);
 
         ordersRepository.findById(paymentsInput.getOrderId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "There is no order with that Id"));
