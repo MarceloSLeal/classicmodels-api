@@ -49,6 +49,11 @@ public class OrdersCatalogService {
         return this.salvar(orders);
     }
 
+    @Transactional
+    public void updateOrderStatus(Long id) {
+        ordersRepository.updateOrderStatusToShipped(id);
+    }
+
     public List<Orders> buscarPorOrderDate(String date) {
 
         return ordersRepository.findByDate(startOfDayFormatter(date), endOfDayFormatter(date));

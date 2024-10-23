@@ -8,6 +8,7 @@ import com.classicmodels.domain.model.Payments;
 import com.classicmodels.domain.repository.CustomersRepository;
 import com.classicmodels.domain.repository.OrdersRepository;
 import com.classicmodels.domain.repository.PaymentsRepository;
+import com.classicmodels.domain.service.OrdersCatalogService;
 import com.classicmodels.domain.service.PaymentsCatalogService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -30,6 +31,7 @@ public class PaymentsController {
     private PaymentsRepository paymentsRepository;
     private PaymentsMapper paymentsMapper;
     private PaymentsCatalogService paymentsCatalogService;
+    private OrdersCatalogService ordersCatalogService;
     private OrdersRepository ordersRepository;
 
     @GetMapping
@@ -67,23 +69,16 @@ public class PaymentsController {
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<PaymentsRepModel> adicionar(@Valid @RequestBody PaymentsInput paymentsInput) {
 
-//        customersRepository.findById(paymentsInput.getCustomerId())
-////                .orElseThrow(() -> new EntityNotFoundException("There is no customer with that Id"));
-//                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "There is no customer with that Id"));
-        System.out.println("OrderId" + paymentsInput.getOrderId());
-        System.out.println("PaymentDate" + paymentsInput.getPaymentDate());
-        System.out.println("Amount" + paymentsInput.getAmount());
-
         LocalDateTime agora = LocalDateTime.now();
-        System.out.println(agora);
 
         ordersRepository.findById(paymentsInput.getOrderId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "There is no order with that Id"));
 
-
         Payments payments = paymentsMapper.toEntity(paymentsInput);
         Payments savedPayment = paymentsCatalogService.salvar(payments);
         PaymentsRepModel paymentsRepModel = paymentsMapper.toModel(savedPayment);
+
+        ordersCatalogService.updateOrderStatus(paymentsInput.getOrderId());
 
         return ResponseEntity.status(HttpStatus.CREATED).body(paymentsRepModel);
     }

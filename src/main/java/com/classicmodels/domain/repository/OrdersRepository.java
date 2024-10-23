@@ -3,6 +3,7 @@ package com.classicmodels.domain.repository;
 import com.classicmodels.api.model.lists.interfaces.OrdersIdStatusProjection;
 import com.classicmodels.domain.model.Orders;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -28,5 +29,9 @@ public interface OrdersRepository extends JpaRepository<Orders, Long> {
 
     @Query( value = "SELECT id, status from classicmodels_api.orders WHERE status = 'RESOLVED'", nativeQuery = true)
     List<OrdersIdStatusProjection> findIdStatus();
+
+    @Modifying
+    @Query(value = "UPDATE classicmodels_api.orders SET status = 'SHIPPED' WHERE id = :id", nativeQuery = true)
+    void updateOrderStatusToShipped(@Param("id") Long id);
 
 }

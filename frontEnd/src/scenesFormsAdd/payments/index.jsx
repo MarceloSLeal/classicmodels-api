@@ -53,17 +53,6 @@ const FormAddPayments = () => {
 
   FormListCalls(url.orders.findByIdStatus, setDataOrdersIdStatus);
 
-  const GridActionTooltip = styled(({ className, ...props }) => (
-    <Tooltip {...props} classes={{ popper: className }} />
-  ))(() => ({
-    [`& .${tooltipClasses.tooltip}`]: {
-      backgroundColor: colors.primary[400],
-      color: colors.primary[100],
-      fontSize: 15,
-      border: `1px solid ${colors.primary[100]}`,
-    },
-  }));
-
   const columns = [
     { field: "orderId", headerName: "ORDER ID", flex: 0.5 },
     { field: "productId", headerName: "PRODUCT ID", flex: 1 },
@@ -75,8 +64,8 @@ const FormAddPayments = () => {
   ]
 
   // TODO -- Fazer o submit do formulário
-  // TODO -- atualizar o status na tabela orders
-  // talvez criar um novo endpoint para isso
+  // TODO -- ainda está com problema de não fazer o submit com a hora atual 
+  // TODO -- resolver o resetForm
   const handleSubmitPayments = async (values, { setSubmitting, resetForm }) => {
     setStatus('');
     setResponseCode(null);
@@ -84,7 +73,9 @@ const FormAddPayments = () => {
     try {
       const valuesToSubmit = {
         ...values,
-        paymentDate: dayjs(values.paymentDate).add(1, 'minute').format('YYYY-MM-DDTHH:mm:ssZ'),
+        // paymentDate: dayjs(values.paymentDate).add(1, 'minute').format('YYYY-MM-DDTHH:mm:ssZ'),
+        // amount: parseFloat(values.amount),
+        paymentDate: dayjs().add(1, 'minute').format('YYYY-MM-DDTHH:mm:ssZ'),
         amount: parseFloat(values.amount),
       }
 
