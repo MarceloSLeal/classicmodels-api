@@ -64,7 +64,6 @@ const FormAddPayments = () => {
   ]
 
   // TODO -- Fazer o submit do formulário
-  // TODO -- ainda está com problema de não fazer o submit com a hora atual 
   // TODO -- resolver o resetForm
   const handleSubmitPayments = async (values, { setSubmitting, resetForm }) => {
     setStatus('');
