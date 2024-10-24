@@ -83,17 +83,22 @@ const Orders = () => {
       cellClassName: 'actions',
       getActions: (params) => {
 
-        return [
-          <GridActionTooltip title="Edit Order" placement="bottom">
-            <GridActionsCellItem
-              icon={<EditIcon />}
-              label="Edit"
-              className="textPrimary"
-              onClick={handleEditDataGridButton(params)}
-              color="inherit"
-            />
-          </GridActionTooltip>
-        ];
+        if (params.row.status !== "SHIPPED") {
+
+          return [
+            <GridActionTooltip title="Edit Order" placement="bottom">
+              <GridActionsCellItem
+                icon={<EditIcon />}
+                label="Edit"
+                className="textPrimary"
+                onClick={handleEditDataGridButton(params)}
+                color="inherit"
+              />
+            </GridActionTooltip>
+          ];
+        }
+
+        return [];
       },
     },
   ];

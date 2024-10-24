@@ -3,8 +3,6 @@ import React, { useEffect, useState, useRef } from "react";
 import { DataGrid } from "@mui/x-data-grid";
 import { Box, Button, useTheme } from "@mui/material";
 import useMediaQuery from "@mui/material/useMediaQuery";
-import Tooltip, { tooltipClasses } from '@mui/material/Tooltip';
-import { styled } from '@mui/material/styles';
 
 import { Formik } from "formik";
 import * as yup from "yup";
@@ -65,8 +63,6 @@ const FormAddPayments = () => {
     { field: "orderLineNumber", headerName: "ORDER LINE NUMBER", flex: 1 },
   ]
 
-  // TODO -- Aparentemente está tudo pronto, só preciso fazer uma verificação 
-  // completa por todos as páginas que usam o componete FormListCalls
   const handleSubmitPayments = async (values, { setSubmitting, resetForm }) => {
     setStatus('');
     setResponseCode(null);
@@ -74,8 +70,6 @@ const FormAddPayments = () => {
     try {
       const valuesToSubmit = {
         ...values,
-        // paymentDate: dayjs(values.paymentDate).add(1, 'minute').format('YYYY-MM-DDTHH:mm:ssZ'),
-        // amount: parseFloat(values.amount),
         paymentDate: dayjs().add(1, 'minute').format('YYYY-MM-DDTHH:mm:ssZ'),
         amount: parseFloat(values.amount),
       }
@@ -144,7 +138,6 @@ const FormAddPayments = () => {
       if (setAmountFieldValueRef.current) {
         setAmountFieldValueRef.current("amount", cumulativeTotal.toFixed(2));
       }
-
     }
   }, [data]);
 
@@ -158,7 +151,6 @@ const FormAddPayments = () => {
       updateSelectOptions();
     }
   }, [updateSelect]);
-
 
   if (loading) {
     return (
