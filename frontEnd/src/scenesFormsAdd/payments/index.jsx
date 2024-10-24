@@ -51,6 +51,8 @@ const FormAddPayments = () => {
   const amountFormikValuesRef = useRef(null);
   const setAmountFieldValueRef = useRef(null);
 
+  const [updateSelect, setUpdateSelect] = useState(false);
+
   FormListCalls(url.orders.findByIdStatus, setDataOrdersIdStatus);
 
   const columns = [
@@ -63,8 +65,8 @@ const FormAddPayments = () => {
     { field: "orderLineNumber", headerName: "ORDER LINE NUMBER", flex: 1 },
   ]
 
-  // TODO -- Fazer o submit do formulário
-  // TODO -- resolver o resetForm
+  // TODO -- Aparentemente está tudo pronto, só preciso fazer uma verificação 
+  // completa por todos as páginas que usam o componete FormListCalls
   const handleSubmitPayments = async (values, { setSubmitting, resetForm }) => {
     setStatus('');
     setResponseCode(null);
@@ -94,7 +96,13 @@ const FormAddPayments = () => {
 
       if (response.ok) {
         setStatus('Payment created successfully!');
-        setResetFormFn(() => resetForm);
+
+        resetForm();
+
+        setRows(null);
+
+        setUpdateSelect(true);
+
       } else {
         setStatus(`Error: ${data.title || 'Failed to create Payment'} - ${data.detail || ''}`);
       }
@@ -139,6 +147,18 @@ const FormAddPayments = () => {
 
     }
   }, [data]);
+
+  useEffect(() => {
+    if (updateSelect) {
+      const updateSelectOptions = async () => {
+        await FormListCalls(url.orders.findByIdStatus, setDataOrdersIdStatus);
+        setUpdateSelect(false);
+      };
+
+      updateSelectOptions();
+    }
+  }, [updateSelect]);
+
 
   if (loading) {
     return (
