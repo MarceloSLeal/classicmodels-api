@@ -18,7 +18,7 @@ import BoxDataGrid from "../../components/boxes/BoxDataGrid"
 const ProductLines = () => {
   const urlData = Urls();
   const theme = useTheme();
-  const { data, loading, error } = useFetchData(urlData.customers.findAll_Post);
+  const { data, loading, error } = useFetchData(urlData.productlines.findAll_Post);
   const [dialogConfirmOpen, setDialogConfirmOpen] = useState(false);
   const [dialogDeleteOpen, setDialogDeleteOpen] = useState(false);
   const [idDelete, setIdDelete] = useState(null);
@@ -71,6 +71,10 @@ const ProductLines = () => {
     }
 
     setDialogDeleteOpen(true);
+  }
+
+  const handleCloseDelete = () => {
+    setDialogDeleteOpen(false);
   }
 
   const GridActionTooltip = styled(({ className, ...props }) => (
@@ -159,8 +163,11 @@ const ProductLines = () => {
         colors={colors}
         rows={rows}
         columns={columns}
-      // TODO -- Adicionar página formaddproductlines
-      // path={"/formaddproductlines"}
+        // TODO -- Adicionar página formaddproductlines
+        // path={"/formaddproductlines"}
+        rowId={"productLine"}
+
+      // getRowId={(row) => `${row.orderId} - ${row.productId}`}
       />
 
       <ConfirmDeleteDialog
