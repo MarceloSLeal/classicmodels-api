@@ -25,6 +25,7 @@ import FormEditOffices from './scenesFormsEdit/offices';
 import FormAddOrders from './scenesFormsAdd/orders';
 import FormEditOrders from './scenesFormsEdit/orders';
 import FormAddPayments from './scenesFormsAdd/payments';
+import FormAddProductLines from './scenesFormsAdd/productlines';
 
 import Form from './scenes/form';
 import Calendar from "./scenes/calendar";
@@ -67,6 +68,7 @@ const App = () => {
               <Route path="/formaddorders" element={<FormAddOrders />} />
               <Route path="/formeditorders" element={<FormEditOrders />} />
               <Route path="/formaddpayments" element={<FormAddPayments />} />
+              <Route path="/formaddproductlines" element={<FormAddProductLines />} />
 
               <Route path="/form" element={<Form />} />
               <Route path="/calendar" element={<Calendar />} />

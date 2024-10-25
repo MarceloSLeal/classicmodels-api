@@ -74,9 +74,6 @@ const FormAddPayments = () => {
         amount: parseFloat(values.amount),
       }
 
-      console.log(valuesToSubmit);
-      console.log("OrderId", valuesToSubmit.orderId);
-
       const response = await fetch(url.payments.findAll_Post, {
         method: 'POST',
         headers: {

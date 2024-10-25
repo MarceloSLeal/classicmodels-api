@@ -165,9 +165,8 @@ const ProductLines = () => {
         columns={columns}
         // TODO -- Adicionar página formaddproductlines
         // path={"/formaddproductlines"}
+        path={"/formaddproductlines"}
         rowId={"productLine"}
-
-      // getRowId={(row) => `${row.orderId} - ${row.productId}`}
       />
 
       <ConfirmDeleteDialog
