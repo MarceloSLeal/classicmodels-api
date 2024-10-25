@@ -196,7 +196,7 @@ const Sidebar = () => {
             />
             <Item
               title="Product Line"
-              to="/productline"
+              to="/productlines"
               icon={<CategoryOutlinedIcon />}
               selected={selected}
               setSelected={setSelected}

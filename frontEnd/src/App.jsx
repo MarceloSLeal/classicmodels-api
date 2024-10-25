@@ -11,6 +11,7 @@ import Offices from './scenes/offices';
 import OrderDetails from './scenes/orderDetails';
 import Orders from './scenes/orders';
 import Payments from './scenes/payments';
+import ProductLines from './scenes/productLines';
 
 import SelectOrderId from './scenesSelects/selectOrderId';
 import SelectProductId from './scenesSelects/selectProductId';
@@ -52,6 +53,7 @@ const App = () => {
               <Route path="/orderdetails" element={<OrderDetails />} />
               <Route path="/orders" element={<Orders />} />
               <Route path="/payments" element={<Payments />} />
+              <Route path="/productlines" element={<ProductLines />} />
 
               <Route path="/selectorderid" element={<SelectOrderId />} />
               <Route path="/selectproductid" element={<SelectProductId />} />
