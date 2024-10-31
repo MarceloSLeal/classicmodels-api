@@ -88,9 +88,29 @@ const ProductLines = () => {
     },
   }));
 
+  // TODO -- adicionar para a tela orders na coluna comments essa configuração de 
+  // quebra de linha para textos grandes
   const columns = [
-    { field: "productLine", headerName: "PRODUCT LINE", flex: 1, cellClassName: "name-column-cell" },
-    { field: "textDescription", headerName: "TEXT DESCRIPTION", flex: 1 },
+    { field: "productLine", headerName: "PRODUCT LINE", flex: 0.5, cellClassName: "name-column-cell" },
+    {
+      field: "textDescription",
+      headerName: "TEXT DESCRIPTION",
+      flex: 1.5,
+      minWidth: 150,
+      renderCell: (params) => (
+        <div
+          style={{
+            maxHeight: 200,
+            overflowY: 'auto',
+            whiteSpace: 'normal', // Permite quebra de linha
+            wordWrap: 'break-word',
+            lineHeight: 2,
+          }}
+        >
+          {params.value}
+        </div>
+      ),
+    },
     { field: "htmlDescrition", headerName: "HTML DESCRIPTION", flex: 1 },
     { field: "image", headerName: "IMAGE", flex: 1 },
 
@@ -163,10 +183,9 @@ const ProductLines = () => {
         colors={colors}
         rows={rows}
         columns={columns}
-        // TODO -- Adicionar página formaddproductlines
-        // path={"/formaddproductlines"}
         path={"/formaddproductlines"}
         rowId={"productLine"}
+        rowHeight={200}
       />
 
       <ConfirmDeleteDialog
