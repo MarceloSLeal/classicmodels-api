@@ -51,7 +51,10 @@ const FormAddPayments = () => {
 
   const [updateSelect, setUpdateSelect] = useState(false);
 
-  FormListCalls(url.orders.findByIdStatus, setDataOrdersIdStatus);
+  useEffect(() => {
+    FormListCalls(url.orders.findByIdStatus, setDataOrdersIdStatus);
+  }, [])
+
 
   const columns = [
     { field: "orderId", headerName: "ORDER ID", flex: 0.5 },

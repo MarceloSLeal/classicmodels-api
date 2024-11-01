@@ -1,5 +1,5 @@
 import { useLocation } from "react-router-dom";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import { Box, Button } from "@mui/material";
 import useMediaQuery from "@mui/material/useMediaQuery";
@@ -46,7 +46,10 @@ const FormEditCustomer = () => {
   const navigate = useNavigate();
 
   const [dataEmployeeIdNameList, setDataEmployeeIdNameList] = useState(null);
-  FormListCalls(url.employees.findByEmployeesIds, setDataEmployeeIdNameList);
+
+  useEffect(() => {
+    FormListCalls(url.employees.findByEmployeesIds, setDataEmployeeIdNameList);
+  }, [])
 
   const initialValues = {
     id: rowData.id, name: rowData.name, email: rowData.email, contactLastName:

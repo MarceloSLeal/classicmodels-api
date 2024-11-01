@@ -69,10 +69,12 @@ const FormAddOrders = () => {
   const [lineCounter, setLineCounter] = useState(0);
 
   const [dataProductIdNameQuantityInStock, setDataProductIdNameQuantityInStock] = useState(null);
-  FormListCalls(url.products.findByIdNameQuantityInStock, setDataProductIdNameQuantityInStock);
-
   const [dataCustomersIdNameCreditLimit, setDataCustomersIdNameCreditLimit] = useState(null);
-  FormListCalls(url.customers.findByIdNameCreditLimit, setDataCustomersIdNameCreditLimit);
+
+  useEffect(() => {
+    FormListCalls(url.products.findByIdNameQuantityInStock, setDataProductIdNameQuantityInStock);
+    FormListCalls(url.customers.findByIdNameCreditLimit, setDataCustomersIdNameCreditLimit);
+  }, [])
 
 
   const GridActionTooltip = styled(({ className, ...props }) => (

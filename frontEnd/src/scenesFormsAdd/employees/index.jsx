@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import { Box, Button } from "@mui/material";
 import useMediaQuery from "@mui/material/useMediaQuery";
@@ -34,10 +34,12 @@ const FormAddEmployee = () => {
   const jobTitleList = Constants().employees.jobTitle;
 
   const [dataIdName, setDataIdName] = useState(null);
-  FormListCalls(url.employees.findByIdNames, setDataIdName);
-
   const [dataOfficeIdName, setDataOfficeIdName] = useState(null);
-  FormListCalls(url.offices.findByOfficeIds, setDataOfficeIdName);
+
+  useEffect(() => {
+    FormListCalls(url.employees.findByIdNames, setDataIdName);
+    FormListCalls(url.offices.findByOfficeIds, setDataOfficeIdName);
+  }, [])
 
   const isNonMobile = useMediaQuery("(min-width:600px)");
   const [responseCode, setResponseCode] = useState(null);

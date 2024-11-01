@@ -1,5 +1,5 @@
 import { useLocation } from "react-router-dom";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import { Box, Button, useMediaQuery } from "@mui/material";
 import Divider from '@mui/material/Divider';
@@ -32,10 +32,12 @@ const FormEditEmployee = () => {
   const jobTitleList = Constants().employees.jobTitle;
 
   const [dataIdName, setDataIdName] = useState(null);
-  FormListCalls(url.employees.findByIdNames, setDataIdName);
-
   const [dataOfficeIdName, setDataOfficeIdName] = useState(null);
-  FormListCalls(url.offices.findByOfficeIds, setDataOfficeIdName);
+
+  useEffect(() => {
+    FormListCalls(url.employees.findByIdNames, setDataIdName);
+    FormListCalls(url.offices.findByOfficeIds, setDataOfficeIdName);
+  }, [])
 
   const isNonMobile = useMediaQuery("(min-width:600px)");
   const [responseCode, setResponseCode] = useState(null);
