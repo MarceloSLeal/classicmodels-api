@@ -7,7 +7,7 @@ import Divider from '@mui/material/Divider';
 import { Formik } from "formik";
 import * as yup from "yup";
 
-import CustomersFormInputs from "../../components/formInputs/Customers";
+import ProductLinesFormInput from "../../components/formInputs/ProductLinesInput";
 import Header from "../../components/Header";
 import { Urls } from "../../api/Paths";
 import FormListCalls from "../../components/FormsListCalls";
@@ -98,12 +98,16 @@ const FormAddProductLines = () => {
               }}
             >
 
-              <Divider sx={{ gridColumn: "span 5" }} />
-
               {/* TODO -- criar o ProductLinesFormInput */}
               {/* <CustomersFormInputs handleBlur={handleBlur} handleChange={handleChange} */}
               {/*   values={values} touched={touched} errors={errors} isEdit={false} */}
               {/*   dataEmployeeIdNameList={dataEmployeeIdNameList} setFieldValue={setFieldValue} /> */}
+
+              <ProductLinesFormInput
+                handleBlur={handleBlur} handleChange={handleChange} values={values} touched={touched}
+                errors={errors} productLinesSchema={productLinesSchema} setFieldValue={setFieldValue}
+              />
+
 
             </Box>
             <Box display="flex" justifyContent="end" mt="20px">
