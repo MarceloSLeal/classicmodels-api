@@ -14,21 +14,12 @@ const ProductLinesFormInput = ({ handleBlur, handleChange, values, touched,
   const [dragActive, setDragActive] = useState(false);
   const inputRef = useRef(null);
 
-  // const handleFileChange = (event) => {
-  //   const file = event.target.files[0];
-  //   if (file) {
-  //     const reader = new FileReader();
-  //     reader.onload = () => setImage(reader.result);
-  //     reader.readAsDataURL(file);
-  //   }
-  // };
 
-  // TODO -- fazer a validação para os outros eventos
   const handleFileChange = (event) => {
     const file = event.target.files[0];
     if (file) {
       if (file.size > 200 * 1024) {
-        alert("A imagem deve ter menos de 200 KB.");
+        alert("The file must be less than 200Kb");
         return;
       }
       const reader = new FileReader();
@@ -51,6 +42,10 @@ const ProductLinesFormInput = ({ handleBlur, handleChange, values, touched,
     setDragActive(false);
     const file = event.dataTransfer.files[0];
     if (file) {
+      if (file.size > 200 * 1024) {
+        alert("The file must be less than 200Kb")
+        return;
+      }
       const reader = new FileReader();
       reader.onload = () => setImage(reader.result);
       reader.readAsDataURL(file);
@@ -108,7 +103,6 @@ const ProductLinesFormInput = ({ handleBlur, handleChange, values, touched,
         sx={{ gridColumn: "span 1" }}
       />
 
-      {/* TODO -- falta colocar o componente de imagem */}
       <Box>
         <Box
           onDragOver={handleDragOver}

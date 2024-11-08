@@ -7,7 +7,7 @@ import Divider from '@mui/material/Divider';
 import { Formik } from "formik";
 import * as yup from "yup";
 
-import ProductLinesFormInput from "../../components/formInputs/ProductLinesInput";
+import ProductLinesFormInput from "../../components/formInputs/ProductLines";
 import Header from "../../components/Header";
 import { Urls } from "../../api/Paths";
 import FormListCalls from "../../components/FormsListCalls";
