@@ -7,6 +7,8 @@ import com.classicmodels.domain.exception.EntityNotFoundException;
 import com.classicmodels.domain.model.ProductLines;
 import com.classicmodels.domain.repository.ProductLinesRepository;
 import com.classicmodels.domain.service.ProductLinesCatalogService;
+import com.classicmodels.storage.FotoStorage;
+import com.classicmodels.storage.FotoStorageRunnable;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -24,6 +26,7 @@ public class ProductLinesController {
     private ProductLinesRepository productLinesRepository;
     private ProductLinesMapper productLinesMapper;
     private ProductLinesCatalogService productLinesCatalogService;
+    private FotoStorage fotoStorage;
 
     @GetMapping
     public List<ProductLines> listar() {
@@ -41,6 +44,9 @@ public class ProductLinesController {
 
     @PostMapping
     public ResponseEntity<ProductLinesRepModel> adicionar(@Valid @RequestBody ProductLinesInput productLinesInput) {
+
+        Thread thread = new Thread(new FotoStorageRunnable(productLinesInput.getFile(), fotoStorage, productLinesInput.getProductLine()));
+        thread.start();
 
         productLinesRepository.findByProductLine(productLinesInput.getProductLine())
                 .ifPresent(productLines -> {
@@ -63,7 +69,8 @@ public class ProductLinesController {
 
         existingProductLines.setTextDescription(productLinesInput.getTextDescription());
         existingProductLines.setHtmlDescription(productLinesInput.getHtmlDescription());
-        existingProductLines.setImage(productLinesInput.getImage());
+        //TODO -- mudar o PUT para imagem
+//        existingProductLines.setImage(productLinesInput.getImage());
 
         ProductLines savedProductLines = productLinesRepository.save(existingProductLines);
 

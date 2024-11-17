@@ -6,6 +6,7 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.lang.Nullable;
+import org.springframework.web.multipart.MultipartFile;
 
 @Getter
 @Setter
@@ -20,6 +21,6 @@ public class ProductLinesInput {
 
     private String htmlDescription;
 
-    private byte[] image;
+    private MultipartFile file;
 
 }

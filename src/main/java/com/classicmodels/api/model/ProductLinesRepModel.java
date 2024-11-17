@@ -10,6 +10,6 @@ public class ProductLinesRepModel {
     private String productLine;
     private String textDescription;
     private String htmlDescription;
-    private byte[] image;
+    private String image;
 
 }

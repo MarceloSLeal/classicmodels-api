@@ -1,8 +1,11 @@
 package com.classicmodels.storage.s3;
 
 import com.classicmodels.storage.FotoStorage;
+import io.github.cdimascio.dotenv.Dotenv;
 import io.micrometer.common.util.StringUtils;
+import jakarta.annotation.PostConstruct;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
@@ -24,22 +27,30 @@ import java.util.Map;
 @Component
 public class FotoStorageS3 implements FotoStorage {
 
-    //TODO -- inserir logger
-    //private static final Logger logger = LoggerFactory.getLogger(FotoStorageS3.class);
 
-    //TODO -- criar variáveis de ambiente para essas chaves
-    String accessKey = "${ACCESS_KEY}";
-    String secretKey = "${SECRET_KEY}";
-    AwsCredentials credentials = AwsBasicCredentials.create(accessKey, secretKey);
+    private Dotenv dotenv = Dotenv.load();
+    private AwsCredentials credentials;
+    private S3Client s3Client;
 
-    String regionName = "${REGION_NAME}";
-    S3Client s3Client = S3Client
-            .builder()
-            .region(Region.of(regionName))
-            .credentialsProvider(StaticCredentialsProvider.create(credentials))
-            .build();
+    public FotoStorageS3(Dotenv dotenv) {
+        this.dotenv = dotenv;
+    }
 
-    private static final String BUCKET = "${BUCKET}";
+    @PostConstruct
+    public void init() {
+        String accessKey = dotenv.get("ACCESS_KEY");
+        String secretKey = dotenv.get("SECRET_KEY");
+        String regionName = dotenv.get("REGION_NAME");
+
+        this.credentials = AwsBasicCredentials.create(accessKey, secretKey);
+        this.s3Client = S3Client.builder()
+                .region(Region.of(regionName))
+                .credentialsProvider(StaticCredentialsProvider.create(credentials))
+                .build();
+    }
+
+    @Value("${BUCKET}")
+    private String BUCKET = dotenv.get("BUCKET");
 
     @Override
     public String salvar(MultipartFile file, String nome){

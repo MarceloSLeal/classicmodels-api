@@ -29,6 +29,6 @@ public class ProductLines {
 
     private String htmlDescription;
 
-    private byte[] image;
+    private String image;
 
 }
