@@ -2,10 +2,8 @@ package com.classicmodels.storage.s3;
 
 import com.classicmodels.storage.FotoStorage;
 import io.github.cdimascio.dotenv.Dotenv;
-import io.micrometer.common.util.StringUtils;
 import jakarta.annotation.PostConstruct;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
@@ -16,21 +14,23 @@ import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-//@Profile("prod") inserir perfil?
 @AllArgsConstructor
 @Component
 public class FotoStorageS3 implements FotoStorage {
 
-
     private Dotenv dotenv = Dotenv.load();
     private AwsCredentials credentials;
     private S3Client s3Client;
+    private static String BUCKET;
+    private String extension;
+
+    public FotoStorageS3() {
+    }
 
     public FotoStorageS3(Dotenv dotenv) {
         this.dotenv = dotenv;
@@ -41,6 +41,7 @@ public class FotoStorageS3 implements FotoStorage {
         String accessKey = dotenv.get("ACCESS_KEY");
         String secretKey = dotenv.get("SECRET_KEY");
         String regionName = dotenv.get("REGION_NAME");
+        BUCKET = dotenv.get("BUCKET");
 
         this.credentials = AwsBasicCredentials.create(accessKey, secretKey);
         this.s3Client = S3Client.builder()
@@ -49,33 +50,39 @@ public class FotoStorageS3 implements FotoStorage {
                 .build();
     }
 
-    @Value("${BUCKET}")
-    private String BUCKET = dotenv.get("BUCKET");
-
     @Override
     public String salvar(MultipartFile file, String nome){
 
        if( file != null && file.getSize() > 0) {
-
            try {
                 enviarFoto(nome, file);
             } catch (IOException e) {
-                throw new RuntimeException("Erro salvando arquivo no S3", e);
+                throw new RuntimeException("Error saving file on S3", e);
             }
-
        }
        return nome;
     }
 
     private Map<String, String> enviarFoto(String nome, MultipartFile arquivo) throws IOException{
+
+        String aux = arquivo.getOriginalFilename();
+        extension = "";
+
+        if (aux != null && aux.contains(".")) {
+            extension = aux.substring(aux.lastIndexOf(".") + 1);
+        }
+
         Map<String, String> metadata = new HashMap<>();
+//        assert arquivo != null;
         metadata.put("Content Type", arquivo.getContentType());
         metadata.put("Size", String.valueOf(arquivo.getSize()));
         metadata.put("Environment", "Dev");
+        metadata.put("Original Name", arquivo.getOriginalFilename());
+        metadata.put("Extension", extension);
 
         PutObjectRequest por = PutObjectRequest.builder()
                         .bucket(BUCKET)
-                                .key(nome)
+                                .key("%s.%s".formatted(nome, extension))
                                         .metadata(metadata)
                                                 .build();
 

@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.io.IOException;
 import java.util.List;
 
 @AllArgsConstructor
@@ -43,10 +44,7 @@ public class ProductLinesController {
     }
 
     @PostMapping
-    public ResponseEntity<ProductLinesRepModel> adicionar(@Valid @RequestBody ProductLinesInput productLinesInput) {
-
-        Thread thread = new Thread(new FotoStorageRunnable(productLinesInput.getFile(), fotoStorage, productLinesInput.getProductLine()));
-        thread.start();
+    public ResponseEntity<ProductLinesRepModel> adicionar(@Valid @ModelAttribute ProductLinesInput productLinesInput) {
 
         productLinesRepository.findByProductLine(productLinesInput.getProductLine())
                 .ifPresent(productLines -> {
@@ -57,6 +55,9 @@ public class ProductLinesController {
         ProductLines productLines = productLinesMapper.toEntity(productLinesInput);
         ProductLines savedProductLine = productLinesCatalogService.salvar(productLines);
         ProductLinesRepModel productLinesRepModel = productLinesMapper.toModel(savedProductLine);
+
+        Thread thread = new Thread(new FotoStorageRunnable(productLinesInput.getFile(), fotoStorage, productLinesInput.getProductLine()));
+        thread.start();
 
         return ResponseEntity.status(HttpStatus.CREATED).body(productLinesRepModel);
     }
