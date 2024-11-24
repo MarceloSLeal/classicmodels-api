@@ -1,15 +1,13 @@
 package com.classicmodels.storage;
 
-import com.classicmodels.api.model.input.ProductLinesInput;
-import org.springframework.web.context.request.async.DeferredResult;
 import org.springframework.web.multipart.MultipartFile;
 
 public class FotoStorageRunnable implements Runnable{
 
-    private MultipartFile file;
+    private final MultipartFile file;
 //    private DeferredResult<ProductLinesInput> resultado;
-    private FotoStorage fotoStorage;
-    private String nome;
+    private final FotoStorage fotoStorage;
+    private final String nome;
 
     public FotoStorageRunnable(MultipartFile file, FotoStorage fotoStorage, String nome) {
         this.file = file;

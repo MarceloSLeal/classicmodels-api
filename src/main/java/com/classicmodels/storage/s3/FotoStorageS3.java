@@ -26,8 +26,9 @@ public class FotoStorageS3 implements FotoStorage {
     private Dotenv dotenv = Dotenv.load();
     private AwsCredentials credentials;
     private S3Client s3Client;
-    private static String BUCKET;
+    private String bucket;
     private String extension;
+    private String folderPrefix;
 
     public FotoStorageS3() {
     }
@@ -41,7 +42,9 @@ public class FotoStorageS3 implements FotoStorage {
         String accessKey = dotenv.get("ACCESS_KEY");
         String secretKey = dotenv.get("SECRET_KEY");
         String regionName = dotenv.get("REGION_NAME");
-        BUCKET = dotenv.get("BUCKET");
+        bucket = dotenv.get("BUCKET");
+        folderPrefix = "productLinesImages/";
+
 
         this.credentials = AwsBasicCredentials.create(accessKey, secretKey);
         this.s3Client = S3Client.builder()
@@ -81,8 +84,8 @@ public class FotoStorageS3 implements FotoStorage {
         metadata.put("Extension", extension);
 
         PutObjectRequest por = PutObjectRequest.builder()
-                        .bucket(BUCKET)
-                                .key("%s.%s".formatted(nome, extension))
+                        .bucket(bucket)
+                                .key("%s%s.%s".formatted(folderPrefix, nome, extension))
                                         .metadata(metadata)
                                                 .build();
 
