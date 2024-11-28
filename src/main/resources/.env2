@@ -1,4 +1,4 @@
-#rename this file to .env and set the values
+#Rename this file to .env and set the values
 #Docker containers
 MYSQL_ADDRESS=
 MYSQL_PORT=
@@ -6,7 +6,13 @@ MYSQL_ROOT_PASSWORD=
 MYSQL_DATABASE=
 MYSQL_USER=
 MYSQL_PASSWORD=
+
+#CrossOrigin
 CONTROLLERS_CROSS_ORIGIN=
+
+#Access Token
+TOKEN=
+
 #AWS S3
 ACCESS_KEY=
 SECRET_KEY=
