@@ -52,6 +52,7 @@ const Customers = () => {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': 'HwuYQd-zrRw6WfCOUz4VcRrdjHeCGvyL6QD76aQUpdQ',
         },
       });
 
