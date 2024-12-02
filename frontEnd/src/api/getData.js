@@ -4,16 +4,16 @@ const useFetchData = (apiUrl) => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const token = import.meta.env.VITE_TOKEN;
 
   useEffect(() => {
     const fetchData = async () => {
       try {
 
-        // const response = await fetch(apiUrl);
         const response = await fetch(apiUrl, {
           method: "GET",
           headers: {
-            'Authorization': 'HwuYQd-zrRw6WfCOUz4VcRrdjHeCGvyL6QD76aQUpdQ',
+            'Authorization': `${token}`,
           },
           credentials: 'include',
         });
