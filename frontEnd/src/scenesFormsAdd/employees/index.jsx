@@ -13,6 +13,7 @@ import { Urls } from "../../api/Paths";
 import { Constants } from "../../data/constants";
 import FormListCalls from "../../components/FormsListCalls";
 import OperationStatusDialog from "../../components/dialogs/OperationStatusDialog"
+import PostForms from "../../components/PostForms";
 
 const initialValues = {
   lastName: "", firstName: "", email: "", reportsTo: "", jobTitle: "",
@@ -51,13 +52,8 @@ const FormAddEmployee = () => {
     setStatus('');
     setResponseCode(null);
     try {
-      const response = await fetch(url.employees.findAll_Post, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(values),
-      });
+
+      const response = await PostForms(values, url.employees.findAll_Post);
       const data = await response.json();
 
       setResponseCode(response.status);

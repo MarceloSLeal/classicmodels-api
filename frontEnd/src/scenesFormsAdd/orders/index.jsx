@@ -18,6 +18,7 @@ import OrdersAddFormInputs from "../../components/formInputs/OrdersAdd";
 import OrdersDetailsFormInputs from "../../components/formInputs/OrdersDetails";
 import dayjs from 'dayjs';
 import OperationStatusDialog from "../../components/dialogs/OperationStatusDialog"
+import PostForms from "../../components/PostForms";
 
 const currentTime = dayjs();
 let tomorrow = dayjs().add(1, 'day');
@@ -205,16 +206,9 @@ const FormAddOrders = () => {
     };
 
     try {
-      const response = await fetch(url.orders.findAll_Post, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formattedValues),
-      });
-      const data = await response.json();
 
-      setResponseCode(response.status);
+      const response = await PostForms(formattedValues, url.orders.findAll_Post);
+      const data = await response.json();
 
       if (response.ok) {
         setStatus(`Order ${data.id} created successfully!`);
@@ -248,13 +242,8 @@ const FormAddOrders = () => {
   const handlePostOrdersDetails = async (rowsUpdate) => {
 
     try {
-      const response = await fetch(url.orderdetails.Post, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(rowsUpdate),
-      });
+
+      const response = await PostForms(rowsUpdate, url.orderdetails.Post);
 
       if (response.ok) {
         setStatus((prevString) => prevString + " Order Details created sucessfully!");

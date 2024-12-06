@@ -1,8 +1,6 @@
 const FormListCalls = async (url, setData) => {
   const token = import.meta.env.VITE_TOKEN;
 
-  console.log(token);
-
   try {
     const response = await fetch(url, {
       method: "GET",

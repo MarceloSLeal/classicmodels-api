@@ -11,7 +11,8 @@ import CustomersFormInputs from "../../components/formInputs/Customers";
 import Header from "../../components/Header";
 import { Urls } from "../../api/Paths";
 import FormListCalls from "../../components/FormsListCalls";
-import OperationStatusDialog from "../../components/dialogs/OperationStatusDialog"
+import OperationStatusDialog from "../../components/dialogs/OperationStatusDialog";
+import PostForms from "../../components/PostForms";
 
 const initialValues = {
   name: "", email: "", contactLastName: "", contactFirstName: "", phone: "",
@@ -61,13 +62,18 @@ const FormAddCustomer = () => {
     setStatus('');
     setResponseCode(null);
     try {
-      const response = await fetch(url.customers.findAll_Post, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(values),
-      });
+      // const response = await fetch(url.customers.findAll_Post, {
+      //   method: 'POST',
+      //   headers: {
+      //     'Content-Type': 'application/json',
+      //   },
+      //   body: JSON.stringify(values),
+      // });
+      // const data = await response.json();
+
+      // console.log(url.customers.findAll_Post);
+
+      const response = await PostForms(values, url.customers.findAll_Post);
       const data = await response.json();
 
       setResponseCode(response.status);

@@ -15,6 +15,7 @@ import PaymentsAddFormInputs from "../../components/formInputs/PaymentsAdd";
 import useFetchData from '../../api/getData';
 import dayjs from 'dayjs';
 import OperationStatusDialog from "../../components/dialogs/OperationStatusDialog"
+import PostForms from "../../components/PostForms";
 
 const initialValues = {
   orderId: "",
@@ -77,13 +78,7 @@ const FormAddPayments = () => {
         amount: parseFloat(values.amount),
       }
 
-      const response = await fetch(url.payments.findAll_Post, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(valuesToSubmit),
-      });
+      const response = await PostForms(valuesToSubmit, url.payments.findAll_Post);
       const data = await response.json();
 
       setResponseCode(response.status);
