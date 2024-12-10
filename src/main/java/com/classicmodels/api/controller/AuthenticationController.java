@@ -6,7 +6,6 @@ import com.classicmodels.domain.model.Users;
 import com.classicmodels.domain.repository.UsersRepository;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -21,10 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/auth")
 public class AuthenticationController {
 
-    @Autowired
     private AuthenticationManager authenticationManager;
-
-    @Autowired
     private UsersRepository usersRepository;
 
     @PostMapping("/login")
@@ -42,7 +38,7 @@ public class AuthenticationController {
         String encryptedPassword = new BCryptPasswordEncoder().encode(usersInput.getPassword());
         Users newUser = new Users(usersInput.getLogin(), encryptedPassword, usersInput.getRole());
 
-        System.out.println(newUser.getRole());
+        System.out.println(newUser.getPassword());
 
         this.usersRepository.save(newUser);
 

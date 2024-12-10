@@ -32,7 +32,7 @@ public class Users implements UserDetails {
     @NotBlank
     private String login;
 
-    @Size(max = 50)
+    @Size(max = 256)
     @NotBlank
     private String password;
 

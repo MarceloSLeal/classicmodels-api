@@ -1,16 +1,16 @@
 package com.classicmodels.domain.service;
 
 import com.classicmodels.domain.repository.UsersRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+@AllArgsConstructor
 @Service
 public class AuthorizationService implements UserDetailsService {
 
-    @Autowired
     UsersRepository usersRepository;
 
     @Override
