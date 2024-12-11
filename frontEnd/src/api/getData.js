@@ -13,7 +13,7 @@ const useFetchData = (apiUrl) => {
         const response = await fetch(apiUrl, {
           method: "GET",
           headers: {
-            'Authorization': `${token}`,
+            'Authorization': `Bearer ${token}`,
           },
           credentials: 'include',
         });
