@@ -8,7 +8,6 @@ import com.classicmodels.domain.repository.UsersRepository;
 import com.classicmodels.security.TokenService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import org.apache.catalina.User;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -17,6 +16,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 
 @AllArgsConstructor
 @RestController
@@ -28,13 +30,14 @@ public class AuthenticationController {
     private TokenService tokenService;
 
     @PostMapping("/login")
-    public ResponseEntity login(@RequestBody @Valid AuthInput authInput) {
+    public ResponseEntity<LoginResponseTokenRepModel> login(@RequestBody @Valid AuthInput authInput) {
         var userNamePassword = new UsernamePasswordAuthenticationToken(authInput.getLogin(), authInput.getPassword());
         var auth = this.authenticationManager.authenticate(userNamePassword);
 
         var token = tokenService.generateToken((Users) auth.getPrincipal());
 
-        return ResponseEntity.ok(new LoginResponseTokenRepModel(token));
+        return ResponseEntity.ok(new LoginResponseTokenRepModel(token, authInput.getLogin(),
+                LocalDateTime.now().plusMinutes(10).atOffset(ZoneOffset.of("-03:00")).toLocalDateTime()));
     }
 
     @PostMapping("/register")
