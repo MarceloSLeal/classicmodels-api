@@ -31,13 +31,18 @@ public class AuthenticationController {
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponseTokenRepModel> login(@RequestBody @Valid AuthInput authInput) {
-        var userNamePassword = new UsernamePasswordAuthenticationToken(authInput.getLogin(), authInput.getPassword());
-        var auth = this.authenticationManager.authenticate(userNamePassword);
+            var userNamePassword = new UsernamePasswordAuthenticationToken(authInput.getLogin(), authInput.getPassword());
+            var auth = this.authenticationManager.authenticate(userNamePassword);
 
-        var token = tokenService.generateToken((Users) auth.getPrincipal());
+            var token = tokenService.generateToken((Users) auth.getPrincipal());
 
-        return ResponseEntity.ok(new LoginResponseTokenRepModel(token, authInput.getLogin(),
-                LocalDateTime.now().plusMinutes(10).atOffset(ZoneOffset.of("-03:00")).toLocalDateTime()));
+            if (token.isEmpty()) {
+                return ResponseEntity.badRequest().build();
+            }
+
+            return ResponseEntity.ok(new LoginResponseTokenRepModel(token, authInput.getLogin(),
+                    LocalDateTime.now().plusMinutes(10).atOffset(ZoneOffset.of("-03:00")).toLocalDateTime()));
+
     }
 
     @PostMapping("/register")
