@@ -6,6 +6,8 @@ import { Formik } from "formik";
 import * as yup from "yup";
 import OperationStatusDialog from "../../components/dialogs/OperationStatusDialog";
 
+import RefreshToken from "../auth/RefreshToken";
+
 const Login = () => {
   const isNonMobile = useMediaQuery("(min-width:600px)");
   const url = import.meta.env.VITE_URL_PREFIX;
@@ -50,11 +52,19 @@ const Login = () => {
     console.log("User:", data.user);
     console.log("Expires:", data.expires);
 
+    // console.log(localStorage.getItem(("token")));
+
   }
 
   const handleClose = () => {
     setDialogOpen(false);
   }
+
+  const handleTeste = () => {
+    console.log("handleTeste");
+    RefreshToken(); // Aguarda a execução do RefreshToken
+  };
+
 
   return (
     <Box
@@ -116,6 +126,15 @@ const Login = () => {
                 variant="contained"
               >
                 Login
+              </Button>
+
+              <Button
+                onClick={handleTeste}
+                fullWidth
+                color="secondary"
+                variant="contained"
+              >
+                Teste
               </Button>
             </Box>
           </form>
