@@ -18,7 +18,7 @@ const RefreshToken = async () => {
   console.log("timeRemaining", timeRemaining);
 
   // if (timeRemaining < 2 * 60 * 1000) {
-  if (timeRemaining < 3 * 60 * 1000) {
+  if (timeRemaining < 2 * 60 * 1000) {
     try {
       const response = await fetch(url + "auth/refresh", {
         method: "POST",

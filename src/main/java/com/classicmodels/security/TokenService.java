@@ -1,7 +1,6 @@
 package com.classicmodels.security;
 
 import com.auth0.jwt.JWT;
-import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
@@ -9,15 +8,18 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 import com.classicmodels.api.model.LoginResponseTokenRepModel;
 import com.classicmodels.domain.model.Users;
 import com.classicmodels.domain.repository.UsersRepository;
+import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cglib.core.Local;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 
+@Slf4j
 @Service
 public class TokenService {
 
@@ -40,23 +42,24 @@ public class TokenService {
 
     public LoginResponseTokenRepModel refreshToken(String token){
         try{
-            Algorithm algorithm = Algorithm.HMAC256(tokenKey);
-            JWTVerifier verifier = JWT.require(algorithm).withIssuer("auth-api").build();
-            DecodedJWT decodedJWT = verifier.verify(token);
-
+            DecodedJWT decodedJWT = JWT.decode(token);
             String userName = decodedJWT.getSubject();
-            UserDetails user = usersRepository.findByLogin(userName);
 
-            String newtoken = generateToken((Users) user);
+            log.debug("Decoded username from token: {}", userName);
+//            System.out.println("userName: " + userName);
+            Users user = usersRepository.findByLogin(userName)
+                            .orElseThrow(() -> new UsernameNotFoundException("User not found: " + userName));
 
-            LoginResponseTokenRepModel repModel = new LoginResponseTokenRepModel(
-                    newtoken,
-                    ((Users) user).getLogin(),
+            System.out.println("RefreshToken");
+
+            String newToken = generateToken(user);
+
+            return new LoginResponseTokenRepModel(
+                    newToken,
+                    user.getLogin(),
                     LocalDateTime.now().plusMinutes(2).atOffset(ZoneOffset.of("-03:00")).toLocalDateTime());
-
-            return repModel;
-        } catch (JWTCreationException exception) {
-            throw new RuntimeException("Error while refreshing token", exception);
+        } catch (Exception e) {
+            throw new RuntimeException("Error while refreshing token", e);
         }
     }
 
@@ -74,7 +77,7 @@ public class TokenService {
     }
 
     private Instant genExpirationDate(){
-        return LocalDateTime.now().plusMinutes(2).toInstant(ZoneOffset.of("-03:00"));
+        return LocalDateTime.now().plusMinutes(10).toInstant(ZoneOffset.of("-03:00"));
     }
 
 }

@@ -16,13 +16,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.Optional;
 
 @AllArgsConstructor
 @RestController
@@ -32,6 +30,11 @@ public class AuthenticationController {
     private AuthenticationManager authenticationManager;
     private UsersRepository usersRepository;
     private TokenService tokenService;
+
+    @GetMapping("/user/{user}")
+    public ResponseEntity<Optional<Users>> user(@PathVariable String user){
+        return ResponseEntity.ok(usersRepository.findByLogin(user));
+    }
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponseTokenRepModel> login(@RequestBody @Valid AuthInput authInput) {
@@ -45,7 +48,7 @@ public class AuthenticationController {
         }
 
         return ResponseEntity.ok(new LoginResponseTokenRepModel(token, authInput.getLogin(),
-                LocalDateTime.now().plusMinutes(3).atOffset(ZoneOffset.of("-03:00")).toLocalDateTime()));
+                LocalDateTime.now().plusMinutes(1).atOffset(ZoneOffset.of("-03:00")).toLocalDateTime()));
 
     }
 
@@ -60,7 +63,6 @@ public class AuthenticationController {
         String token = authorizationHeader.replace("Bearer ", "");
 
         try {
-            System.out.println(token);
             return ResponseEntity.ok(tokenService.refreshToken(token));
 
         } catch (JWTVerificationException e) {
