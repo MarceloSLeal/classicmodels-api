@@ -1,6 +1,5 @@
 package com.classicmodels.api.controller;
 
-import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.classicmodels.api.model.LoginResponseTokenRepModel;
 import com.classicmodels.api.model.input.AuthInput;
@@ -47,9 +46,16 @@ public class AuthenticationController {
             return ResponseEntity.badRequest().build();
         }
 
-        return ResponseEntity.ok(new LoginResponseTokenRepModel(token, authInput.getLogin(),
-                LocalDateTime.now().plusMinutes(1).atOffset(ZoneOffset.of("-03:00")).toLocalDateTime()));
+        LoginResponseTokenRepModel repModel = new LoginResponseTokenRepModel(
+                token,
+                authInput.getLogin(),
+                LocalDateTime.now().plusMinutes(1).atOffset(ZoneOffset.of("-03:00")).toLocalDateTime(),
+                usersRepository.findRoleByLogin(authInput.getLogin())
+        );
 
+//        return ResponseEntity.ok(new LoginResponseTokenRepModel(token, authInput.getLogin(),
+//                LocalDateTime.now().plusMinutes(1).atOffset(ZoneOffset.of("-03:00")).toLocalDateTime()));
+        return ResponseEntity.ok(repModel);
     }
 
     @PostMapping("/refresh")
@@ -71,7 +77,7 @@ public class AuthenticationController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity register(@RequestBody @Valid UsersInput usersInput) {
+    public ResponseEntity<Void> register(@RequestBody @Valid UsersInput usersInput) {
         if (this.usersRepository.findByLogin(usersInput.getLogin()) != null) return ResponseEntity.badRequest().build();
 
         String encryptedPassword = new BCryptPasswordEncoder().encode(usersInput.getPassword());

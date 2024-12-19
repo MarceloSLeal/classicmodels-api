@@ -8,9 +8,10 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 import com.classicmodels.api.model.LoginResponseTokenRepModel;
 import com.classicmodels.domain.model.Users;
 import com.classicmodels.domain.repository.UsersRepository;
+import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -23,9 +24,15 @@ import java.time.ZoneOffset;
 @Service
 public class TokenService {
 
-    @Value("${JWT_TOKEN_KEY")
+    @Value("${JWT_TOKEN_KEY}")
     private String tokenKey;
+
+    @Autowired
     private UsersRepository usersRepository;
+
+//    public TokenService(){
+//
+//    }
 
     public String generateToken(Users users){
         try{
@@ -46,7 +53,6 @@ public class TokenService {
             String userName = decodedJWT.getSubject();
 
             log.debug("Decoded username from token: {}", userName);
-//            System.out.println("userName: " + userName);
             Users user = usersRepository.findByLogin(userName)
                             .orElseThrow(() -> new UsernameNotFoundException("User not found: " + userName));
 
@@ -57,7 +63,8 @@ public class TokenService {
             return new LoginResponseTokenRepModel(
                     newToken,
                     user.getLogin(),
-                    LocalDateTime.now().plusMinutes(2).atOffset(ZoneOffset.of("-03:00")).toLocalDateTime());
+                    LocalDateTime.now().plusMinutes(2).atOffset(ZoneOffset.of("-03:00")).toLocalDateTime(),
+                    user.getRole());
         } catch (Exception e) {
             throw new RuntimeException("Error while refreshing token", e);
         }

@@ -1,5 +1,6 @@
 package com.classicmodels.domain.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
