@@ -1,6 +1,10 @@
 import { ColorModeContext, useMode } from './theme';
 import { CssBaseline, ThemeProvider } from '@mui/material';
 import { Route, Routes, useLocation } from 'react-router-dom';
+
+import { AuthProvider, useAuth } from './auth/AuthContext.jsx';
+import ProtectedRoute from './auth/ProtectedRoute';
+
 import Topbar from './scenes/global/Topbar';
 import Sidebar from './scenes/global/Sidebar';
 import Dashboard from "./scenes/dashboard";
@@ -38,63 +42,85 @@ import Geography from "./scenes/geography";
 const App = () => {
   const [theme, colorMode] = useMode();
 
-  const location = useLocation();
-
-  const isLoginRoute = location.pathname === "/login";
-
-  console.log(isLoginRoute);
-
   return (
     <ColorModeContext.Provider value={colorMode}>
       <ThemeProvider theme={theme}>
         <CssBaseline />
-        {isLoginRoute ? (
-          <Login />
-        ) : (
+
+        <AuthProvider>
           <div className="app">
-            <Sidebar />
-            <main className="content">
-              <Topbar />
-              <Routes>
-                <Route path="/" element={<Dashboard />} />
-                <Route path="/login" element={<Login />} />
 
-                <Route path="/customers" element={<Customers />} />
-                <Route path="/employees" element={<Employees />} />
-                <Route path="/offices" element={<Offices />} />
-                <Route path="/orderdetails" element={<OrderDetails />} />
-                <Route path="/orders" element={<Orders />} />
-                <Route path="/payments" element={<Payments />} />
-                <Route path="/productlines" element={<ProductLines />} />
+            <Layout />
 
-                <Route path="/selectorderid" element={<SelectOrderId />} />
-                <Route path="/selectproductid" element={<SelectProductId />} />
-
-                <Route path="/formaddcustomer" element={<FormAddCustomer />} />
-                <Route path="/formeditcustomer" element={<FormEditCustomer />} />
-                <Route path="/formaddemployee" element={<FormAddEmployee />} />
-                <Route path="/formeditemployee" element={<FormEditEmployee />} />
-                <Route path="/formaddoffices" element={<FormAddOffices />} />
-                <Route path="/formeditoffices" element={<FormEditOffices />} />
-                <Route path="/formaddorders" element={<FormAddOrders />} />
-                <Route path="/formeditorders" element={<FormEditOrders />} />
-                <Route path="/formaddpayments" element={<FormAddPayments />} />
-                <Route path="/formaddproductlines" element={<FormAddProductLines />} />
-
-                <Route path="/form" element={<Form />} />
-                <Route path="/calendar" element={<Calendar />} />
-                <Route path="/bar" element={<Bar />} />
-                <Route path="/pie" element={<Pie />} />
-                <Route path="/line" element={<Line />} />
-                <Route path="/geography" element={<Geography />} />
-
-              </Routes>
-            </main>
           </div>
-        )}
+        </AuthProvider>
+
       </ThemeProvider>
     </ColorModeContext.Provider>
   )
 }
+
+const Layout = () => {
+  const { isAuthenticated } = useAuth();
+
+  return (
+    <>
+      {isAuthenticated && <Sidebar />}
+      <main className="content">
+        {isAuthenticated && <Topbar />}
+        <Routes>
+
+          {/* Rota pública para login */}
+          <Route path="/login" element={<Login />} />
+
+          <Route path="/login" element={<Login />} />
+
+          {/* Rotas protegidas */}
+          <Route
+            path="/*"
+            element={
+              <ProtectedRoute>
+                <Routes>
+
+                  {/* Outras rotas protegidas */}
+                  <Route path="/" element={<Dashboard />} />
+
+                  <Route path="/customers" element={<Customers />} />
+                  <Route path="/employees" element={<Employees />} />
+                  <Route path="/offices" element={<Offices />} />
+                  <Route path="/orderdetails" element={<OrderDetails />} />
+                  <Route path="/orders" element={<Orders />} />
+                  <Route path="/payments" element={<Payments />} />
+                  <Route path="/productlines" element={<ProductLines />} />
+
+                  <Route path="/selectorderid" element={<SelectOrderId />} />
+                  <Route path="/selectproductid" element={<SelectProductId />} />
+
+                  <Route path="/formaddcustomer" element={<FormAddCustomer />} />
+                  <Route path="/formeditcustomer" element={<FormEditCustomer />} />
+                  <Route path="/formaddemployee" element={<FormAddEmployee />} />
+                  <Route path="/formeditemployee" element={<FormEditEmployee />} />
+                  <Route path="/formaddoffices" element={<FormAddOffices />} />
+                  <Route path="/formeditoffices" element={<FormEditOffices />} />
+                  <Route path="/formaddorders" element={<FormAddOrders />} />
+                  <Route path="/formeditorders" element={<FormEditOrders />} />
+                  <Route path="/formaddpayments" element={<FormAddPayments />} />
+                  <Route path="/formaddproductlines" element={<FormAddProductLines />} />
+
+                  <Route path="/form" element={<Form />} />
+                  <Route path="/calendar" element={<Calendar />} />
+                  <Route path="/bar" element={<Bar />} />
+                  <Route path="/pie" element={<Pie />} />
+                  <Route path="/line" element={<Line />} />
+                  <Route path="/geography" element={<Geography />} />
+                </Routes>
+              </ProtectedRoute>
+            }
+          />
+        </Routes>
+      </main>
+    </>
+  );
+};
 
 export default App;

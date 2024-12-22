@@ -12,6 +12,8 @@ import PersonOutLinedIcon from "@mui/icons-material/PersonOutlined";
 import SearchIcon from "@mui/icons-material/Search";
 import Tooltip from '@mui/material/Tooltip';
 
+import { useAuth } from "../../auth/AuthContext";
+
 import { ColorModeContext, tokens } from "../../theme";
 
 const Topbar = () => {
@@ -19,10 +21,16 @@ const Topbar = () => {
   const colors = tokens(theme.palette.mode);
   const colorMode = useContext(ColorModeContext);
   const navigateLogin = useNavigate();
+  const userLogout = useAuth();
 
 
   const handleLogoutButton = () => {
     navigateLogin("/login");
+  }
+
+  const handleRemoveToken = () => {
+    userLogout.logout();
+    console.log("Logout");
   }
 
   return <Box display="flex" justifyContent="space-between" p={2}>
@@ -49,7 +57,7 @@ const Topbar = () => {
         </IconButton>
       </Tooltip>
 
-      <IconButton>
+      <IconButton onClick={handleRemoveToken}>
         <NotificationsOutLinedIcon />
       </IconButton>
 

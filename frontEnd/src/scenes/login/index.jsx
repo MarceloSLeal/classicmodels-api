@@ -1,10 +1,13 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 import { Box, Button, TextField } from "@mui/material";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { Formik } from "formik";
 import * as yup from "yup";
 import OperationStatusDialog from "../../components/dialogs/OperationStatusDialog";
+
+import { useAuth } from "../../auth/AuthContext";
 
 import RefreshToken from "../auth/RefreshToken";
 
@@ -14,6 +17,8 @@ const Login = () => {
   const [responseCode, setResponseCode] = useState(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [status, setStatus] = useState('');
+  const navigateDashBoard = useNavigate();
+  const userLogin = useAuth();
 
   const initialValues = {
     login: "", password: "",
@@ -44,15 +49,19 @@ const Login = () => {
 
     const data = await response.json();
 
+    userLogin.login(data.token);
+
     localStorage.setItem("token", data.token);
     localStorage.setItem("user", data.user);
+    localStorage.setItem("role", data.role);
     localStorage.setItem("expires", new Date(data.expires).getTime());
 
     console.log("Token:", data.token);
     console.log("User:", data.user);
+    console.log("role", data.role);
     console.log("Expires:", data.expires);
 
-    // console.log(localStorage.getItem(("token")));
+    navigateDashBoard("/");
 
   }
 

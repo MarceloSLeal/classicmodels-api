@@ -77,16 +77,15 @@ public class AuthenticationController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<Void> register(@RequestBody @Valid UsersInput usersInput) {
-        if (this.usersRepository.findByLogin(usersInput.getLogin()) != null) return ResponseEntity.badRequest().build();
+    public ResponseEntity<String> register(@RequestBody @Valid UsersInput usersInput) {
+        if (this.usersRepository.findByLogin(usersInput.getLogin()).isPresent()) {
+            return ResponseEntity.badRequest().body("This login is already in use");
+        }
 
         String encryptedPassword = new BCryptPasswordEncoder().encode(usersInput.getPassword());
         Users newUser = new Users(usersInput.getLogin(), encryptedPassword, usersInput.getRole());
 
-        System.out.println(newUser.getPassword());
-
         this.usersRepository.save(newUser);
-
         return ResponseEntity.ok().build();
     }
 
