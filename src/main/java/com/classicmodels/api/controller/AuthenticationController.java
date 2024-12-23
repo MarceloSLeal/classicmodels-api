@@ -30,11 +30,6 @@ public class AuthenticationController {
     private UsersRepository usersRepository;
     private TokenService tokenService;
 
-    @GetMapping("/user/{user}")
-    public ResponseEntity<Optional<Users>> user(@PathVariable String user){
-        return ResponseEntity.ok(usersRepository.findByLogin(user));
-    }
-
     @PostMapping("/login")
     public ResponseEntity<LoginResponseTokenRepModel> login(@RequestBody @Valid AuthInput authInput) {
         var userNamePassword = new UsernamePasswordAuthenticationToken(authInput.getLogin(), authInput.getPassword());
@@ -43,6 +38,7 @@ public class AuthenticationController {
         var token = tokenService.generateToken((Users) auth.getPrincipal());
 
         if (token.isEmpty()) {
+            System.out.println("token vazio");
             return ResponseEntity.badRequest().build();
         }
 

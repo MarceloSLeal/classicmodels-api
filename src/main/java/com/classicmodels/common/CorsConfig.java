@@ -6,8 +6,9 @@ import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-@Configuration
-@EnableWebMvc
+//@Configuration
+//@EnableWebMvc
+//TODO - Excluir essa classe
 public class CorsConfig implements WebMvcConfigurer {
 
     @Value("${CONTROLLERS_CROSS_ORIGIN}")

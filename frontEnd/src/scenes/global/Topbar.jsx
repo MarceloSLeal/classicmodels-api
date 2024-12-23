@@ -25,12 +25,7 @@ const Topbar = () => {
 
 
   const handleLogoutButton = () => {
-    navigateLogin("/login");
-  }
-
-  const handleRemoveToken = () => {
     userLogout.logout();
-    console.log("Logout");
   }
 
   return <Box display="flex" justifyContent="space-between" p={2}>
@@ -57,7 +52,7 @@ const Topbar = () => {
         </IconButton>
       </Tooltip>
 
-      <IconButton onClick={handleRemoveToken}>
+      <IconButton>
         <NotificationsOutLinedIcon />
       </IconButton>
 
