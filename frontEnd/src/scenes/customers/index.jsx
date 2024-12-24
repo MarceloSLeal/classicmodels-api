@@ -18,13 +18,11 @@ import { tokens } from "../../theme";
 import ConfirmDeleteDialog from "../../components/dialogs/ConfirmDeleteDialog"
 import BoxDataGrid from "../../components/boxes/BoxDataGrid"
 
-import OperationStatusDialog from "../../components/dialogs/OperationStatusDialog";
-import { useAuth } from '../../auth/AuthContext';
 
 const Customers = () => {
   const urlData = Urls();
   const theme = useTheme();
-  const { data, loading, error, responseStatus } = useFetchData(urlData.customers.findAll_Post);
+  const { data, loading, error } = useFetchData(urlData.customers.findAll_Post);
   const [dialogConfirmOpen, setDialogConfirmOpen] = useState(false);
   const [dialogDeleteOpen, setDialogDeleteOpen] = useState(false);
 
@@ -33,11 +31,6 @@ const Customers = () => {
   const [status, setStatus] = useState('');
   const [rows, setRows] = useState([]);
   const navigateEdit = useNavigate();
-  const userLogout = useAuth();
-
-  const handleStatusResponse = () => {
-    userLogout.logout();
-  };
 
   const handleEditDatagridButton = (params) => () => {
     const rowData = params.row;
@@ -148,12 +141,6 @@ const Customers = () => {
       },
     },
   ];
-
-  useEffect(() => {
-    if (responseStatus === 403) {
-      handleStatusResponse();
-    }
-  }, [responseStatus]);
 
 
   useEffect(() => {
