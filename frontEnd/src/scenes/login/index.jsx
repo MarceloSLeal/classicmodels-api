@@ -71,7 +71,7 @@ const Login = () => {
 
   const handleTeste = () => {
     console.log("handleTeste");
-    RefreshToken(); // Aguarda a execução do RefreshToken
+    RefreshToken();
   };
 
 

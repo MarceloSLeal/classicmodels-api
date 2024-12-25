@@ -40,6 +40,8 @@ const RefreshToken = async () => {
 
       console.log("Token refreshed");
       console.log(data.token);
+      console.log(data.expires);
+
     } catch (error) {
       console.error("Fail to request token", error);
     }
