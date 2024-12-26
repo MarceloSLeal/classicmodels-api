@@ -19,10 +19,9 @@ import java.util.List;
 @Getter
 @Setter
 @AllArgsConstructor
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@EqualsAndHashCode(of = "id")
 public class Users implements UserDetails {
 
-    @EqualsAndHashCode.Include
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
@@ -40,7 +39,6 @@ public class Users implements UserDetails {
     private UsersRole role;
 
     public Users(){
-
     }
 
     public Users(String login, String password, UsersRole role){

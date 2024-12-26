@@ -1,7 +1,7 @@
 package com.classicmodels.api.controller;
 
 import com.auth0.jwt.exceptions.JWTVerificationException;
-import com.classicmodels.api.model.LoginResponseTokenRepModel;
+import com.classicmodels.api.model.TokenRepModel;
 import com.classicmodels.api.model.input.AuthInput;
 import com.classicmodels.api.model.input.UsersInput;
 import com.classicmodels.domain.model.Users;
@@ -15,11 +15,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.web.bind.annotation.*;
-
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
-import java.util.Optional;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @AllArgsConstructor
 @RestController
@@ -31,31 +30,21 @@ public class AuthenticationController {
     private TokenService tokenService;
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponseTokenRepModel> login(@RequestBody @Valid AuthInput authInput) {
+    public ResponseEntity<TokenRepModel> login(@RequestBody @Valid AuthInput authInput) {
         var userNamePassword = new UsernamePasswordAuthenticationToken(authInput.getLogin(), authInput.getPassword());
         var auth = this.authenticationManager.authenticate(userNamePassword);
 
-        var token = tokenService.generateToken((Users) auth.getPrincipal());
+        TokenRepModel token = tokenService.generateToken((Users) auth.getPrincipal());
 
-        if (token.isEmpty()) {
-            System.out.println("token vazio");
+        if (token == null) {
             return ResponseEntity.badRequest().build();
         }
 
-        LoginResponseTokenRepModel repModel = new LoginResponseTokenRepModel(
-                token,
-                authInput.getLogin(),
-                LocalDateTime.now().plusMinutes(1).atOffset(ZoneOffset.of("-03:00")).toLocalDateTime(),
-                usersRepository.findRoleByLogin(authInput.getLogin())
-        );
-
-//        return ResponseEntity.ok(new LoginResponseTokenRepModel(token, authInput.getLogin(),
-//                LocalDateTime.now().plusMinutes(1).atOffset(ZoneOffset.of("-03:00")).toLocalDateTime()));
-        return ResponseEntity.ok(repModel);
+        return ResponseEntity.ok(token);
     }
 
     @PostMapping("/refresh")
-    public ResponseEntity<LoginResponseTokenRepModel> refresh(HttpServletRequest request) {
+    public ResponseEntity<TokenRepModel> refresh(HttpServletRequest request) {
         String authorizationHeader = request.getHeader("Authorization");
 
         if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer")) {
@@ -74,7 +63,8 @@ public class AuthenticationController {
 
     @PostMapping("/register")
     public ResponseEntity<String> register(@RequestBody @Valid UsersInput usersInput) {
-        if (this.usersRepository.findByLogin(usersInput.getLogin()).isPresent()) {
+//        if (this.usersRepository.findByLogin(usersInput.getLogin()).isPresent()) {
+        if (this.usersRepository.findByLogin(usersInput.getLogin()) != null) {
             return ResponseEntity.badRequest().body("This login is already in use");
         }
 
