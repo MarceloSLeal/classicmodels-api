@@ -3,6 +3,7 @@ package com.classicmodels.security;
 import com.classicmodels.domain.repository.UsersRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
@@ -27,7 +28,8 @@ public class SecurityFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
-        String token = this.recoverToken(request);
+//        String token = this.recoverToken(request);
+        String token = this.recoverCookieToken(request);
         String validatedToken = tokenService.validateToken(token);
 
         System.out.println("validatedToken: " + validatedToken);
@@ -50,4 +52,16 @@ public class SecurityFilter extends OncePerRequestFilter {
         if(authHeader == null) return null;
         return authHeader.replace("Bearer ", "");
     }
+    private String recoverCookieToken(HttpServletRequest request) {
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if ("token".equals(cookie.getName())) {  // Substitua "token" pelo nome do seu cookie
+                    return cookie.getValue();
+                }
+            }
+        }
+        return "";
+    }
+
 }

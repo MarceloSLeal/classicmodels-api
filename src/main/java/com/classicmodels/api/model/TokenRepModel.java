@@ -2,10 +2,10 @@ package com.classicmodels.api.model;
 
 import com.classicmodels.domain.model.UsersRole;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.Instant;
 import java.time.LocalDateTime;
 
 @Getter

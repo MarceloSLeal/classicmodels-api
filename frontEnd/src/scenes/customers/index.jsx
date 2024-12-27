@@ -165,14 +165,6 @@ const Customers = () => {
       <Box m="20px">
         <Header title="CUSTOMERS" subtitle="Manage Customers" />
         <Box>Error: {error.message}{ }</Box>
-        <Button
-          onClick={handleStatusResponse}
-          fullWidth
-          color="secondary"
-          variant="contained"
-        >
-          Teste
-        </Button>
       </Box>
     );
   }

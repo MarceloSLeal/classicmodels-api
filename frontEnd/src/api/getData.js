@@ -11,13 +11,13 @@ const useFetchData = (apiUrl) => {
     const fetchData = async () => {
       try {
 
-        var token = localStorage.getItem('token');
+        // var token = localStorage.getItem('token');
 
         const response = await fetch(apiUrl, {
           method: "GET",
-          headers: {
-            'Authorization': `Bearer ${token}`,
-          },
+          // headers: {
+          //   'Authorization': `Bearer ${token}`,
+          // },
           credentials: 'include',
         });
 
