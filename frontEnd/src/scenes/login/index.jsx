@@ -6,10 +6,7 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import { Formik } from "formik";
 import * as yup from "yup";
 import OperationStatusDialog from "../../components/dialogs/OperationStatusDialog";
-
 import { useAuth } from "../../auth/AuthContext";
-
-import RefreshToken from "../auth/RefreshToken";
 
 const Login = () => {
   const isNonMobile = useMediaQuery("(min-width:600px)");
@@ -29,43 +26,6 @@ const Login = () => {
     password: yup.string().max(50).required(),
   })
 
-  // const handleLogin = async (values) => {
-  //
-  //   const response = await fetch(url + "auth/login", {
-  //     method: "POST",
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //     },
-  //     credentials: "include",
-  //
-  //     body: JSON.stringify(values),
-  //   });
-  //
-  //   if (!response.ok) {
-  //     setStatus("Invalid username or password");
-  //     setDialogOpen(true);
-  //     setResponseCode(response.status);
-  //     return;
-  //   }
-  //
-  //   const data = await response.json();
-  //
-  //   userLogin.login(data.token);
-  //
-  //   localStorage.setItem("token", data.token);
-  //   localStorage.setItem("user", data.user);
-  //   localStorage.setItem("role", data.role);
-  //   localStorage.setItem("expires", new Date(data.expires).getTime());
-  //
-  //   console.log("Token:", data.token);
-  //   console.log("User:", data.user);
-  //   console.log("role", data.role);
-  //   console.log("Expires:", data.expires);
-  //
-  //   navigateDashBoard("/");
-  //
-  // }
-
   const handleLogin = async (values) => {
 
     const response = await fetch(url + "auth/login", {
@@ -84,7 +44,12 @@ const Login = () => {
       return;
     }
 
+    const data = await response.json();
+
     userLogin.login();
+
+    localStorage.setItem("user", data.user);
+    localStorage.setItem("role", data.role);
 
     navigateDashBoard("/");
   }
@@ -92,12 +57,6 @@ const Login = () => {
   const handleClose = () => {
     setDialogOpen(false);
   }
-
-  const handleTeste = () => {
-    console.log("handleTeste");
-    RefreshToken();
-  };
-
 
   return (
     <Box
@@ -159,15 +118,6 @@ const Login = () => {
                 variant="contained"
               >
                 Login
-              </Button>
-
-              <Button
-                onClick={handleTeste}
-                fullWidth
-                color="secondary"
-                variant="contained"
-              >
-                Teste
               </Button>
             </Box>
           </form>

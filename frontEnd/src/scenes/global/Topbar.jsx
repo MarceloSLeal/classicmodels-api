@@ -14,6 +14,8 @@ import Tooltip from '@mui/material/Tooltip';
 
 import { useAuth } from "../../auth/AuthContext";
 
+import RefreshToken from "../../auth/RefreshToken";
+
 import { ColorModeContext, tokens } from "../../theme";
 
 const Topbar = () => {
@@ -26,6 +28,10 @@ const Topbar = () => {
 
   const handleLogoutButton = () => {
     userLogout.logout();
+  }
+
+  const handleTeste = () => {
+    RefreshToken();
   }
 
   return <Box display="flex" justifyContent="space-between" p={2}>
@@ -52,7 +58,7 @@ const Topbar = () => {
         </IconButton>
       </Tooltip>
 
-      <IconButton>
+      <IconButton onClick={handleTeste}>
         <NotificationsOutLinedIcon />
       </IconButton>
 

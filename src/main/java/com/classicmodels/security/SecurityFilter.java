@@ -26,11 +26,9 @@ public class SecurityFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
-//        String token = this.recoverToken(request);
         String cookieName = determineCookieName(request);
         String token = this.recoverCookieToken(request, cookieName);
 
-//        if (!Objects.equals(token, "") && !Objects.equals(validatedToken, "")) {
         if (token != null && !token.isEmpty()) {
             String validatedToken = tokenService.validateToken(token);
 
@@ -46,11 +44,6 @@ public class SecurityFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
-    //    private String recoverToken(HttpServletRequest request){
-//        var authHeader = request.getHeader("Authorization");
-//        if(authHeader == null) return null;
-//        return authHeader.replace("Bearer ", "");
-//    }
     private String determineCookieName(HttpServletRequest request) {
         String path = request.getRequestURI();
         if (path.startsWith("/auth/refresh")) {
@@ -70,5 +63,4 @@ public class SecurityFilter extends OncePerRequestFilter {
         }
         return "";
     }
-
 }

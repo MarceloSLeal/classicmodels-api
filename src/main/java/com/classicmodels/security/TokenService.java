@@ -64,7 +64,6 @@ public class TokenService {
 
             log.debug("Decoded username from token: {}", userName);
             Users user = (Users) usersRepository.findByLogin(userName);
-//                            .orElseThrow(() -> new UsernameNotFoundException("User not found: " + userName));
 
             return generateToken(user);
 
