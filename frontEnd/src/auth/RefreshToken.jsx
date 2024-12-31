@@ -1,24 +1,27 @@
 import { useAuth } from "./AuthContext";
 
-const RefreshToken = async () => {
+export const useRefreshToken = () => {
   const { logout } = useAuth();
 
-  const url = import.meta.env.VITE_URL_PREFIX;
+  const refreshToken = async () => {
+    const url = import.meta.env.VITE_URL_PREFIX;
 
-  const response = await fetch(url + "auth/refresh", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    credentials: "include",
-  });
+    const response = await fetch(url + "auth/refresh", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+    });
 
-  if (!response.ok) {
-    console.error("Fail to refresh token");
-    logout();
-  } else {
-    console.log("Token refreshed");
-  }
+    if (!response.ok) {
+      console.error("Fail to refresh token");
+      logout();
+    } else {
+      console.log("Token refreshed");
+    }
+  };
+
+  return refreshToken;
 };
 
-export default RefreshToken;

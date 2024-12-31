@@ -1,6 +1,5 @@
 
 import { useContext } from "react";
-import { useNavigate } from "react-router-dom";
 
 import { Box, IconButton, useTheme } from "@mui/material";
 import InputBase from "@mui/material/InputBase";
@@ -14,24 +13,16 @@ import Tooltip from '@mui/material/Tooltip';
 
 import { useAuth } from "../../auth/AuthContext";
 
-import RefreshToken from "../../auth/RefreshToken";
-
 import { ColorModeContext, tokens } from "../../theme";
 
 const Topbar = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const colorMode = useContext(ColorModeContext);
-  const navigateLogin = useNavigate();
   const userLogout = useAuth();
-
 
   const handleLogoutButton = () => {
     userLogout.logout();
-  }
-
-  const handleTeste = () => {
-    RefreshToken();
   }
 
   return <Box display="flex" justifyContent="space-between" p={2}>
@@ -58,7 +49,7 @@ const Topbar = () => {
         </IconButton>
       </Tooltip>
 
-      <IconButton onClick={handleTeste}>
+      <IconButton>
         <NotificationsOutLinedIcon />
       </IconButton>
 

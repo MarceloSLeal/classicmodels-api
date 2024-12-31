@@ -75,6 +75,8 @@ public class AuthenticationController {
         ResponseCookie tokenCookie = createCookie("token", token.getToken(), token.getExpires());
         ResponseCookie tokenRefreshCookie = createCookie("refreshToken", token.getRefreshToken(), token.getRefreshExpires());
 
+        System.out.println("Token refreshed");
+
         return ResponseEntity.ok()
                 .header("Set-Cookie", tokenCookie.toString())
                 .header("Set-Cookie", tokenRefreshCookie.toString())
