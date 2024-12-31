@@ -1,6 +1,5 @@
 package com.classicmodels.storage;
 
-import io.github.cdimascio.dotenv.Dotenv;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.UUID;

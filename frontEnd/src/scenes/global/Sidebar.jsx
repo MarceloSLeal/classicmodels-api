@@ -4,35 +4,22 @@ import { Box, IconButton, Typography, useTheme } from '@mui/material';
 import { Link } from "react-router-dom";
 import 'react-pro-sidebar/dist/css/styles.css';
 import { tokens } from "../../theme";
-import LightModeOutLinedIcon from "@mui/icons-material/LightModeOutlined";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
-import PeopleOutLinedIcon from "@mui/icons-material/PeopleOutlined";
-import ReceiptOutlinedIcon from "@mui/icons-material/ReceiptOutlined";
 import PersonOutlinedIcon from "@mui/icons-material/PersonOutlined";
 import CalendarTodayOutLinedIcon from "@mui/icons-material/CalendarTodayOutlined";
-import HelpOutLinedIcon from "@mui/icons-material/HelpOutlined";
 import BarChartOutLinedIcon from "@mui/icons-material/BarChartOutlined";
 import PieChartOutlineOutlinedicon from "@mui/icons-material/PieChartOutlineOutlined";
 import TimelineOutLinedIcon from "@mui/icons-material/TimelineOutlined";
 import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
 import MapOutLinedIcon from "@mui/icons-material/MapOutlined";
 
-//For classicModels backend projetct
-//customers
 import PeopleAltOutlinedIcon from '@mui/icons-material/PeopleAltOutlined';
-//emploees
 import Person4OutlinedIcon from '@mui/icons-material/Person4Outlined';
-//offices
 import ApartmentOutlinedIcon from '@mui/icons-material/ApartmentOutlined';
-//orderDetails
 import ViewListOutlinedIcon from '@mui/icons-material/ViewListOutlined';
-//orders
 import BorderColorOutlinedIcon from '@mui/icons-material/BorderColorOutlined';
-//payments
 import PaymentOutlinedIcon from '@mui/icons-material/PaymentOutlined';
-//productLine
 import CategoryOutlinedIcon from '@mui/icons-material/CategoryOutlined';
-//products
 import ToysOutlinedIcon from '@mui/icons-material/ToysOutlined';
 
 const Item = ({ title, to, icon, selected, setSelected }) => {
@@ -56,6 +43,8 @@ const Sidebar = () => {
   const colors = tokens(theme.palette.mode);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [selected, setSelected] = useState("Dashboard");
+  const [user, setUser] = useState(() => localStorage.getItem("user") || "");
+  const [role, setRole] = useState(() => localStorage.getItem("role") || "");
 
   return (
     <Box
@@ -126,10 +115,10 @@ const Sidebar = () => {
                   fontWeight="bold"
                   sx={{ m: "10px 0 0 0" }}
                 >
-                  Marcelo
+                  {user}
                 </Typography>
                 <Typography variant="h5" color={colors.greenAccent[500]}>
-                  Dev Admin
+                  {role}
                 </Typography>
               </Box>
             </Box>

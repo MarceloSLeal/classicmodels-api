@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
 
+
+import { Button } from "@mui/material";
+
 import { GridActionsCellItem } from "@mui/x-data-grid";
 import { Box, useTheme } from "@mui/material";
 import DeleteIcon from '@mui/icons-material/DeleteOutlined';
@@ -15,12 +18,14 @@ import { tokens } from "../../theme";
 import ConfirmDeleteDialog from "../../components/dialogs/ConfirmDeleteDialog"
 import BoxDataGrid from "../../components/boxes/BoxDataGrid"
 
+
 const Customers = () => {
   const urlData = Urls();
   const theme = useTheme();
   const { data, loading, error } = useFetchData(urlData.customers.findAll_Post);
   const [dialogConfirmOpen, setDialogConfirmOpen] = useState(false);
   const [dialogDeleteOpen, setDialogDeleteOpen] = useState(false);
+
   const [idDelete, setIdDelete] = useState(null);
   const colors = tokens(theme.palette.mode);
   const [status, setStatus] = useState('');
@@ -136,6 +141,7 @@ const Customers = () => {
       },
     },
   ];
+
 
   useEffect(() => {
     if (data) {

@@ -79,7 +79,7 @@ public class OrdersControllerTest {
 
         when(ordersRepository.findAll()).thenReturn(mockOrdersList);
 
-        List<Orders> result = ordersController.listar();
+        List<OrdersRepModel> result = ordersController.listar();
 
         verify(ordersRepository, times(1)).findAll();
         assertEquals(mockOrdersList, result);
