@@ -80,7 +80,7 @@ public class FotoStorageS3 implements FotoStorage {
         }
 
         Map<String, String> metadata = new HashMap<>();
-//        assert arquivo != null;
+
         metadata.put("Content Type", arquivo.getContentType());
         metadata.put("Size", String.valueOf(arquivo.getSize()));
         metadata.put("Environment", "Dev");
@@ -99,30 +99,6 @@ public class FotoStorageS3 implements FotoStorage {
         return metadata;
     }
 
-   // private AmazonS3 amazonS3;
-
-//    @Override
-//    public String salvar(MultipartFile[] files) {
-//        String novoNome = null;
-//        if (files != null && files.length > 0) {
-//            MultipartFile arquivo = files[0];
-//            novoNome = renomearArquivo(arquivo.getOriginalFilename());
-//
-//            try {
-//
-//                AccessControlList acl = new AccessControlList();
-//                acl.grantPermission(GroupGrantee.AllUsers, Permission.Read);
-//
-//                enviarFoto(novoNome, arquivo, acl);
-//                enviarThumbnail(novoNome, arquivo, acl);
-//            } catch (IOException e) {
-//                throw new RuntimeException("Erro salvando arquivo no S3", e);
-//            }
-//        }
-//
-//        return novoNome;
-//    }
-//
 //    @Override
 //    public byte[] recuperar(String foto) {
 //        InputStream is = amazonS3.getObject(BUCKET, foto).getObjectContent();
@@ -151,28 +127,6 @@ public class FotoStorageS3 implements FotoStorage {
 //        }
 //
 //        return null;
-//    }
-//
-//    private ObjectMetadata enviarFoto(String novoNome, MultipartFile arquivo, AccessControlList acl)
-//            throws IOException {
-//        ObjectMetadata metadata = new ObjectMetadata();
-//        metadata.setContentType(arquivo.getContentType());
-//        metadata.setContentLength(arquivo.getSize());
-//        amazonS3.putObject(new PutObjectRequest(BUCKET, novoNome, arquivo.getInputStream(), metadata)
-//                .withAccessControlList(acl));
-//        return metadata;
-//    }
-//
-//    private void enviarThumbnail(String novoNome, MultipartFile arquivo, AccessControlList acl)	throws IOException {
-//        ByteArrayOutputStream os = new ByteArrayOutputStream();
-//        Thumbnails.of(arquivo.getInputStream()).size(40, 68).toOutputStream(os);
-//        byte[] array = os.toByteArray();
-//        InputStream is = new ByteArrayInputStream(array);
-//        ObjectMetadata thumbMetadata = new ObjectMetadata();
-//        thumbMetadata.setContentType(arquivo.getContentType());
-//        thumbMetadata.setContentLength(array.length);
-//        amazonS3.putObject(new PutObjectRequest(BUCKET, THUMBNAIL_PREFIX + novoNome, is, thumbMetadata)
-//                .withAccessControlList(acl));
 //    }
 
 }

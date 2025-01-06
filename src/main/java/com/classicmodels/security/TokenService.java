@@ -86,11 +86,11 @@ public class TokenService {
     }
 
     private Instant tokenExpiration(){
-        return LocalDateTime.now().plusMinutes(3).toInstant(zoneOffset);
+        return LocalDateTime.now().plusMinutes(10).toInstant(zoneOffset);
     }
 
     private Instant refreshTokenExpiration() {
-        return LocalDateTime.now().plusMinutes(10).toInstant(zoneOffset);
+        return LocalDateTime.now().plusMinutes(30).toInstant(zoneOffset);
     }
 
 }

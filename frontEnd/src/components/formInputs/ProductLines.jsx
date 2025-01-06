@@ -4,28 +4,35 @@ import { Box, Typography, Button } from "@mui/material";
 import { TextField, FormControl, InputLabel, Select, MenuItem, FormHelperText } from "@mui/material";
 import Divider from '@mui/material/Divider';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
-import { CloudUpload } from "@mui/icons-material";
 
 const ProductLinesFormInput = ({ handleBlur, handleChange, values, touched,
   errors, productLinesSchema, setFieldValue, }) => {
 
-  const cloud = CloudUpload;
   const [image, setImage] = useState(null);
   const [dragActive, setDragActive] = useState(false);
   const inputRef = useRef(null);
 
 
+  const validateAndLoadFile = (file) => {
+    if (!file) return;
+
+    if (file.size > 200 * 1024) {
+      alert("The file must be less than 200Kb");
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      const result = reader.result;
+      setImage(result);
+      setFieldValue('image', result);
+    };
+    reader.readAsDataURL(file);
+  };
+
   const handleFileChange = (event) => {
     const file = event.target.files[0];
-    if (file) {
-      if (file.size > 200 * 1024) {
-        alert("The file must be less than 200Kb");
-        return;
-      }
-      const reader = new FileReader();
-      reader.onload = () => setImage(reader.result);
-      reader.readAsDataURL(file);
-    }
+    validateAndLoadFile(file);
   };
 
   const handleDragOver = (event) => {
@@ -41,15 +48,7 @@ const ProductLinesFormInput = ({ handleBlur, handleChange, values, touched,
     event.preventDefault();
     setDragActive(false);
     const file = event.dataTransfer.files[0];
-    if (file) {
-      if (file.size > 200 * 1024) {
-        alert("The file must be less than 200Kb")
-        return;
-      }
-      const reader = new FileReader();
-      reader.onload = () => setImage(reader.result);
-      reader.readAsDataURL(file);
-    }
+    validateAndLoadFile(file);
   };
 
   const handleClick = () => {
@@ -67,7 +66,7 @@ const ProductLinesFormInput = ({ handleBlur, handleChange, values, touched,
         onBlur={handleBlur}
         onChange={handleChange}
         value={values.productLine}
-        name="productLines"
+        name="productLine"
         error={!!touched.productLine && !!errors.productLine}
         helperText={touched.productLine && errors.productLine}
         sx={{ gridColumn: "span 1" }}
@@ -105,6 +104,8 @@ const ProductLinesFormInput = ({ handleBlur, handleChange, values, touched,
 
       <Box>
         <Box
+          role="button"
+          aria-label="Upload an image"
           onDragOver={handleDragOver}
           onDragLeave={handleDragLeave}
           onDrop={handleDrop}

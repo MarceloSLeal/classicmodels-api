@@ -5,7 +5,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class FotoStorageRunnable implements Runnable{
 
     private final MultipartFile file;
-//    private DeferredResult<ProductLinesInput> resultado;
+    //    private DeferredResult<ProductLinesInput> resultado;
     private final FotoStorage fotoStorage;
     private final String nome;
 

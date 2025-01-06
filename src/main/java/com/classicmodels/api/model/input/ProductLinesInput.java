@@ -1,11 +1,9 @@
 package com.classicmodels.api.model.input;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Null;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.lang.Nullable;
 import org.springframework.web.multipart.MultipartFile;
 
 @Getter
@@ -21,6 +19,6 @@ public class ProductLinesInput {
 
     private String htmlDescription;
 
-    private MultipartFile file;
+    private MultipartFile image;
 
 }

@@ -17,21 +17,21 @@ const initialValues = {
   productLine: "",
   textDescription: "",
   htmlDescription: "",
-  image: null,
+  // image: null,
 };
 
 const productLinesSchema = yup.object().shape({
   productLine: yup.string().max(50).required(),
   textDescription: yup.string().max(4000),
   htmlDescription: yup.string(),
-  image: yup
-    .mixed()
-    .test("fileSize", "The file size shold be less than 2MB", (file) => {
-      return file && file.size <= 2 * 1024 * 1024;
-    })
-    .test("fileFormat", "Only .jpg files are allowed", (file) => {
-      return file && file.type === "image/jpeg";
-    }),
+  // image: yup
+  //   .mixed()
+  //   .test("fileSize", "The file size shold be less than 2MB", (file) => {
+  //     return file && file.size <= 200 * 1024;
+  //   })
+  //   .test("fileFormat", "Only .jpg files are allowed", (file) => {
+  //     return file && file.type === "image/jpeg";
+  //   }),
 });
 
 const FormAddProductLines = () => {
@@ -45,16 +45,34 @@ const FormAddProductLines = () => {
   const handleFormSubmit = async (values, { setSubmitting, resetForm }) => {
     setStatus('');
     setResponseCode(null);
+
+    const formData = new FormData();
+
+    Object.keys(values).forEach((key) => {
+      if (key === "image" && values[key]) {
+        formData.append(key, values[key]);
+      } else {
+        formData.append(key, values[key]);
+      }
+    });
+
     try {
-      // TODO -- mudar o caminho do submit
-      const response = await fetch(url.customers.findAll_Post, {
+
+      console.log("Post");
+
+      const response = await fetch(url.productlines.findAll_Post, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(values),
+        // headers: {
+        //   'Content-Type': 'application/json',
+        // },
+        credentials: "include",
+
+        // body: JSON.stringify(values),
+        body: formData,
       });
       const data = await response.json();
+
+      console.log("Requisição bem sucedida");
 
       setResponseCode(response.status);
 
@@ -98,16 +116,10 @@ const FormAddProductLines = () => {
               }}
             >
 
-              {/* TODO -- criar o ProductLinesFormInput */}
-              {/* <CustomersFormInputs handleBlur={handleBlur} handleChange={handleChange} */}
-              {/*   values={values} touched={touched} errors={errors} isEdit={false} */}
-              {/*   dataEmployeeIdNameList={dataEmployeeIdNameList} setFieldValue={setFieldValue} /> */}
-
               <ProductLinesFormInput
                 handleBlur={handleBlur} handleChange={handleChange} values={values} touched={touched}
                 errors={errors} productLinesSchema={productLinesSchema} setFieldValue={setFieldValue}
               />
-
 
             </Box>
             <Box display="flex" justifyContent="end" mt="20px">

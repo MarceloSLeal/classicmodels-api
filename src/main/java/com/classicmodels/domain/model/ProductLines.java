@@ -11,6 +11,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.validator.constraints.UniqueElements;
 import org.springframework.lang.Nullable;
+import org.springframework.web.multipart.MultipartFile;
 
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Getter
@@ -29,6 +30,6 @@ public class ProductLines {
 
     private String htmlDescription;
 
-    private String image;
+    private MultipartFile image;
 
 }

@@ -45,6 +45,8 @@ public class ProductLinesController {
     @PostMapping
     public ResponseEntity<ProductLinesRepModel> adicionar(@Valid @ModelAttribute ProductLinesInput productLinesInput) {
 
+        System.out.println("Chegou no POST do controller");
+
         productLinesRepository.findByProductLine(productLinesInput.getProductLine())
                 .ifPresent(productLines -> {
                     throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
@@ -55,8 +57,10 @@ public class ProductLinesController {
         ProductLines savedProductLine = productLinesCatalogService.salvar(productLines);
         ProductLinesRepModel productLinesRepModel = productLinesMapper.toModel(savedProductLine);
 
-        Thread thread = new Thread(new FotoStorageRunnable(productLinesInput.getFile(), fotoStorage, productLinesInput.getProductLine()));
-        thread.start();
+        if (productLines.getImage() != null) {
+            Thread thread = new Thread(new FotoStorageRunnable(productLinesInput.getImage(), fotoStorage, productLinesInput.getProductLine()));
+            thread.start();
+        }
 
         return ResponseEntity.status(HttpStatus.CREATED).body(productLinesRepModel);
     }
