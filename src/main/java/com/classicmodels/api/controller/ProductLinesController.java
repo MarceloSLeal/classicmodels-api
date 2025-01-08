@@ -53,11 +53,18 @@ public class ProductLinesController {
                             "This product line %s already exists".formatted(productLinesInput.getProductLine()));
                 });
 
-        ProductLines productLines = productLinesMapper.toEntity(productLinesInput);
+        ProductLines productLines = new ProductLines(
+                productLinesInput.getProductLine(),
+                productLinesInput.getTextDescription(),
+                productLinesInput.getHtmlDescription()
+        );
+
+//        ProductLines productLines = productLinesMapper.toEntity(productLinesInput);
         ProductLines savedProductLine = productLinesCatalogService.salvar(productLines);
+        System.out.println("oi");
         ProductLinesRepModel productLinesRepModel = productLinesMapper.toModel(savedProductLine);
 
-        if (productLines.getImage() != null) {
+        if (productLinesInput.getImage() != null) {
             Thread thread = new Thread(new FotoStorageRunnable(productLinesInput.getImage(), fotoStorage, productLinesInput.getProductLine()));
             thread.start();
         }

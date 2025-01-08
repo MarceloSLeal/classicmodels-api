@@ -6,6 +6,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -14,11 +15,15 @@ import org.springframework.lang.Nullable;
 import org.springframework.web.multipart.MultipartFile;
 
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@AllArgsConstructor
 @Getter
 @Setter
 @Entity
 @Table(name = "productlines")
 public class ProductLines {
+
+    public ProductLines() {
+    }
 
     @Id
     @Size(max = 50)
@@ -30,6 +35,6 @@ public class ProductLines {
 
     private String htmlDescription;
 
-    private MultipartFile image;
+//    private String image;
 
 }
