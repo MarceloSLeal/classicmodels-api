@@ -17,21 +17,21 @@ const initialValues = {
   productLine: "",
   textDescription: "",
   htmlDescription: "",
-  // image: null,
+  image: null,
 };
 
 const productLinesSchema = yup.object().shape({
   productLine: yup.string().max(50).required(),
   textDescription: yup.string().max(4000),
   htmlDescription: yup.string(),
-  // image: yup
-  //   .mixed()
-  //   .test("fileSize", "The file size shold be less than 2MB", (file) => {
-  //     return file && file.size <= 200 * 1024;
-  //   })
-  //   .test("fileFormat", "Only .jpg files are allowed", (file) => {
-  //     return file && file.type === "image/jpeg";
-  //   }),
+  image: yup
+    .mixed()
+    .test("fileSize", "The file size shold be less than 2MB", (file) => {
+      return file && file.size <= 200 * 1024;
+    })
+    .test("fileFormat", "Only .jpg files are allowed", (file) => {
+      return file && file.type === "image/jpeg";
+    }),
 });
 
 const FormAddProductLines = () => {
@@ -49,8 +49,8 @@ const FormAddProductLines = () => {
     const formData = new FormData();
 
     Object.keys(values).forEach((key) => {
-      if (key === "image" && values[key]) {
-        formData.append(key, values[key]);
+      if (key === "image" && values[key] instanceof File) {
+        formData.append(key, values[key]); // Garante que é um arquivo.
       } else {
         formData.append(key, values[key]);
       }
@@ -58,25 +58,20 @@ const FormAddProductLines = () => {
 
     try {
 
-      console.log("Post");
+      console.log(formData);
 
       const response = await fetch(url.productlines.findAll_Post, {
         method: 'POST',
-        // headers: {
-        //   'Content-Type': 'application/json',
-        // },
         credentials: "include",
 
-        // body: JSON.stringify(values),
         body: formData,
       });
       const data = await response.json();
 
-      console.log("Requisição bem sucedida");
-
       setResponseCode(response.status);
 
       if (response.ok) {
+        console.log("Requisição bem sucedida");
         setStatus('Product Line created successfully!');
         setResetFormFn(() => resetForm);
       } else {

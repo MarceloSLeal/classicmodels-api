@@ -122,7 +122,7 @@ const ProductLinesFormInput = ({ handleBlur, handleChange, values, touched,
             cursor: 'pointer',
             backgroundColor: dragActive ? '#1f2a40' : 'transparent',
             backgroundImage: image ? `url(${image})` : 'none',
-            backgroundSize: 'cover',
+            backgroundSize: 'contain',
             backgroundPosition: 'center',
             backgroundRepeat: 'no-repeat',
             position: 'relative',
@@ -146,9 +146,13 @@ const ProductLinesFormInput = ({ handleBlur, handleChange, values, touched,
         </Box>
         <input
           type="file"
-          accept="image/*"
+          name="image"
+          accept="image/jpeg"
           ref={inputRef}
-          onChange={handleFileChange}
+          onChange={(event) => {
+            setFieldValue("image", event.currentTarget.files[0]);
+            handleFileChange(event)
+          }}
           style={{ display: 'none' }}
         />
       </Box>
