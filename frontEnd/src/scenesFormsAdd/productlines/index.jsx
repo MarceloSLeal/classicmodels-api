@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 
 import { Box, Button } from "@mui/material";
 import useMediaQuery from "@mui/material/useMediaQuery";
@@ -55,9 +55,9 @@ const FormAddProductLines = () => {
   const url = Urls();
   const isNonMobile = useMediaQuery("(min-width:600px)");
   const [responseCode, setResponseCode] = useState(null);
-  const [resetFormFn, setResetFormFn] = useState(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [status, setStatus] = useState('');
+  const resetImageRef = useRef(null);
 
   const handleFormSubmit = async (values, { setSubmitting, resetForm }) => {
     setStatus('');
@@ -73,12 +73,7 @@ const FormAddProductLines = () => {
       }
     });
 
-    for (let pair of formData.entries()) {
-      console.log(`${pair[0]}: ${pair[1]}`);
-    }
-
     try {
-
       const response = await fetch(url.productlines.findAll_Post, {
         method: 'POST',
         credentials: "include",
@@ -90,9 +85,9 @@ const FormAddProductLines = () => {
       setResponseCode(response.status);
 
       if (response.ok) {
-        console.log("Requisição bem sucedida");
         setStatus('Product Line created successfully!');
-        setResetFormFn(() => resetForm);
+        resetForm();
+        if (resetImageRef.current) resetImageRef.current();
       } else {
         setStatus(`Error: ${data.title || 'Failed to create Product Line'} - ${data.detail || ''}`);
       }
@@ -105,9 +100,6 @@ const FormAddProductLines = () => {
 
   const handleClose = () => {
     setDialogOpen(false);
-    if (responseCode === 201 && resetFormFn) {
-      resetFormFn();
-    }
   }
 
   return (
@@ -132,7 +124,8 @@ const FormAddProductLines = () => {
 
               <ProductLinesFormInput
                 handleBlur={handleBlur} handleChange={handleChange} values={values} touched={touched}
-                errors={errors} setFieldValue={setFieldValue}
+                errors={errors} setFieldValue={setFieldValue} onResetImage={(resetFunc) =>
+                  (resetImageRef.current = resetFunc)}
               />
 
             </Box>

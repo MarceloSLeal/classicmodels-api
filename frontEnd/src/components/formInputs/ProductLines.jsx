@@ -1,12 +1,12 @@
-import React, { useState, useRef } from "react";
-import { Box, Typography, Button } from "@mui/material";
+import React, { useState, useRef, useEffect } from "react";
+import { Box, Typography } from "@mui/material";
 
 import { TextField } from "@mui/material";
 import Divider from '@mui/material/Divider';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 
 const ProductLinesFormInput = ({ handleBlur, handleChange, values, touched,
-  errors, setFieldValue, }) => {
+  errors, setFieldValue, onResetImage }) => {
 
   const [image, setImage] = useState(null);
   const [dragActive, setDragActive] = useState(false);
@@ -24,10 +24,11 @@ const ProductLinesFormInput = ({ handleBlur, handleChange, values, touched,
     setFieldValue("image", file);
   };
 
-  const handleFileChange = (event) => {
-    const file = event.target.files[0];
-    validateAndLoadFile(file);
-  };
+  useEffect(() => {
+    if (onResetImage) {
+      onResetImage(() => setImage(null));
+    }
+  }, [onResetImage]);
 
   const handleDragOver = (event) => {
     event.preventDefault();
