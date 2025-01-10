@@ -45,8 +45,6 @@ public class ProductLinesController {
     @PostMapping
     public ResponseEntity<ProductLinesRepModel> adicionar(@Valid @ModelAttribute ProductLinesInput productLinesInput) {
 
-        System.out.println("Chegou no POST do controller");
-
         productLinesRepository.findByProductLine(productLinesInput.getProductLine())
                 .ifPresent(productLines -> {
                     throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
@@ -61,7 +59,6 @@ public class ProductLinesController {
 
 //        ProductLines productLines = productLinesMapper.toEntity(productLinesInput);
         ProductLines savedProductLine = productLinesCatalogService.salvar(productLines);
-        System.out.println("oi");
         ProductLinesRepModel productLinesRepModel = productLinesMapper.toModel(savedProductLine);
 
         if (productLinesInput.getImage() != null) {

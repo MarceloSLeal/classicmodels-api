@@ -1,5 +1,6 @@
 package com.classicmodels.api.model.input;
 
+import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
@@ -19,6 +20,8 @@ public class ProductLinesInput {
 
     private String htmlDescription;
 
+//    private MultipartFile image;
+    @Nullable
     private MultipartFile image;
 
 }

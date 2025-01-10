@@ -13,21 +13,36 @@ const ProductLinesFormInput = ({ handleBlur, handleChange, values, touched,
   const inputRef = useRef(null);
 
 
+  // const validateAndLoadFile = (file) => {
+  //   if (!file) return;
+  //
+  //   // if (file.size > 200 * 1024) {
+  //   //   alert("The file must be less than 200Kb");
+  //   //   return;
+  //   // }
+  //
+  //   const reader = new FileReader();
+  //   reader.onload = () => {
+  //     const result = reader.result;
+  //     setImage(result);
+  //     setFieldValue('image', result);
+  //     values.image = image;
+  //   };
+  //   reader.readAsDataURL(file);
+  // };
+
   const validateAndLoadFile = (file) => {
     if (!file) return;
 
-    if (file.size > 200 * 1024) {
-      alert("The file must be less than 200Kb");
-      return;
-    }
-
+    // Atualiza a imagem para pré-visualização
     const reader = new FileReader();
     reader.onload = () => {
-      const result = reader.result;
-      setImage(result);
-      setFieldValue('image', result);
+      setImage(reader.result); // Define o base64 apenas para exibição
     };
     reader.readAsDataURL(file);
+
+    // Define o arquivo original no Formik
+    setFieldValue("image", file);
   };
 
   const handleFileChange = (event) => {
@@ -54,6 +69,8 @@ const ProductLinesFormInput = ({ handleBlur, handleChange, values, touched,
   const handleClick = () => {
     inputRef.current.click();
   };
+
+  const validFileExtensions = ['jpg', 'png', 'jpeg'];
 
   return (
     <>
@@ -147,14 +164,24 @@ const ProductLinesFormInput = ({ handleBlur, handleChange, values, touched,
         <input
           type="file"
           name="image"
-          accept="image/jpeg"
+          accpet={validFileExtensions.map(ext => `image/${ext}`).join(',')}
           ref={inputRef}
+          // onChange={(event) => {
+          //   setFieldValue("image", event.currentTarget.files[0]);
+          //
+          //   handleFileChange(event)
+          // }}
           onChange={(event) => {
-            setFieldValue("image", event.currentTarget.files[0]);
-            handleFileChange(event)
+            const file = event.currentTarget.files[0];
+            validateAndLoadFile(file); // Valida e define o arquivo
           }}
           style={{ display: 'none' }}
         />
+        <div>
+          {touched.image && errors.image && (
+            <p style={{ color: 'red' }}>{errors.image}</p>
+          )}
+        </div>
       </Box>
 
     </>

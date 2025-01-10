@@ -17,21 +17,49 @@ const initialValues = {
   productLine: "",
   textDescription: "",
   htmlDescription: "",
-  image: null,
+  image: "",
 };
+
+const MAX_FILE_SIZE = 200 * 1024;
+
+const validFileExtension = { image: ['jpg', 'png', 'jpeg'] };
+
+function isValidFileType(fileName, fileType) {
+  if (!fileName) return false; // Verifica se o nome do arquivo é válido
+  const extension = fileName.split('.').pop().toLowerCase(); // Obtém a extensão do arquivo
+  return validFileExtension[fileType]?.includes(extension); // Verifica se a extensão é permitida
+}
 
 const productLinesSchema = yup.object().shape({
   productLine: yup.string().max(50).required(),
   textDescription: yup.string().max(4000),
   htmlDescription: yup.string(),
+  // image: yup
+  //   .mixed()
+  //   .test("fileSize", "The file size shold be less than 2MB", (file) => {
+  //     return file && file.size <= 200 * 1024;
+  //   })
+  //   .test("fileFormat", "Only .jpg files are allowed", (file) => {
+  //     return file && file.type === "image/jpg";
+  //   }),
   image: yup
     .mixed()
-    .test("fileSize", "The file size shold be less than 2MB", (file) => {
-      return file && file.size <= 200 * 1024;
-    })
-    .test("fileFormat", "Only .jpg files are allowed", (file) => {
-      return file && file.type === "image/jpeg";
-    }),
+    .test(
+      "is-valid-type",
+      "Not a valid image type. Allowed types: jpg, png, jpeg",
+      value => {
+        // Garante que o valor não é nulo antes de validar o tipo
+        return value ? isValidFileType(value.name, "image") : false;
+      }
+    )
+    .test(
+      "is-valid-size",
+      `File size must be less than ${MAX_FILE_SIZE / 1024}KB`,
+      (value) => {
+        // Garante que o valor não é nulo antes de validar o tamanho
+        return value ? value.size <= MAX_FILE_SIZE : false;
+      }
+    ),
 });
 
 const FormAddProductLines = () => {
@@ -50,15 +78,24 @@ const FormAddProductLines = () => {
 
     Object.keys(values).forEach((key) => {
       if (key === "image" && values[key] instanceof File) {
-        formData.append(key, values[key]); // Garante que é um arquivo.
+        formData.append(key, values[key]); // Certifique-se de que values[key] seja um objeto File
       } else {
         formData.append(key, values[key]);
       }
     });
 
-    try {
+    // const formData = new FormData();
+    // formData.append("productLine", values.productLine);
+    // formData.append("textDescription", values.textDescription);
+    // formData.append("htmlDescription", values.htmlDescription);
+    // formData.append("image", values.image); // Certifique-se de que values.image seja um File/Blob.
 
-      console.log(formData);
+
+    for (let pair of formData.entries()) {
+      console.log(`${pair[0]}: ${pair[1]}`);
+    }
+
+    try {
 
       const response = await fetch(url.productlines.findAll_Post, {
         method: 'POST',
