@@ -1,47 +1,26 @@
 import React, { useState, useRef } from "react";
 import { Box, Typography, Button } from "@mui/material";
 
-import { TextField, FormControl, InputLabel, Select, MenuItem, FormHelperText } from "@mui/material";
+import { TextField } from "@mui/material";
 import Divider from '@mui/material/Divider';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 
 const ProductLinesFormInput = ({ handleBlur, handleChange, values, touched,
-  errors, productLinesSchema, setFieldValue, }) => {
+  errors, setFieldValue, }) => {
 
   const [image, setImage] = useState(null);
   const [dragActive, setDragActive] = useState(false);
   const inputRef = useRef(null);
 
-
-  // const validateAndLoadFile = (file) => {
-  //   if (!file) return;
-  //
-  //   // if (file.size > 200 * 1024) {
-  //   //   alert("The file must be less than 200Kb");
-  //   //   return;
-  //   // }
-  //
-  //   const reader = new FileReader();
-  //   reader.onload = () => {
-  //     const result = reader.result;
-  //     setImage(result);
-  //     setFieldValue('image', result);
-  //     values.image = image;
-  //   };
-  //   reader.readAsDataURL(file);
-  // };
-
   const validateAndLoadFile = (file) => {
     if (!file) return;
 
-    // Atualiza a imagem para pré-visualização
     const reader = new FileReader();
     reader.onload = () => {
-      setImage(reader.result); // Define o base64 apenas para exibição
+      setImage(reader.result);
     };
     reader.readAsDataURL(file);
 
-    // Define o arquivo original no Formik
     setFieldValue("image", file);
   };
 
@@ -166,14 +145,9 @@ const ProductLinesFormInput = ({ handleBlur, handleChange, values, touched,
           name="image"
           accpet={validFileExtensions.map(ext => `image/${ext}`).join(',')}
           ref={inputRef}
-          // onChange={(event) => {
-          //   setFieldValue("image", event.currentTarget.files[0]);
-          //
-          //   handleFileChange(event)
-          // }}
           onChange={(event) => {
             const file = event.currentTarget.files[0];
-            validateAndLoadFile(file); // Valida e define o arquivo
+            validateAndLoadFile(file);
           }}
           style={{ display: 'none' }}
         />

@@ -10,7 +10,6 @@ import * as yup from "yup";
 import ProductLinesFormInput from "../../components/formInputs/ProductLines";
 import Header from "../../components/Header";
 import { Urls } from "../../api/Paths";
-import FormListCalls from "../../components/FormsListCalls";
 import OperationStatusDialog from "../../components/dialogs/OperationStatusDialog"
 
 const initialValues = {
@@ -25,30 +24,21 @@ const MAX_FILE_SIZE = 200 * 1024;
 const validFileExtension = { image: ['jpg', 'png', 'jpeg'] };
 
 function isValidFileType(fileName, fileType) {
-  if (!fileName) return false; // Verifica se o nome do arquivo é válido
-  const extension = fileName.split('.').pop().toLowerCase(); // Obtém a extensão do arquivo
-  return validFileExtension[fileType]?.includes(extension); // Verifica se a extensão é permitida
+  if (!fileName) return false;
+  const extension = fileName.split('.').pop().toLowerCase();
+  return validFileExtension[fileType]?.includes(extension);
 }
 
 const productLinesSchema = yup.object().shape({
   productLine: yup.string().max(50).required(),
   textDescription: yup.string().max(4000),
   htmlDescription: yup.string(),
-  // image: yup
-  //   .mixed()
-  //   .test("fileSize", "The file size shold be less than 2MB", (file) => {
-  //     return file && file.size <= 200 * 1024;
-  //   })
-  //   .test("fileFormat", "Only .jpg files are allowed", (file) => {
-  //     return file && file.type === "image/jpg";
-  //   }),
   image: yup
     .mixed()
     .test(
       "is-valid-type",
       "Not a valid image type. Allowed types: jpg, png, jpeg",
       value => {
-        // Garante que o valor não é nulo antes de validar o tipo
         return value ? isValidFileType(value.name, "image") : false;
       }
     )
@@ -56,7 +46,6 @@ const productLinesSchema = yup.object().shape({
       "is-valid-size",
       `File size must be less than ${MAX_FILE_SIZE / 1024}KB`,
       (value) => {
-        // Garante que o valor não é nulo antes de validar o tamanho
         return value ? value.size <= MAX_FILE_SIZE : false;
       }
     ),
@@ -78,18 +67,11 @@ const FormAddProductLines = () => {
 
     Object.keys(values).forEach((key) => {
       if (key === "image" && values[key] instanceof File) {
-        formData.append(key, values[key]); // Certifique-se de que values[key] seja um objeto File
+        formData.append(key, values[key]);
       } else {
         formData.append(key, values[key]);
       }
     });
-
-    // const formData = new FormData();
-    // formData.append("productLine", values.productLine);
-    // formData.append("textDescription", values.textDescription);
-    // formData.append("htmlDescription", values.htmlDescription);
-    // formData.append("image", values.image); // Certifique-se de que values.image seja um File/Blob.
-
 
     for (let pair of formData.entries()) {
       console.log(`${pair[0]}: ${pair[1]}`);
@@ -150,7 +132,7 @@ const FormAddProductLines = () => {
 
               <ProductLinesFormInput
                 handleBlur={handleBlur} handleChange={handleChange} values={values} touched={touched}
-                errors={errors} productLinesSchema={productLinesSchema} setFieldValue={setFieldValue}
+                errors={errors} setFieldValue={setFieldValue}
               />
 
             </Box>
