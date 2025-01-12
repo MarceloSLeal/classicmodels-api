@@ -33,6 +33,11 @@ public class ProductLinesController {
         return productLinesRepository.findAll();
     }
 
+    @GetMapping("/teste/{foto}")
+    public byte[] teste(@PathVariable String foto) {
+        return fotoStorage.recuperar(foto);
+    }
+
     @GetMapping("/{productLine}")
     public ResponseEntity<ProductLinesRepModel> buscarPorProductLine(@PathVariable String productLine) {
 

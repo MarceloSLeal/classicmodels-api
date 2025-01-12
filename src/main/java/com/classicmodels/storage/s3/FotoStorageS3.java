@@ -10,9 +10,11 @@ import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.AwsCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.core.sync.RequestBody;
+import software.amazon.awssdk.core.sync.ResponseTransformer;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
+import software.amazon.awssdk.utils.IoUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -27,16 +29,16 @@ public class FotoStorageS3 implements FotoStorage {
     private S3Client s3Client;
 
     @Value("${BUCKET}")
-    private String bucket;
+    private String BUCKET;
 
     @Value("${ACCESS_KEY}")
-    private String accessKey;
+    private String ACCESSKEY;
 
     @Value("${SECRET_KEY}")
-    private String secretKey;
+    private String SECRETKEY;
 
     @Value("${REGION_NAME}")
-    private String regionName;
+    private String REGIONNAME;
 
     private String extension;
     private String folderPrefix;
@@ -50,9 +52,9 @@ public class FotoStorageS3 implements FotoStorage {
 
         folderPrefix = "productLinesImages/";
 
-        this.credentials = AwsBasicCredentials.create(accessKey, secretKey);
+        this.credentials = AwsBasicCredentials.create(ACCESSKEY, SECRETKEY);
         this.s3Client = S3Client.builder()
-                .region(Region.of(regionName))
+                .region(Region.of(REGIONNAME))
                 .credentialsProvider(StaticCredentialsProvider.create(credentials))
                 .build();
     }
@@ -88,7 +90,7 @@ public class FotoStorageS3 implements FotoStorage {
         metadata.put("Extension", extension);
 
         PutObjectRequest por = PutObjectRequest.builder()
-                        .bucket(bucket)
+                        .bucket(BUCKET)
                                 .key("%s%s.%s".formatted(folderPrefix, nome, extension))
                                         .metadata(metadata)
                                                 .build();
@@ -99,11 +101,25 @@ public class FotoStorageS3 implements FotoStorage {
         return metadata;
     }
 
+    @Override
+    public byte[] recuperar(String foto){
+
+
+        InputStream is = s3Client.getObject(request -> request.bucket(BUCKET).key(folderPrefix + foto), ResponseTransformer.toInputStream());
+
+        try {
+            return IoUtils.toByteArray(is);
+        } catch (IOException e) {
+            System.out.println(e);
+        }
+        return null;
+    }
+
 //    @Override
 //    public byte[] recuperar(String foto) {
-//        InputStream is = amazonS3.getObject(BUCKET, foto).getObjectContent();
+//        InputStream is = s3Client.getObject(BUCKET, foto).getObjectContent();
 //        try {
-//            return IOUtils.toByteArray(is);
+//            return IoUtils.toByteArray(is);
 //        } catch (IOException e) {
 //            //logger.error("Não conseguiu recuerar foto do S3", e);
 //        }

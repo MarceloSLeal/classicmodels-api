@@ -8,8 +8,8 @@ public interface FotoStorage {
 
     public String salvar(MultipartFile file, String nome);
 
-//    public byte[] recuperar(String foto);
-//
+    public byte[] recuperar(String foto);
+
 //    public void excluir(String foto);
 //
 //    public String getUrl(String foto);
