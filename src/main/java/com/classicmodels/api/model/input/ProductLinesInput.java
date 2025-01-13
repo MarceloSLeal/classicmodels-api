@@ -20,7 +20,6 @@ public class ProductLinesInput {
 
     private String htmlDescription;
 
-//    private MultipartFile image;
     @Nullable
     private MultipartFile image;
 

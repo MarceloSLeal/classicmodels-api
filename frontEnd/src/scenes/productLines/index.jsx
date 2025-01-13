@@ -18,7 +18,8 @@ import BoxDataGrid from "../../components/boxes/BoxDataGrid"
 const ProductLines = () => {
   const urlData = Urls();
   const theme = useTheme();
-  const { data, loading, error } = useFetchData(urlData.productlines.findAll_Post);
+  // const { data, loading, error } = useFetchData(urlData.productlines.findAll_Post);
+  const { data, loading, error } = useFetchData("http://localhost:8080/productlines/teste2");
   const [dialogConfirmOpen, setDialogConfirmOpen] = useState(false);
   const [dialogDeleteOpen, setDialogDeleteOpen] = useState(false);
   const [idDelete, setIdDelete] = useState(null);
@@ -112,7 +113,26 @@ const ProductLines = () => {
       ),
     },
     { field: "htmlDescrition", headerName: "HTML DESCRIPTION", flex: 1 },
-    { field: "image", headerName: "IMAGE", flex: 1 },
+    // { field: "image", headerName: "IMAGE", flex: 1 },
+    {
+      field: "image",
+      headerName: "IMAGE",
+      flex: 1,
+      renderCell: (params) => {
+        const imageSrc = `data:image/jpg;base64,${params.value}`; // Ajuste o MIME type conforme necessário
+        return (
+          <img
+            src={imageSrc}
+            alt="Product Line"
+            style={{
+              maxHeight: "100%", // Ajusta a altura máxima
+              maxWidth: "100%",  // Ajusta a largura máxima
+              objectFit: "contain", // Para manter o aspecto da imagem
+            }}
+          />
+        );
+      },
+    },
 
     {
       field: 'actions',

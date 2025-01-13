@@ -11,11 +11,14 @@ import com.classicmodels.storage.FotoStorage;
 import com.classicmodels.storage.FotoStorageRunnable;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Base64;
 import java.util.List;
 
 @AllArgsConstructor
@@ -33,9 +36,52 @@ public class ProductLinesController {
         return productLinesRepository.findAll();
     }
 
+    @GetMapping("/teste2")
+    public ResponseEntity<List<ProductLinesRepModel>> listar2() {
+        List<ProductLines> productLines = productLinesRepository.findAll();
+
+        List<ProductLinesRepModel> productLinesRepModelList = new java.util.ArrayList<>(List.of());
+
+        for (ProductLines productLine : productLines) {
+
+            String imageBase64 = Base64.getEncoder().encodeToString(fotoStorage.recuperar(productLine.getImage()));
+
+            productLinesRepModelList.add(new ProductLinesRepModel(
+                    productLine.getProductLine(),
+                    productLine.getTextDescription(),
+                    productLine.getHtmlDescription(),
+//                    fotoStorage.recuperar(productLine.getImage())));
+                    imageBase64.getBytes()));
+        }
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(productLinesRepModelList);
+    }
+
     @GetMapping("/teste/{foto}")
-    public byte[] teste(@PathVariable String foto) {
-        return fotoStorage.recuperar(foto);
+    public ResponseEntity<byte[]> teste(@PathVariable String foto) {
+        byte[] fileContent = fotoStorage.recuperar(foto);
+
+        if (fileContent == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        String contentType = setContentType(foto);
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType(contentType))
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + foto + "\"")
+                .body(fileContent);
+    }
+
+    private String setContentType(String foto) {
+        if (foto.endsWith(".jpg") || (foto.endsWith(".jpeg"))) {
+            return "image/jpeg";
+        } else if (foto.endsWith(".png")) {
+            return "image/png";
+        }
+        return "application/octet-stream";
     }
 
     @GetMapping("/{productLine}")
@@ -56,13 +102,8 @@ public class ProductLinesController {
                             "This product line %s already exists".formatted(productLinesInput.getProductLine()));
                 });
 
-        ProductLines productLines = new ProductLines(
-                productLinesInput.getProductLine(),
-                productLinesInput.getTextDescription(),
-                productLinesInput.getHtmlDescription()
-        );
+        final ProductLines productLines = getProductLines(productLinesInput);
 
-//        ProductLines productLines = productLinesMapper.toEntity(productLinesInput);
         ProductLines savedProductLine = productLinesCatalogService.salvar(productLines);
         ProductLinesRepModel productLinesRepModel = productLinesMapper.toModel(savedProductLine);
 
@@ -73,6 +114,7 @@ public class ProductLinesController {
 
         return ResponseEntity.status(HttpStatus.CREATED).body(productLinesRepModel);
     }
+
 
     @PutMapping("/{productLine}")
     public ResponseEntity<ProductLinesRepModel> atualizar(@PathVariable String productLine, @Valid @RequestBody ProductLinesInput productLinesInput) {
@@ -102,4 +144,22 @@ public class ProductLinesController {
         return ResponseEntity.noContent().build();
     }
 
+    private ProductLines getProductLines(ProductLinesInput productLinesInput) {
+        String aux = null;
+        if (productLinesInput.getImage() != null) {
+            aux = productLinesInput.getImage().getOriginalFilename();
+        }
+        String extension = "";
+
+        if (aux != null && aux.contains(".")) {
+            extension = aux.substring(aux.lastIndexOf(".") + 1);
+        }
+
+        return new ProductLines(
+                productLinesInput.getProductLine(),
+                productLinesInput.getTextDescription(),
+                productLinesInput.getHtmlDescription(),
+                productLinesInput.getProductLine() + "." + extension
+        );
+    }
 }

@@ -35,6 +35,6 @@ public class ProductLines {
 
     private String htmlDescription;
 
-//    private String image;
+    private String image;
 
 }

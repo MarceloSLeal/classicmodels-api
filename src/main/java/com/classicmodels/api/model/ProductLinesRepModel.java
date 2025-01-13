@@ -11,6 +11,13 @@ public class ProductLinesRepModel {
     private String productLine;
     private String textDescription;
     private String htmlDescription;
-//    private String image;
+    private byte[] image;
+
+    public ProductLinesRepModel(String productLine, String textDescription, String htmlDescription, byte[] image) {
+        this.productLine = productLine;
+        this.textDescription = textDescription;
+        this.htmlDescription = htmlDescription;
+        this.image = image;
+    }
 
 }

@@ -104,8 +104,8 @@ public class FotoStorageS3 implements FotoStorage {
     @Override
     public byte[] recuperar(String foto){
 
-
-        InputStream is = s3Client.getObject(request -> request.bucket(BUCKET).key(folderPrefix + foto), ResponseTransformer.toInputStream());
+        InputStream is = s3Client.getObject(request ->
+                request.bucket(BUCKET).key(folderPrefix + foto), ResponseTransformer.toInputStream());
 
         try {
             return IoUtils.toByteArray(is);
