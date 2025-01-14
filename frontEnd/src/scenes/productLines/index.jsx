@@ -18,8 +18,7 @@ import BoxDataGrid from "../../components/boxes/BoxDataGrid"
 const ProductLines = () => {
   const urlData = Urls();
   const theme = useTheme();
-  // const { data, loading, error } = useFetchData(urlData.productlines.findAll_Post);
-  const { data, loading, error } = useFetchData("http://localhost:8080/productlines/teste2");
+  const { data, loading, error } = useFetchData(urlData.productlines.findAll_Post);
   const [dialogConfirmOpen, setDialogConfirmOpen] = useState(false);
   const [dialogDeleteOpen, setDialogDeleteOpen] = useState(false);
   const [idDelete, setIdDelete] = useState(null);
@@ -89,8 +88,6 @@ const ProductLines = () => {
     },
   }));
 
-  // TODO -- adicionar para a tela orders na coluna comments essa configuração de 
-  // quebra de linha para textos grandes
   const columns = [
     { field: "productLine", headerName: "PRODUCT LINE", flex: 0.5, cellClassName: "name-column-cell" },
     {
@@ -103,7 +100,7 @@ const ProductLines = () => {
           style={{
             maxHeight: 200,
             overflowY: 'auto',
-            whiteSpace: 'normal', // Permite quebra de linha
+            whiteSpace: 'normal',
             wordWrap: 'break-word',
             lineHeight: 2,
           }}
@@ -113,21 +110,33 @@ const ProductLines = () => {
       ),
     },
     { field: "htmlDescrition", headerName: "HTML DESCRIPTION", flex: 1 },
-    // { field: "image", headerName: "IMAGE", flex: 1 },
     {
       field: "image",
       headerName: "IMAGE",
       flex: 1,
       renderCell: (params) => {
-        const imageSrc = `data:image/jpg;base64,${params.value}`; // Ajuste o MIME type conforme necessário
+
+        if (!params.value) return null;
+
+        const fileExtension = params.row.image.split('.').pop().toLowerCase();
+
+        const mimeType = {
+          jpg: "image/jpg",
+          jpeg: "image/jpeg",
+          png: "image/png",
+        }[fileExtension] || "image/jpg";
+
+        // const imageSrc = `data:image/jpg;base64,${params.value}`;
+        const imageSrc = `data:${mimeType};base64,${params.value}`;
+
         return (
           <img
             src={imageSrc}
             alt="Product Line"
             style={{
-              maxHeight: "100%", // Ajusta a altura máxima
-              maxWidth: "100%",  // Ajusta a largura máxima
-              objectFit: "contain", // Para manter o aspecto da imagem
+              maxHeight: "100%",
+              maxWidth: "100%",
+              objectFit: "contain",
             }}
           />
         );

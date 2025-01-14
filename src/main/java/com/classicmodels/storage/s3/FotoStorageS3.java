@@ -101,6 +101,7 @@ public class FotoStorageS3 implements FotoStorage {
         return metadata;
     }
 
+    //TODO - fazer alguma validação para o caso de não encontrar a foto
     @Override
     public byte[] recuperar(String foto){
 

@@ -31,57 +31,29 @@ public class ProductLinesController {
     private ProductLinesCatalogService productLinesCatalogService;
     private FotoStorage fotoStorage;
 
-    @GetMapping
-    public List<ProductLines> listar() {
-        return productLinesRepository.findAll();
-    }
+//    @GetMapping
+//    public List<ProductLines> listar() {
+//        return productLinesRepository.findAll();
+//    }
 
-    @GetMapping("/teste2")
-    public ResponseEntity<List<ProductLinesRepModel>> listar2() {
+    @GetMapping
+    public ResponseEntity<List<ProductLinesRepModel>> listar() {
         List<ProductLines> productLines = productLinesRepository.findAll();
 
         List<ProductLinesRepModel> productLinesRepModelList = new java.util.ArrayList<>(List.of());
 
         for (ProductLines productLine : productLines) {
 
-            String imageBase64 = Base64.getEncoder().encodeToString(fotoStorage.recuperar(productLine.getImage()));
-
             productLinesRepModelList.add(new ProductLinesRepModel(
                     productLine.getProductLine(),
                     productLine.getTextDescription(),
                     productLine.getHtmlDescription(),
-//                    fotoStorage.recuperar(productLine.getImage())));
-                    imageBase64.getBytes()));
+                    fotoStorage.recuperar(productLine.getImage())));
         }
 
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(productLinesRepModelList);
-    }
-
-    @GetMapping("/teste/{foto}")
-    public ResponseEntity<byte[]> teste(@PathVariable String foto) {
-        byte[] fileContent = fotoStorage.recuperar(foto);
-
-        if (fileContent == null) {
-            return ResponseEntity.notFound().build();
-        }
-
-        String contentType = setContentType(foto);
-
-        return ResponseEntity.ok()
-                .contentType(MediaType.parseMediaType(contentType))
-                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + foto + "\"")
-                .body(fileContent);
-    }
-
-    private String setContentType(String foto) {
-        if (foto.endsWith(".jpg") || (foto.endsWith(".jpeg"))) {
-            return "image/jpeg";
-        } else if (foto.endsWith(".png")) {
-            return "image/png";
-        }
-        return "application/octet-stream";
     }
 
     @GetMapping("/{productLine}")
@@ -105,6 +77,7 @@ public class ProductLinesController {
         final ProductLines productLines = getProductLines(productLinesInput);
 
         ProductLines savedProductLine = productLinesCatalogService.salvar(productLines);
+        //TODO - problemas para mapear para ProductLineRepModel
         ProductLinesRepModel productLinesRepModel = productLinesMapper.toModel(savedProductLine);
 
         if (productLinesInput.getImage() != null) {

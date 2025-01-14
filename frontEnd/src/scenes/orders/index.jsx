@@ -72,7 +72,25 @@ const Orders = () => {
       },
     },
     { field: "status", headerName: "STATUS", flex: 1 },
-    { field: "comments", headerName: "COMMENTS", flex: 1 },
+    {
+      field: "comments",
+      headerName: "COMMENTS",
+      flex: 1,
+      minWidht: 150,
+      renderCell: (params) => (
+        <div
+          style={{
+            maxWidth: 200,
+            overFlowY: 'auto',
+            whiteSpace: 'normal',
+            wordWrap: 'break-word',
+            lineHeight: 2,
+          }}
+        >
+          {params.value}
+        </div>
+      )
+    },
     { field: "customerId", headerName: "CUSTOMER ID", flex: 0.5 },
 
     {
