@@ -1,19 +1,18 @@
 package com.classicmodels.storage.s3;
 
+import com.classicmodels.common.AwsS3Config;
 import com.classicmodels.storage.FotoStorage;
 import jakarta.annotation.PostConstruct;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
+import lombok.NoArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
-import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
-import software.amazon.awssdk.auth.credentials.AwsCredentials;
-import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.core.sync.ResponseTransformer;
-import software.amazon.awssdk.regions.Region;
-import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
+import software.amazon.awssdk.services.s3.model.S3Exception;
 import software.amazon.awssdk.utils.IoUtils;
 
 import java.io.IOException;
@@ -22,41 +21,19 @@ import java.util.HashMap;
 import java.util.Map;
 
 @AllArgsConstructor
+@NoArgsConstructor
 @Component
 public class FotoStorageS3 implements FotoStorage {
 
-    private AwsCredentials credentials;
-    private S3Client s3Client;
-
-    @Value("${BUCKET}")
-    private String BUCKET;
-
-    @Value("${ACCESS_KEY}")
-    private String ACCESSKEY;
-
-    @Value("${SECRET_KEY}")
-    private String SECRETKEY;
-
-    @Value("${REGION_NAME}")
-    private String REGIONNAME;
+    @Autowired
+    AwsS3Config s3Config;
 
     private String extension;
     private String folderPrefix;
 
-    public FotoStorageS3() {
-
-    }
-
     @PostConstruct
     public void init() {
-
         folderPrefix = "productLinesImages/";
-
-        this.credentials = AwsBasicCredentials.create(ACCESSKEY, SECRETKEY);
-        this.s3Client = S3Client.builder()
-                .region(Region.of(REGIONNAME))
-                .credentialsProvider(StaticCredentialsProvider.create(credentials))
-                .build();
     }
 
     @Override
@@ -72,7 +49,7 @@ public class FotoStorageS3 implements FotoStorage {
        return nome;
     }
 
-    private Map<String, String> enviarFoto(String nome, MultipartFile arquivo) throws IOException{
+    private void enviarFoto(String nome, MultipartFile arquivo) throws IOException{
 
         String aux = arquivo.getOriginalFilename();
         extension = "";
@@ -90,28 +67,36 @@ public class FotoStorageS3 implements FotoStorage {
         metadata.put("Extension", extension);
 
         PutObjectRequest por = PutObjectRequest.builder()
-                        .bucket(BUCKET)
+                .bucket(s3Config.getBUCKET())
                                 .key("%s%s.%s".formatted(folderPrefix, nome, extension))
                                         .metadata(metadata)
                                                 .build();
 
         InputStream inputStream = arquivo.getInputStream();
-        s3Client.putObject(por, RequestBody.fromInputStream(inputStream, arquivo.getSize()));
+        s3Config.getS3().putObject(por, RequestBody.fromInputStream(inputStream, arquivo.getSize()));
 
-        return metadata;
     }
 
-    //TODO - fazer alguma validação para o caso de não encontrar a foto
     @Override
-    public byte[] recuperar(String foto){
-
-        InputStream is = s3Client.getObject(request ->
-                request.bucket(BUCKET).key(folderPrefix + foto), ResponseTransformer.toInputStream());
-
+    public byte[] recuperar(String foto) {
         try {
+            InputStream is = s3Config.getS3().getObject(request ->
+                    request.bucket(s3Config.getBUCKET()).key(folderPrefix + foto), ResponseTransformer.toInputStream());
+
             return IoUtils.toByteArray(is);
+
+        } catch (S3Exception e) {
+            //TODO - remvoer esses System.out depois
+            System.out.println("Arquivo não encontrado no bucket: " + e.getMessage());
+
+            try {
+                InputStream defaultImage = new ClassPathResource("images/no_image.png").getInputStream();
+                return IoUtils.toByteArray(defaultImage);
+            } catch (IOException ex) {
+                System.out.println("Erro ao processar o arquivo: " + ex.getMessage());
+            }
         } catch (IOException e) {
-            System.out.println(e);
+            System.out.println("Erro ao processar o arquivo: " + e.getMessage());
         }
         return null;
     }

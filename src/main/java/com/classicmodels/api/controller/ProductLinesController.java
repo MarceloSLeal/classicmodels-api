@@ -1,5 +1,6 @@
 package com.classicmodels.api.controller;
 
+import com.classicmodels.api.mapper.ProductLinesInputMapper;
 import com.classicmodels.api.mapper.ProductLinesMapper;
 import com.classicmodels.api.model.ProductLinesRepModel;
 import com.classicmodels.api.model.input.ProductLinesInput;
@@ -15,6 +16,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -28,6 +30,7 @@ public class ProductLinesController {
 
     private ProductLinesRepository productLinesRepository;
     private ProductLinesMapper productLinesMapper;
+    private ProductLinesInputMapper productLinesInputMapper;
     private ProductLinesCatalogService productLinesCatalogService;
     private FotoStorage fotoStorage;
 
@@ -66,7 +69,7 @@ public class ProductLinesController {
     }
 
     @PostMapping
-    public ResponseEntity<ProductLinesRepModel> adicionar(@Valid @ModelAttribute ProductLinesInput productLinesInput) {
+    public ResponseEntity<Void> adicionar(@Valid @ModelAttribute ProductLinesInput productLinesInput) {
 
         productLinesRepository.findByProductLine(productLinesInput.getProductLine())
                 .ifPresent(productLines -> {
@@ -74,18 +77,22 @@ public class ProductLinesController {
                             "This product line %s already exists".formatted(productLinesInput.getProductLine()));
                 });
 
-        final ProductLines productLines = getProductLines(productLinesInput);
+//        final ProductLines productLines = getProductLines(productLinesInput);
+        ProductLines productLines = productLinesInputMapper.toEntity(productLinesInput);
 
-        ProductLines savedProductLine = productLinesCatalogService.salvar(productLines);
+//        ProductLines savedProductLine = productLinesCatalogService.salvar(productLines);
+        productLinesCatalogService.salvar(productLines);
         //TODO - problemas para mapear para ProductLineRepModel
-        ProductLinesRepModel productLinesRepModel = productLinesMapper.toModel(savedProductLine);
+//        ProductLinesRepModel productLinesRepModel = productLinesMapper.toModel(savedProductLine);
 
         if (productLinesInput.getImage() != null) {
+            System.out.println(productLines.getImage());
             Thread thread = new Thread(new FotoStorageRunnable(productLinesInput.getImage(), fotoStorage, productLinesInput.getProductLine()));
             thread.start();
         }
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(productLinesRepModel);
+//        return ResponseEntity.status(HttpStatus.CREATED).body(productLinesRepModel);
+        return ResponseEntity.ok().build();
     }
 
 

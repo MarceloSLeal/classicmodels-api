@@ -144,7 +144,7 @@ const ProductLinesFormInput = ({ handleBlur, handleChange, values, touched,
         <input
           type="file"
           name="image"
-          accpet={validFileExtensions.map(ext => `image/${ext}`).join(',')}
+          accept={validFileExtensions.map(ext => `image/${ext}`).join(',')}
           ref={inputRef}
           onChange={(event) => {
             const file = event.currentTarget.files[0];
