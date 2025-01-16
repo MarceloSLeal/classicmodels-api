@@ -21,7 +21,7 @@ const initialValues = {
 
 const MAX_FILE_SIZE = 200 * 1024;
 
-const validFileExtension = { image: ['jpg', 'png', 'jpeg'] };
+const validFileExtension = { image: ['png', 'jpeg'] };
 
 function isValidFileType(fileName, fileType) {
   if (!fileName) return false;
@@ -29,27 +29,53 @@ function isValidFileType(fileName, fileType) {
   return validFileExtension[fileType]?.includes(extension);
 }
 
+// const productLinesSchema = yup.object().shape({
+//   productLine: yup.string().max(50).required(),
+//   textDescription: yup.string().max(4000),
+//   htmlDescription: yup.string(),
+//   image: yup
+//     .mixed()
+//     .test(
+//       "is-valid-type",
+//       "Not a valid image type. Allowed types: png, jpeg",
+//       value => {
+//         return value ? isValidFileType(value.name, "image") : false;
+//       }
+//     )
+//     .test(
+//       "is-valid-size",
+//       `File size must be less than ${MAX_FILE_SIZE / 1024}KB`,
+//       (value) => {
+//         return value ? value.size <= MAX_FILE_SIZE : false;
+//       }
+//     ),
+// });
+
 const productLinesSchema = yup.object().shape({
   productLine: yup.string().max(50).required(),
   textDescription: yup.string().max(4000),
   htmlDescription: yup.string(),
   image: yup
     .mixed()
+    .nullable() // Permite valores nulos
     .test(
       "is-valid-type",
-      "Not a valid image type. Allowed types: jpg, png, jpeg",
+      "Not a valid image type. Allowed types: png, jpeg",
       value => {
-        return value ? isValidFileType(value.name, "image") : false;
+        if (!value) return true; // Permite o campo vazio
+        return isValidFileType(value.name, "image");
       }
     )
     .test(
       "is-valid-size",
       `File size must be less than ${MAX_FILE_SIZE / 1024}KB`,
-      (value) => {
-        return value ? value.size <= MAX_FILE_SIZE : false;
+      value => {
+        if (!value) return true; // Permite o campo vazio
+        return value.size <= MAX_FILE_SIZE;
       }
     ),
 });
+
 
 const FormAddProductLines = () => {
   const url = Urls();
@@ -66,12 +92,17 @@ const FormAddProductLines = () => {
     const formData = new FormData();
 
     Object.keys(values).forEach((key) => {
-      if (key === "image" && values[key] instanceof File) {
+      if (key === "image" && values[key] instanceof File && values[key].size > 0) {
         formData.append(key, values[key]);
-      } else {
+      } else if (key !== "image") {
         formData.append(key, values[key]);
       }
     });
+
+    // Depuração: Log dos dados do FormData
+    // for (const pair of formData.entries()) {
+    //   console.log(`${pair[0]}:`, pair[1]);
+    // }
 
     try {
       const response = await fetch(url.productlines.findAll_Post, {
@@ -89,7 +120,7 @@ const FormAddProductLines = () => {
         resetForm();
         if (resetImageRef.current) resetImageRef.current();
       } else {
-        setStatus(`Error: ${data.title || 'Failed to create Product Line'} - ${data.detail || ''}`);
+        setStatus(`Error else: ${data.title || 'Failed to create Product Line'} - ${data.detail || ''}`);
       }
     } catch (error) {
       setStatus(`Error: ${error.message || 'Failed to create Product Line'}`);

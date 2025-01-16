@@ -9,14 +9,15 @@ public class ProductLinesInputMapper {
 
     public ProductLines toEntity(ProductLinesInput productLinesInput) {
 
-        String aux = null;
-        String extension = null;
+        String aux = "";
+        String extension = "";
 
         if (productLinesInput.getImage() != null) {
             aux = productLinesInput.getImage().getOriginalFilename();
         }
 
-        if ( aux != null && aux.contains(".")) {
+        assert aux != null;
+        if ( aux.contains(".")) {
             extension = aux.substring(aux.lastIndexOf(".") + 1);
         }
 

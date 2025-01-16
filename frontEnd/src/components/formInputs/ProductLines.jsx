@@ -50,7 +50,7 @@ const ProductLinesFormInput = ({ handleBlur, handleChange, values, touched,
     inputRef.current.click();
   };
 
-  const validFileExtensions = ['jpg', 'png', 'jpeg'];
+  const validFileExtensions = ['png', 'jpeg'];
 
   return (
     <>

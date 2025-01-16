@@ -109,7 +109,7 @@ const ProductLines = () => {
         </div>
       ),
     },
-    { field: "htmlDescrition", headerName: "HTML DESCRIPTION", flex: 1 },
+    { field: "htmlDescription", headerName: "HTML DESCRIPTION", flex: 1 },
     {
       field: "image",
       headerName: "IMAGE",
@@ -121,7 +121,6 @@ const ProductLines = () => {
         const fileExtension = params.row.image.split('.').pop().toLowerCase();
 
         const mimeType = {
-          jpg: "image/jpg",
           jpeg: "image/jpeg",
           png: "image/png",
         }[fileExtension] || "image/jpg";
@@ -130,15 +129,26 @@ const ProductLines = () => {
         const imageSrc = `data:${mimeType};base64,${params.value}`;
 
         return (
-          <img
-            src={imageSrc}
-            alt="Product Line"
+          <div
             style={{
-              maxHeight: "100%",
-              maxWidth: "100%",
-              objectFit: "contain",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              height: "100%",
+              width: "100%",
+              overflow: "hidden",
             }}
-          />
+          >
+            <img
+              src={imageSrc}
+              alt="Product Line"
+              style={{
+                maxHeight: "100%",
+                maxWidth: "100%",
+                objectFit: "contain",
+              }}
+            />
+          </div>
         );
       },
     },

@@ -12,16 +12,16 @@ import com.classicmodels.storage.FotoStorage;
 import com.classicmodels.storage.FotoStorageRunnable;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.Base64;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 @AllArgsConstructor
 @RestController
@@ -33,11 +33,6 @@ public class ProductLinesController {
     private ProductLinesInputMapper productLinesInputMapper;
     private ProductLinesCatalogService productLinesCatalogService;
     private FotoStorage fotoStorage;
-
-//    @GetMapping
-//    public List<ProductLines> listar() {
-//        return productLinesRepository.findAll();
-//    }
 
     @GetMapping
     public ResponseEntity<List<ProductLinesRepModel>> listar() {
@@ -69,7 +64,9 @@ public class ProductLinesController {
     }
 
     @PostMapping
-    public ResponseEntity<Void> adicionar(@Valid @ModelAttribute ProductLinesInput productLinesInput) {
+    public ResponseEntity<Map<String, String>> adicionar(@Valid @ModelAttribute ProductLinesInput productLinesInput) {
+
+        System.out.println("recebidos: " + productLinesInput);
 
         productLinesRepository.findByProductLine(productLinesInput.getProductLine())
                 .ifPresent(productLines -> {
@@ -86,13 +83,21 @@ public class ProductLinesController {
 //        ProductLinesRepModel productLinesRepModel = productLinesMapper.toModel(savedProductLine);
 
         if (productLinesInput.getImage() != null) {
+
+            if (!Objects.requireNonNull(productLinesInput.getImage().getContentType()).matches("image/png|image/jpeg")) {
+                throw new IllegalArgumentException("Only PNG or JPEG images are allowed");
+            }
+
             System.out.println(productLines.getImage());
             Thread thread = new Thread(new FotoStorageRunnable(productLinesInput.getImage(), fotoStorage, productLinesInput.getProductLine()));
             thread.start();
+
         }
 
 //        return ResponseEntity.status(HttpStatus.CREATED).body(productLinesRepModel);
-        return ResponseEntity.ok().build();
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "Product Line created successfully");
+        return ResponseEntity.ok().body(response);
     }
 
 
