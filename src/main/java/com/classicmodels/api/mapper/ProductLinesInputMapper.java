@@ -10,7 +10,8 @@ public class ProductLinesInputMapper {
     public ProductLines toEntity(ProductLinesInput productLinesInput) {
 
         String aux = "";
-        String extension = "";
+        String extension;
+        String fileName = null;
 
         if (productLinesInput.getImage() != null) {
             aux = productLinesInput.getImage().getOriginalFilename();
@@ -19,13 +20,15 @@ public class ProductLinesInputMapper {
         assert aux != null;
         if ( aux.contains(".")) {
             extension = aux.substring(aux.lastIndexOf(".") + 1);
+            fileName = String.format("%s.%s", productLinesInput.getProductLine(), extension);
         }
 
         return new ProductLines(
                 productLinesInput.getProductLine(),
                 productLinesInput.getTextDescription(),
                 productLinesInput.getHtmlDescription(),
-                String.format("%s.%s", productLinesInput.getProductLine(), extension)
+                fileName
+//                String.format("%s.%s", productLinesInput.getProductLine(), extension)
         );
     }
 

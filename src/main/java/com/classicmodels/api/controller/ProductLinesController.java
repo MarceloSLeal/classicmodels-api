@@ -66,35 +66,25 @@ public class ProductLinesController {
     @PostMapping
     public ResponseEntity<Map<String, String>> adicionar(@Valid @ModelAttribute ProductLinesInput productLinesInput) {
 
-        System.out.println("recebidos: " + productLinesInput);
-
         productLinesRepository.findByProductLine(productLinesInput.getProductLine())
                 .ifPresent(productLines -> {
                     throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
                             "This product line %s already exists".formatted(productLinesInput.getProductLine()));
                 });
 
-//        final ProductLines productLines = getProductLines(productLinesInput);
         ProductLines productLines = productLinesInputMapper.toEntity(productLinesInput);
 
-//        ProductLines savedProductLine = productLinesCatalogService.salvar(productLines);
         productLinesCatalogService.salvar(productLines);
-        //TODO - problemas para mapear para ProductLineRepModel
-//        ProductLinesRepModel productLinesRepModel = productLinesMapper.toModel(savedProductLine);
 
         if (productLinesInput.getImage() != null) {
-
             if (!Objects.requireNonNull(productLinesInput.getImage().getContentType()).matches("image/png|image/jpeg")) {
                 throw new IllegalArgumentException("Only PNG or JPEG images are allowed");
             }
 
-            System.out.println(productLines.getImage());
             Thread thread = new Thread(new FotoStorageRunnable(productLinesInput.getImage(), fotoStorage, productLinesInput.getProductLine()));
             thread.start();
-
         }
 
-//        return ResponseEntity.status(HttpStatus.CREATED).body(productLinesRepModel);
         Map<String, String> response = new HashMap<>();
         response.put("message", "Product Line created successfully");
         return ResponseEntity.ok().body(response);
