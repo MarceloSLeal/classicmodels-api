@@ -12,12 +12,14 @@ import com.classicmodels.storage.FotoStorage;
 import com.classicmodels.storage.FotoStorageRunnable;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -49,8 +51,12 @@ public class ProductLinesController {
                     fotoStorage.recuperar(productLine.getImage())));
         }
 
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.CACHE_CONTROL, "public, max-age=300");
+
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_JSON)
+                .header(String.valueOf(headers))
                 .body(productLinesRepModelList);
     }
 
@@ -64,7 +70,7 @@ public class ProductLinesController {
     }
 
     @PostMapping
-    public ResponseEntity<Map<String, String>> adicionar(@Valid @ModelAttribute ProductLinesInput productLinesInput) {
+    public ResponseEntity<Map<String, String>> adicionar(@Valid @ModelAttribute ProductLinesInput productLinesInput) throws IOException {
 
         productLinesRepository.findByProductLine(productLinesInput.getProductLine())
                 .ifPresent(productLines -> {
@@ -81,7 +87,11 @@ public class ProductLinesController {
                 throw new IllegalArgumentException("Only PNG or JPEG images are allowed");
             }
 
-            Thread thread = new Thread(new FotoStorageRunnable(productLinesInput.getImage(), fotoStorage, productLinesInput.getProductLine()));
+            byte[] fileContent = productLinesInput.getImage().getBytes();
+
+            Thread thread = new Thread(new FotoStorageRunnable(fileContent, fotoStorage,
+                    productLinesInput.getImage().getContentType(), productLinesInput.getProductLine()));
+
             thread.start();
         }
 

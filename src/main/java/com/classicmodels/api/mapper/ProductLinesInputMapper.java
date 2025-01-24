@@ -28,7 +28,6 @@ public class ProductLinesInputMapper {
                 productLinesInput.getTextDescription(),
                 productLinesInput.getHtmlDescription(),
                 fileName
-//                String.format("%s.%s", productLinesInput.getProductLine(), extension)
         );
     }
 

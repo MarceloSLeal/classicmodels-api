@@ -8,13 +8,13 @@ import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
-import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.core.sync.ResponseTransformer;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.S3Exception;
 import software.amazon.awssdk.utils.IoUtils;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
@@ -37,44 +37,43 @@ public class FotoStorageS3 implements FotoStorage {
     }
 
     @Override
-    public String salvar(MultipartFile file, String nome){
+    public String salvar(byte[] file, String contentType, String nome) {
 
-       if( file != null && file.getSize() > 0) {
-           try {
-                enviarFoto(nome, file);
+        if (file != null && file.length > 0) {
+            try {
+                enviarFoto(nome, file, contentType);
             } catch (IOException e) {
                 throw new RuntimeException("Error saving file on S3", e);
             }
-       }
-       return nome;
+        }
+        return nome;
     }
 
-    private void enviarFoto(String nome, MultipartFile arquivo) throws IOException{
+    private void enviarFoto(String nome, byte[] fileContent, String contentType) throws IOException {
 
-        String aux = arquivo.getOriginalFilename();
-        extension = "";
+        String extension = switch (contentType.trim()) {
+            case "image/png" -> "png";
+            case "image/jpeg" -> "jpeg";
+            default -> "jpeg";
+        };
 
-        if (aux != null && aux.contains(".")) {
-            extension = aux.substring(aux.lastIndexOf(".") + 1);
-        }
+        System.out.println("contentType: " + contentType);
 
         Map<String, String> metadata = new HashMap<>();
-
-        metadata.put("Content Type", arquivo.getContentType());
-        metadata.put("Size", String.valueOf(arquivo.getSize()));
+        metadata.put("Content Type", contentType);
+        metadata.put("Size", String.valueOf(fileContent.length));
         metadata.put("Environment", "Dev");
-        metadata.put("Original Name", arquivo.getOriginalFilename());
         metadata.put("Extension", extension);
 
         PutObjectRequest por = PutObjectRequest.builder()
                 .bucket(s3Config.getBUCKET())
-                                .key("%s%s.%s".formatted(folderPrefix, nome, extension))
-                                        .metadata(metadata)
-                                                .build();
+                .key("%s%s.%s".formatted(folderPrefix, nome, extension))
+                .metadata(metadata)
+                .cacheControl("public, max-age=" + s3Config.getCACHECONTROLMAXAGE())
+                .build();
 
-        InputStream inputStream = arquivo.getInputStream();
-        s3Config.getS3().putObject(por, RequestBody.fromInputStream(inputStream, arquivo.getSize()));
-
+        InputStream inputStream = new ByteArrayInputStream(fileContent);
+        s3Config.getS3().putObject(por, RequestBody.fromInputStream(inputStream, fileContent.length));
     }
 
     @Override

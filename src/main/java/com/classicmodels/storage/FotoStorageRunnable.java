@@ -4,19 +4,21 @@ import org.springframework.web.multipart.MultipartFile;
 
 public class FotoStorageRunnable implements Runnable{
 
-    private final MultipartFile file;
+    private final byte[] file;
+
     private final FotoStorage fotoStorage;
+    private final String contentType;
     private final String nome;
 
-    public FotoStorageRunnable(MultipartFile file, FotoStorage fotoStorage, String nome) {
+    public FotoStorageRunnable(byte[] file, FotoStorage fotoStorage, String contentType, String nome) {
         this.file = file;
         this.fotoStorage = fotoStorage;
+        this.contentType = contentType;
         this.nome = nome;
     }
 
     public void run() {
-        String nomeFoto = this.fotoStorage.salvar(file, nome);
-        String contentType = file.getContentType();
+        fotoStorage.salvar(file, contentType, nome);
     }
 
 }

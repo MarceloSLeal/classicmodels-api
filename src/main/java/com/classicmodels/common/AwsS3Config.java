@@ -17,6 +17,10 @@ public class AwsS3Config {
     @Value("${BUCKET}")
     private String BUCKET;
 
+    @Getter
+    @Value("${CACHECONTROLMAXAGE}")
+    private String CACHECONTROLMAXAGE;
+
     @Value("${ACCESS_KEY}")
     private String ACCESSKEY;
 

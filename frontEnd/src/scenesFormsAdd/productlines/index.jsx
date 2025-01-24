@@ -29,28 +29,6 @@ function isValidFileType(fileName, fileType) {
   return validFileExtension[fileType]?.includes(extension);
 }
 
-// const productLinesSchema = yup.object().shape({
-//   productLine: yup.string().max(50).required(),
-//   textDescription: yup.string().max(4000),
-//   htmlDescription: yup.string(),
-//   image: yup
-//     .mixed()
-//     .test(
-//       "is-valid-type",
-//       "Not a valid image type. Allowed types: png, jpeg",
-//       value => {
-//         return value ? isValidFileType(value.name, "image") : false;
-//       }
-//     )
-//     .test(
-//       "is-valid-size",
-//       `File size must be less than ${MAX_FILE_SIZE / 1024}KB`,
-//       (value) => {
-//         return value ? value.size <= MAX_FILE_SIZE : false;
-//       }
-//     ),
-// });
-
 const productLinesSchema = yup.object().shape({
   productLine: yup.string().max(50).required(),
   textDescription: yup.string().max(4000),
@@ -76,7 +54,6 @@ const productLinesSchema = yup.object().shape({
     ),
 });
 
-
 const FormAddProductLines = () => {
   const url = Urls();
   const isNonMobile = useMediaQuery("(min-width:600px)");
@@ -100,9 +77,9 @@ const FormAddProductLines = () => {
     });
 
     // Depuração: Log dos dados do FormData
-    // for (const pair of formData.entries()) {
-    //   console.log(`${pair[0]}:`, pair[1]);
-    // }
+    for (const pair of formData.entries()) {
+      console.log(`${pair[0]}:`, pair[1]);
+    }
 
     try {
       const response = await fetch(url.productlines.findAll_Post, {
