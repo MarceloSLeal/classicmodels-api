@@ -57,8 +57,6 @@ public class FotoStorageS3 implements FotoStorage {
             default -> "jpeg";
         };
 
-        System.out.println("contentType: " + contentType);
-
         Map<String, String> metadata = new HashMap<>();
         metadata.put("Content Type", contentType);
         metadata.put("Size", String.valueOf(fileContent.length));

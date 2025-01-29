@@ -11,6 +11,7 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
@@ -22,11 +23,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.IOException;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 
+@Log4j2
 @AllArgsConstructor
 @RestController
 @RequestMapping("/auth")
@@ -37,10 +40,14 @@ public class AuthenticationController {
     private TokenService tokenService;
 
     @PostMapping("/login")
-    public ResponseEntity<UserRepModel> login(@RequestBody @Valid AuthInput authInput) {
+    public ResponseEntity<UserRepModel> login(@RequestBody @Valid AuthInput authInput) throws IOException {
 
         var userNamePassword = new UsernamePasswordAuthenticationToken(authInput.getLogin(), authInput.getPassword());
         var auth = this.authenticationManager.authenticate(userNamePassword);
+
+        //logs de teste
+        log.info("Teste de log info");
+        log.error("Teste de log error");
 
         TokenRepModel token = tokenService.generateToken((Users) auth.getPrincipal());
 
