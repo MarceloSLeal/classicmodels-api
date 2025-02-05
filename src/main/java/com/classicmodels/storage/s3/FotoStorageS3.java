@@ -5,6 +5,7 @@ import com.classicmodels.storage.FotoStorage;
 import jakarta.annotation.PostConstruct;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
@@ -20,6 +21,7 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
+@Log4j2
 @AllArgsConstructor
 @NoArgsConstructor
 @Component
@@ -83,17 +85,16 @@ public class FotoStorageS3 implements FotoStorage {
             return IoUtils.toByteArray(is);
 
         } catch (S3Exception e) {
-            //TODO - remvoer esses System.out depois
-            System.out.println("Arquivo não encontrado no bucket: " + e.getMessage());
+            log.info("File not found on bucket: {}", e.getMessage());
 
             try {
                 InputStream defaultImage = new ClassPathResource("images/no_image.png").getInputStream();
                 return IoUtils.toByteArray(defaultImage);
             } catch (IOException ex) {
-                System.out.println("Erro ao processar o arquivo: " + ex.getMessage());
+                log.error("Error processing default image: {}", ex.getMessage());
             }
         } catch (IOException e) {
-            System.out.println("Erro ao processar o arquivo: " + e.getMessage());
+            log.error("Error processing file: {}", e.getMessage());
         }
         return null;
     }

@@ -42,24 +42,28 @@ public class AuthenticationController {
     @PostMapping("/login")
     public ResponseEntity<UserRepModel> login(@RequestBody @Valid AuthInput authInput) throws IOException {
 
-        var userNamePassword = new UsernamePasswordAuthenticationToken(authInput.getLogin(), authInput.getPassword());
-        var auth = this.authenticationManager.authenticate(userNamePassword);
+        try {
+            var userNamePassword = new UsernamePasswordAuthenticationToken(authInput.getLogin(), authInput.getPassword());
+            var auth = this.authenticationManager.authenticate(userNamePassword);
 
-        //logs de teste
-        log.info("Teste de log info");
-        log.error("Teste de log error");
+            log.info("User authenticated: {}", auth.getName());
 
-        TokenRepModel token = tokenService.generateToken((Users) auth.getPrincipal());
+            TokenRepModel token = tokenService.generateToken((Users) auth.getPrincipal());
 
-        ResponseCookie tokenCookie = createCookie("token", token.getToken(), token.getExpires());
-        ResponseCookie tokenRefreshCookie = createCookie("refreshToken", token.getRefreshToken(), token.getRefreshExpires());
+            ResponseCookie tokenCookie = createCookie("token", token.getToken(), token.getExpires());
+            ResponseCookie tokenRefreshCookie = createCookie("refreshToken", token.getRefreshToken(), token.getRefreshExpires());
 
-        UserRepModel user = new UserRepModel(token.getUser(), token.getRole());
+            UserRepModel user = new UserRepModel(token.getUser(), token.getRole());
 
-        return ResponseEntity.ok()
-                .header("Set-Cookie", tokenCookie.toString())
-                .header("Set-Cookie", tokenRefreshCookie.toString())
-                .body(user);
+            return ResponseEntity.ok()
+                    .header("Set-Cookie", tokenCookie.toString())
+                    .header("Set-Cookie", tokenRefreshCookie.toString())
+                    .body(user);
+
+        } catch (Exception e) {
+            log.error("Error authenticating user: {}", authInput.getLogin());
+            return ResponseEntity.badRequest().build();
+        }
     }
 
     @PostMapping("/refresh")
