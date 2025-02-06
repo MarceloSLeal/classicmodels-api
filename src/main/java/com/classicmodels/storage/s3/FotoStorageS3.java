@@ -85,7 +85,7 @@ public class FotoStorageS3 implements FotoStorage {
             return IoUtils.toByteArray(is);
 
         } catch (S3Exception e) {
-            log.info("File not found on bucket: {}", e.getMessage());
+            log.info("File not found on bucket: {}", foto);
 
             try {
                 InputStream defaultImage = new ClassPathResource("images/no_image.png").getInputStream();

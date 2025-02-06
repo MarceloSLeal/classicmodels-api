@@ -1,3 +1,4 @@
+import { useLocation } from "react-router-dom";
 import React, { useState, useRef } from "react";
 
 import { Box, Button } from "@mui/material";
@@ -11,13 +12,6 @@ import ProductLinesFormInput from "../../components/formInputs/ProductLines";
 import Header from "../../components/Header";
 import { Urls } from "../../api/Paths";
 import OperationStatusDialog from "../../components/dialogs/OperationStatusDialog"
-
-const initialValues = {
-  productLine: "",
-  textDescription: "",
-  htmlDescription: "",
-  image: "",
-};
 
 const MAX_FILE_SIZE = 200 * 1024;
 
@@ -54,7 +48,9 @@ const productLinesSchema = yup.object().shape({
     ),
 });
 
-const FormAddProductLines = () => {
+const FormEditProductLines = () => {
+  const location = useLocation();
+  const { rowData } = location.state || {};
   const url = Urls();
   const isNonMobile = useMediaQuery("(min-width:600px)");
   const [responseCode, setResponseCode] = useState(null);
@@ -62,57 +58,25 @@ const FormAddProductLines = () => {
   const [status, setStatus] = useState('');
   const resetImageRef = useRef(null);
 
-  const handleFormSubmit = async (values, { setSubmitting, resetForm }) => {
-    setStatus('');
-    setResponseCode(null);
+  const initialValues = {
+    productLine: rowData.productLine,
+    textDescription: rowData.textDescription,
+    htmlDescription: rowData.htmlDescription,
+    image: rowData.image,
+  };
 
-    const formData = new FormData();
+  const handleFormSubmit = () => {
 
-    Object.keys(values).forEach((key) => {
-      if (key === "image" && values[key] instanceof File && values[key].size > 0) {
-        formData.append(key, values[key]);
-      } else if (key !== "image") {
-        formData.append(key, values[key]);
-      }
-    });
-
-    // Depuração: Log dos dados do FormData
-    // for (const pair of formData.entries()) {
-    //   console.log(`${pair[0]}:`, pair[1]);
-    // }
-
-    try {
-      const response = await fetch(url.productlines.findAll_Post, {
-        method: 'POST',
-        credentials: "include",
-
-        body: formData,
-      });
-      const data = await response.json();
-
-      setResponseCode(response.status);
-
-      if (response.ok) {
-        setStatus('Product Line created successfully!');
-        resetForm();
-        if (resetImageRef.current) resetImageRef.current();
-      } else {
-        setStatus(`Error else: ${data.title || 'Failed to create Product Line'} - ${data.detail || ''}`);
-      }
-    } catch (error) {
-      setStatus(`Error: ${error.message || 'Failed to create Product Line'}`);
-    }
-    setSubmitting(false);
-    setDialogOpen(true);
   }
 
   const handleClose = () => {
-    setDialogOpen(false);
+
   }
+
 
   return (
     <Box m="20px">
-      <Header title="CREATE PRODUCT LINE" subtitle="Create a new Product Line" />
+      <Header title="EDIT PRODUCT LINE" subtitle="Edit Product Line" />
 
       <Formik
         onSubmit={handleFormSubmit}
@@ -139,7 +103,7 @@ const FormAddProductLines = () => {
             </Box>
             <Box display="flex" justifyContent="end" mt="20px">
               <Button type="submit" color="secondary" variant="contained">
-                Create New Product Line
+                Save
               </Button>
             </Box>
 
@@ -159,4 +123,4 @@ const FormAddProductLines = () => {
 
 }
 
-export default FormAddProductLines;
+export default FormEditProductLines;

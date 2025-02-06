@@ -29,8 +29,8 @@ const ProductLines = () => {
 
   const handleEditDatagridButton = (params) => () => {
     const rowData = params.row;
-    // TODO -- criar página formeditproductlines
-    // navigateEdit("/formeditcustomer", { state: { rowData } });
+    console.log(rowData);
+    navigateEdit("/formeditproductlines", { state: { rowData } });
   };
   const handleDeleteDatagridButton = (params) => () => {
     setIdDelete(params.id);
