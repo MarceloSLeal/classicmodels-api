@@ -26,6 +26,9 @@ const ProductLinesFormInput = ({ handleBlur, handleChange, values, touched,
 
   useEffect(() => {
     if (values.image) {
+      // Problema com essa linha
+      // O mais simples seria deixar com estava e criar um
+      // arquivo só para a página de edit
       const mimeType = values.image.startsWith("/9j/") ? "jpeg" : "png";
       setImage(`data:image/${mimeType};base64,${values.image}`);
     } else {
