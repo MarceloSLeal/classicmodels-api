@@ -58,11 +58,14 @@ const FormEditProductLines = () => {
   const [status, setStatus] = useState('');
   const resetImageRef = useRef(null);
 
+  console.log(rowData);
+
   const initialValues = {
     productLine: rowData.productLine,
     textDescription: rowData.textDescription,
-    htmlDescription: rowData.htmlDescription,
-    image: rowData.image,
+    htmlDescription: rowData.htmlDescription || "",
+    // image: rowData.image,
+    image: rowData?.image || "",
   };
 
   const handleFormSubmit = () => {
@@ -97,7 +100,7 @@ const FormEditProductLines = () => {
               <ProductLinesFormInput
                 handleBlur={handleBlur} handleChange={handleChange} values={values} touched={touched}
                 errors={errors} setFieldValue={setFieldValue} onResetImage={(resetFunc) =>
-                  (resetImageRef.current = resetFunc)}
+                  (resetImageRef.current = resetFunc)} isEdit={true}
               />
 
             </Box>

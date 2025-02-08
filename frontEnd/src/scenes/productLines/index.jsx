@@ -29,7 +29,7 @@ const ProductLines = () => {
 
   const handleEditDatagridButton = (params) => () => {
     const rowData = params.row;
-    console.log(rowData);
+    // console.log(rowData);
     navigateEdit("/formeditproductlines", { state: { rowData } });
   };
   const handleDeleteDatagridButton = (params) => () => {

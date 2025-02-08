@@ -6,7 +6,7 @@ import Divider from '@mui/material/Divider';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 
 const ProductLinesFormInput = ({ handleBlur, handleChange, values, touched,
-  errors, setFieldValue, onResetImage }) => {
+  errors, setFieldValue, onResetImage, isEdit }) => {
 
   const [image, setImage] = useState(null);
   const [dragActive, setDragActive] = useState(false);
@@ -25,10 +25,13 @@ const ProductLinesFormInput = ({ handleBlur, handleChange, values, touched,
   };
 
   useEffect(() => {
-    if (onResetImage) {
-      onResetImage(() => setImage(null));
+    if (values.image) {
+      const mimeType = values.image.startsWith("/9j/") ? "jpeg" : "png";
+      setImage(`data:image/${mimeType};base64,${values.image}`);
+    } else {
+      setImage(null);
     }
-  }, [onResetImage]);
+  }, [values.image]);
 
   const handleDragOver = (event) => {
     event.preventDefault();
@@ -67,6 +70,7 @@ const ProductLinesFormInput = ({ handleBlur, handleChange, values, touched,
         error={!!touched.productLine && !!errors.productLine}
         helperText={touched.productLine && errors.productLine}
         sx={{ gridColumn: "span 1" }}
+        disabled={!!isEdit}
       />
 
       <TextField
