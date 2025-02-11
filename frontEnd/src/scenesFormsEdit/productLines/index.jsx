@@ -29,12 +29,14 @@ const productLinesSchema = yup.object().shape({
   htmlDescription: yup.string(),
   image: yup
     .mixed()
-    .nullable() // Permite valores nulos
+    .nullable()
     .test(
       "is-valid-type",
       "Not a valid image type. Allowed types: png, jpeg",
       value => {
-        if (!value) return true; // Permite o campo vazio
+        if (!value) return true;
+
+        if (typeof value === "string") return true; // Permite base64
         return isValidFileType(value.name, "image");
       }
     )
@@ -42,7 +44,7 @@ const productLinesSchema = yup.object().shape({
       "is-valid-size",
       `File size must be less than ${MAX_FILE_SIZE / 1024}KB`,
       value => {
-        if (!value) return true; // Permite o campo vazio
+        if (!value) return true;
         return value.size <= MAX_FILE_SIZE;
       }
     ),
@@ -58,18 +60,15 @@ const FormEditProductLines = () => {
   const [status, setStatus] = useState('');
   const resetImageRef = useRef(null);
 
-  console.log(rowData);
-
   const initialValues = {
     productLine: rowData.productLine,
     textDescription: rowData.textDescription,
     htmlDescription: rowData.htmlDescription || "",
-    // image: rowData.image,
     image: rowData?.image || "",
   };
 
-  const handleFormSubmit = () => {
-
+  const handleFormSubmit = (values) => {
+    console.log(values);
   }
 
   const handleClose = () => {

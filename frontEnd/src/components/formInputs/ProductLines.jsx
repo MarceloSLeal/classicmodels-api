@@ -24,26 +24,28 @@ const ProductLinesFormInput = ({ handleBlur, handleChange, values, touched,
     setFieldValue("image", file);
   };
 
-  // useEffect(() => {
-  //   if (values.image) {
-  //     // Problema com essa linha
-  //     // O mais simples seria deixar com estava e criar um
-  //     // arquivo só para a página de edit
-  //     const mimeType = values.image.startsWith("/9j/") ? "jpeg" : "png";
-  //     setImage(`data:image/${mimeType};base64,${values.image}`);
-  //   } else {
-  //     setImage(null);
-  //   }
-  // }, [values.image]);
-
   useEffect(() => {
-    if (typeof values.image === "string" && values.image.length > 0) {
-      const mimeType = values.image.startsWith("/9j/") ? "jpeg" : "png";
-      setImage(`data:image/${mimeType};base64,${values.image}`);
+
+    if (values.image instanceof File) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        setImage(reader.result);
+      };
+      reader.readAsDataURL(values.image);
+    } else if (typeof values.image === "string" && values.image.length > 0) {
+      const mimeType = values.image.startsWith("/9j/") ? "image/jpeg" : "image/png";
+      setImage(`data:${mimeType};base64,${values.image}`);
+
+      fetch(`data:${mimeType};base64,${values.image}`)
+        .then(res => res.blob())
+        .then(blob => {
+          const file = new File([blob], "image", { type: mimeType });
+          setFieldValue("image", file);
+        });
     } else {
       setImage(null);
     }
-  }, [values.image]);
+  }, [values.image, setFieldValue]);
 
   const handleDragOver = (event) => {
     event.preventDefault();
@@ -63,6 +65,18 @@ const ProductLinesFormInput = ({ handleBlur, handleChange, values, touched,
 
   const handleClick = () => {
     inputRef.current.click();
+  };
+
+  const handleFileChange = (event) => {
+    const file = event.currentTarget.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setImage(reader.result); // Atualiza o preview corretamente
+      setFieldValue("image", file); // Atualiza o Formik com o novo arquivo
+    };
+    reader.readAsDataURL(file);
   };
 
   const validFileExtensions = ['png', 'jpeg'];
@@ -160,12 +174,14 @@ const ProductLinesFormInput = ({ handleBlur, handleChange, values, touched,
         <input
           type="file"
           name="image"
-          accept={validFileExtensions.map(ext => `image/${ext}`).join(',')}
+          // accept={validFileExtensions.map(ext => `image/${ext}`).join(',')}
+          accept="image/png, image/jpeg"
           ref={inputRef}
-          onChange={(event) => {
-            const file = event.currentTarget.files[0];
-            validateAndLoadFile(file);
-          }}
+          // onChange={(event) => {
+          //   const file = event.currentTarget.files[0];
+          //   validateAndLoadFile(file);
+          // }}
+          onChange={handleFileChange}
           style={{ display: 'none' }}
         />
         <div>
