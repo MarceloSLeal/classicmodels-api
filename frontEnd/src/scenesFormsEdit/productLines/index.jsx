@@ -33,19 +33,28 @@ const productLinesSchema = yup.object().shape({
     .test(
       "is-valid-type",
       "Not a valid image type. Allowed types: png, jpeg",
-      value => {
+      (value) => {
         if (!value) return true;
-
-        if (typeof value === "string") return true; // Permite base64
-        return isValidFileType(value.name, "image");
+        // Se for uma string, verifique se ela começa com os prefixos conhecidos para jpeg ou png
+        if (typeof value === "string") {
+          return value.startsWith("/9j/") || value.startsWith("iVBOR");
+        }
+        // Se for um File, valide pelo nome
+        if (value instanceof File) {
+          return isValidFileType(value.name, "image");
+        }
+        return false;
       }
     )
     .test(
       "is-valid-size",
       `File size must be less than ${MAX_FILE_SIZE / 1024}KB`,
-      value => {
+      (value) => {
         if (!value) return true;
-        return value.size <= MAX_FILE_SIZE;
+        if (value instanceof File) {
+          return value.size <= MAX_FILE_SIZE;
+        }
+        return true;
       }
     ),
 });

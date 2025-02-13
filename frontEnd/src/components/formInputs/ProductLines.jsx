@@ -25,8 +25,8 @@ const ProductLinesFormInput = ({ handleBlur, handleChange, values, touched,
   };
 
   useEffect(() => {
-
     if (values.image instanceof File) {
+      // Se já for um arquivo, apenas exibe o preview
       const reader = new FileReader();
       reader.onload = () => {
         setImage(reader.result);
@@ -39,11 +39,13 @@ const ProductLinesFormInput = ({ handleBlur, handleChange, values, touched,
       fetch(`data:${mimeType};base64,${values.image}`)
         .then(res => res.blob())
         .then(blob => {
-          const file = new File([blob], "image", { type: mimeType });
-          setFieldValue("image", file);
+          const extension = mimeType === "image/jpeg" ? "jpeg" : "png";
+          const file = new File([blob], `image.${extension}`, { type: mimeType });
+          setFieldValue("image", file, true);
         });
     } else {
       setImage(null);
+      setFieldValue("image", null, true);
     }
   }, [values.image, setFieldValue]);
 
@@ -78,8 +80,6 @@ const ProductLinesFormInput = ({ handleBlur, handleChange, values, touched,
     };
     reader.readAsDataURL(file);
   };
-
-  const validFileExtensions = ['png', 'jpeg'];
 
   return (
     <>
