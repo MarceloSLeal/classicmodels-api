@@ -11,6 +11,7 @@ import ProductLinesFormInput from "../../components/formInputs/ProductLines";
 import Header from "../../components/Header";
 import { Urls } from "../../api/Paths";
 import OperationStatusDialog from "../../components/dialogs/OperationStatusDialog"
+import PostForms from "../../components/formsRequests/PostForms";
 
 const initialValues = {
   productLine: "",
@@ -82,12 +83,14 @@ const FormAddProductLines = () => {
     // }
 
     try {
-      const response = await fetch(url.productlines.findAll_Post, {
-        method: 'POST',
-        credentials: "include",
+      // const response = await fetch(url.productlines.findAll_Post, {
+      //   method: 'POST',
+      //   credentials: "include",
+      //
+      //   body: formData,
+      // });
 
-        body: formData,
-      });
+      const response = await PostForms(formData, url.productlines.findAll_Post);
       const data = await response.json();
 
       setResponseCode(response.status);

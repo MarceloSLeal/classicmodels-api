@@ -11,7 +11,7 @@ import OfficesFormInputs from "../../components/formInputs/Offices";
 import Header from "../../components/Header";
 import { Urls } from "../../api/Paths";
 import OperationStatusDialog from "../../components/dialogs/OperationStatusDialog"
-import PostForms from "../../components/PostForms";
+import PostForms from "../../components/formsRequests/PostForms";
 
 const initialValues = {
   city: "", country: "", state: "", phone: "", addressLine1: "", addressLine2: "",

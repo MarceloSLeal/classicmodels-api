@@ -15,7 +15,7 @@ import PaymentsAddFormInputs from "../../components/formInputs/PaymentsAdd";
 import useFetchData from '../../api/getData';
 import dayjs from 'dayjs';
 import OperationStatusDialog from "../../components/dialogs/OperationStatusDialog"
-import PostForms from "../../components/PostForms";
+import PostForms from "../../components/formsRequests/PostForms";
 
 const initialValues = {
   orderId: "",

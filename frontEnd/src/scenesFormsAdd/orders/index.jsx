@@ -18,7 +18,7 @@ import OrdersAddFormInputs from "../../components/formInputs/OrdersAdd";
 import OrdersDetailsFormInputs from "../../components/formInputs/OrdersDetails";
 import dayjs from 'dayjs';
 import OperationStatusDialog from "../../components/dialogs/OperationStatusDialog"
-import PostForms from "../../components/PostForms";
+import PostForms from "../../components/formsRequests/PostForms";
 
 const currentTime = dayjs();
 let tomorrow = dayjs().add(1, 'day');

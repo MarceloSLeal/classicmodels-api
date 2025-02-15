@@ -13,7 +13,7 @@ import { Urls } from "../../api/Paths";
 import { Constants } from "../../data/constants";
 import FormListCalls from "../../components/FormsListCalls";
 import OperationStatusDialog from "../../components/dialogs/OperationStatusDialog"
-import PostForms from "../../components/PostForms";
+import PostForms from "../../components/formsRequests/PostForms";
 
 const initialValues = {
   lastName: "", firstName: "", email: "", reportsTo: "", jobTitle: "",
