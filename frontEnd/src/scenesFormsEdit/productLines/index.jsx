@@ -62,7 +62,7 @@ const productLinesSchema = yup.object().shape({
 const FormEditProductLines = () => {
   const location = useLocation();
   const { rowData } = location.state || {};
-  const url = Urls();
+  const url = Urls(rowData.productLine);
   const isNonMobile = useMediaQuery("(min-width:600px)");
   const [responseCode, setResponseCode] = useState(null);
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -76,8 +76,43 @@ const FormEditProductLines = () => {
     image: rowData?.image || "",
   };
 
-  const handleFormSubmit = (values) => {
-    console.log(values);
+  const handleFormSubmit = async (values, { setSubmitting }) => {
+
+    const formData = new FormData();
+
+    Object.keys(values).forEach((key) => {
+      if (key === "image" && values[key] instanceof File && values[key].size > 0) {
+        formData.append(key, values[key]);
+      } else if (key !== "image") {
+        formData.append(key, values[key]);
+      }
+    });
+
+    for (let [key, value] of formData.entries()) {
+      console.log(key, value);
+    }
+
+    try {
+      const response = await fetch(url.productlines.findByProductLine_Put_Delete, {
+        method: 'PUT',
+        credentials: 'include',
+        body: formData,
+      });
+
+      let data;
+      const contentType = response.headers.get("content-type");
+
+      if (contentType && contentType.includes("application/json")) {
+        data = await response.json();
+      } else {
+        data = await response.text();
+      }
+
+      console.log("response:", data);
+    } catch (error) {
+      console.log(error);
+    }
+    setSubmitting(false);
   }
 
   const handleClose = () => {

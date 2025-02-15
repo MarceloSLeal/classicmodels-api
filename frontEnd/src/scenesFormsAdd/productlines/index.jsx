@@ -90,6 +90,9 @@ const FormAddProductLines = () => {
       //   body: formData,
       // });
 
+      //provavelmente não poderei usar esse componete
+      //ele usa o cabeçalho 'Content-Type': 'Application/json'
+      //que eu não posso usar nesse formulário
       const response = await PostForms(formData, url.productlines.findAll_Post);
       const data = await response.json();
 

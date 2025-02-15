@@ -102,19 +102,25 @@ public class ProductLinesController {
 
 
     @PutMapping("/{productLine}")
-    public ResponseEntity<ProductLinesRepModel> atualizar(@PathVariable String productLine, @Valid @RequestBody ProductLinesInput productLinesInput) {
+    public ResponseEntity<ProductLinesRepModel> atualizar(@PathVariable String productLine, @Valid @ModelAttribute ProductLinesInput productLinesInput) {
+
+        System.out.println(productLinesInput.getProductLine());
+        System.out.println(productLinesInput.getTextDescription());
+        System.out.println(productLinesInput.getTextDescription());
+        System.out.println(productLinesInput.getImage());
 
         ProductLines existingProductLines = productLinesRepository.findByProductLine(productLine)
                 .orElseThrow(() -> new EntityNotFoundException("This product line %s doesn't exist".formatted(productLine)));
 
-        existingProductLines.setTextDescription(productLinesInput.getTextDescription());
-        existingProductLines.setHtmlDescription(productLinesInput.getHtmlDescription());
+//        existingProductLines.setTextDescription(productLinesInput.getTextDescription());
+//        existingProductLines.setHtmlDescription(productLinesInput.getHtmlDescription());
         //TODO -- mudar o PUT para imagem
 //        existingProductLines.setImage(productLinesInput.getImage());
 
         ProductLines savedProductLines = productLinesRepository.save(existingProductLines);
 
-        return ResponseEntity.ok(productLinesMapper.toModel(savedProductLines));
+//        return ResponseEntity.ok(productLinesMapper.toModel(savedProductLines));
+        return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/{productLine}")
