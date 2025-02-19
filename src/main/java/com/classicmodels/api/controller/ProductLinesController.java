@@ -72,6 +72,8 @@ public class ProductLinesController {
     @PostMapping
     public ResponseEntity<Map<String, String>> adicionar(@Valid @ModelAttribute ProductLinesInput productLinesInput) throws IOException {
 
+        Map<String, String> response = new HashMap<>();
+
         productLinesRepository.findByProductLine(productLinesInput.getProductLine())
                 .ifPresent(productLines -> {
                     throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
@@ -80,7 +82,12 @@ public class ProductLinesController {
 
         ProductLines productLines = productLinesInputMapper.toEntity(productLinesInput);
 
-        productLinesCatalogService.salvar(productLines);
+        try {
+            productLinesCatalogService.salvar(productLines);
+        } catch (Exception e) {
+            response.put("message", "Error creating product line");
+            return ResponseEntity.badRequest().body(response);
+        }
 
         if (productLinesInput.getImage() != null) {
             if (!Objects.requireNonNull(productLinesInput.getImage().getContentType()).matches("image/png|image/jpeg")) {
@@ -95,32 +102,46 @@ public class ProductLinesController {
             thread.start();
         }
 
-        Map<String, String> response = new HashMap<>();
         response.put("message", "Product Line created successfully");
         return ResponseEntity.ok().body(response);
     }
 
 
     @PutMapping("/{productLine}")
-    public ResponseEntity<ProductLinesRepModel> atualizar(@PathVariable String productLine, @Valid @ModelAttribute ProductLinesInput productLinesInput) {
+    public ResponseEntity<Map<String, String>> atualizar(@PathVariable String productLine, @Valid @ModelAttribute ProductLinesInput productLinesInput)
+            throws IOException {
 
-        System.out.println(productLinesInput.getProductLine());
-        System.out.println(productLinesInput.getTextDescription());
-        System.out.println(productLinesInput.getTextDescription());
-        System.out.println(productLinesInput.getImage());
+        Map<String, String> response = new HashMap<>();
 
         ProductLines existingProductLines = productLinesRepository.findByProductLine(productLine)
                 .orElseThrow(() -> new EntityNotFoundException("This product line %s doesn't exist".formatted(productLine)));
 
-//        existingProductLines.setTextDescription(productLinesInput.getTextDescription());
-//        existingProductLines.setHtmlDescription(productLinesInput.getHtmlDescription());
-        //TODO -- mudar o PUT para imagem
-//        existingProductLines.setImage(productLinesInput.getImage());
+        ProductLines productLines = productLinesInputMapper.toEntity(productLinesInput);
 
-        ProductLines savedProductLines = productLinesRepository.save(existingProductLines);
+        try {
+            productLinesCatalogService.salvar(productLines);
+        } catch (Exception e) {
+            response.put("message", "Error updating product line");
+            return ResponseEntity.badRequest().body(response);
+        }
 
-//        return ResponseEntity.ok(productLinesMapper.toModel(savedProductLines));
-        return ResponseEntity.ok().build();
+        //TODO -- inserir código para atualizar imagem
+
+        if (productLinesInput.getImage() != null) {
+            if (!Objects.requireNonNull(productLinesInput.getImage().getContentType()).matches("image/png|image/jpeg")) {
+                throw new IllegalArgumentException("Only PNG or JPEG images are allowed");
+            }
+
+            byte[] fileContent = productLinesInput.getImage().getBytes();
+
+            Thread thread = new Thread(new FotoStorageRunnable(fileContent, fotoStorage,
+                    productLinesInput.getImage().getContentType(), productLinesInput.getProductLine()));
+
+            thread.start();
+        }
+
+        response.put("message", "Product Line updated successfully");
+        return ResponseEntity.ok().body(response);
     }
 
     @DeleteMapping("/{productLine}")

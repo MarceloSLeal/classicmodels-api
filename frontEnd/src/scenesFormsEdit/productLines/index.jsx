@@ -9,6 +9,7 @@ import { Formik } from "formik";
 import * as yup from "yup";
 
 import ProductLinesFormInput from "../../components/formInputs/ProductLines";
+import { useNavigate } from "react-router-dom";
 import Header from "../../components/Header";
 import { Urls } from "../../api/Paths";
 import OperationStatusDialog from "../../components/dialogs/OperationStatusDialog"
@@ -68,6 +69,7 @@ const FormEditProductLines = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [status, setStatus] = useState('');
   const resetImageRef = useRef(null);
+  const navigate = useNavigate();
 
   const initialValues = {
     productLine: rowData.productLine,
@@ -77,6 +79,9 @@ const FormEditProductLines = () => {
   };
 
   const handleFormSubmit = async (values, { setSubmitting }) => {
+
+    setStatus('');
+    setResponseCode(null);
 
     const formData = new FormData();
 
@@ -88,9 +93,9 @@ const FormEditProductLines = () => {
       }
     });
 
-    for (let [key, value] of formData.entries()) {
-      console.log(key, value);
-    }
+    // for (let [key, value] of formData.entries()) {
+    //   console.log(key, value);
+    // }
 
     try {
       const response = await fetch(url.productlines.findByProductLine_Put_Delete, {
@@ -102,21 +107,34 @@ const FormEditProductLines = () => {
       let data;
       const contentType = response.headers.get("content-type");
 
+      setResponseCode(response.status);
+
       if (contentType && contentType.includes("application/json")) {
         data = await response.json();
       } else {
         data = await response.text();
       }
 
-      console.log("response:", data);
+      if (response.ok) {
+        setStatus('Product Line updated successfully');
+      } else {
+        setStatus(`Error: ${data.title || 'Failed to update Product Line'} - ${data.detail || ''}`);
+      }
+
+      // console.log("response:", data);
     } catch (error) {
-      console.log(error);
+      setStatus(`Error: ${error.message || 'Failed to update Product Line'}`);
+      // console.log(error);
     }
     setSubmitting(false);
+    setDialogOpen(true);
   }
 
   const handleClose = () => {
-
+    setDialogOpen(false);
+    if (responseCode === 200) {
+      navigate("/productlines");
+    }
   }
 
 
