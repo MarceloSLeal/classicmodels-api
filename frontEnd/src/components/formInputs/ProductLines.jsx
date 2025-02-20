@@ -6,7 +6,7 @@ import Divider from '@mui/material/Divider';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 
 const ProductLinesFormInput = ({ handleBlur, handleChange, values, touched,
-  errors, setFieldValue, onResetImage, isEdit }) => {
+  errors, setFieldValue, onResetImage, isEdit, setImageChanged }) => {
 
   const [image, setImage] = useState(null);
   const [dragActive, setDragActive] = useState(false);
@@ -79,6 +79,10 @@ const ProductLinesFormInput = ({ handleBlur, handleChange, values, touched,
       setFieldValue("image", file); // Atualiza o Formik com o novo arquivo
     };
     reader.readAsDataURL(file);
+
+    setImageChanged(true);
+
+    console.log("handleFileChange");
   };
 
   return (

@@ -117,6 +117,7 @@ public class ProductLinesController {
                 .orElseThrow(() -> new EntityNotFoundException("This product line %s doesn't exist".formatted(productLine)));
 
         ProductLines productLines = productLinesInputMapper.toEntity(productLinesInput);
+        productLines.setImage(existingProductLines.getImage());
 
         try {
             productLinesCatalogService.salvar(productLines);
@@ -124,8 +125,6 @@ public class ProductLinesController {
             response.put("message", "Error updating product line");
             return ResponseEntity.badRequest().body(response);
         }
-
-        //TODO -- inserir código para atualizar imagem
 
         if (productLinesInput.getImage() != null) {
             if (!Objects.requireNonNull(productLinesInput.getImage().getContentType()).matches("image/png|image/jpeg")) {

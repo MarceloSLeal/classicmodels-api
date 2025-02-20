@@ -70,6 +70,7 @@ const FormEditProductLines = () => {
   const [status, setStatus] = useState('');
   const resetImageRef = useRef(null);
   const navigate = useNavigate();
+  const [imageChanged, setImageChanged] = useState(false);
 
   const initialValues = {
     productLine: rowData.productLine,
@@ -85,17 +86,37 @@ const FormEditProductLines = () => {
 
     const formData = new FormData();
 
+    // Object.keys(values).forEach((key) => {
+    //   if (key === "image" && values[key] instanceof File && values[key].size > 0) {
+    //     formData.append(key, values[key]);
+    //   } else if (key !== "image") {
+    //     formData.append(key, values[key]);
+    //   }
+    // });
+
+    console.log("imageChanged:", imageChanged);
+
     Object.keys(values).forEach((key) => {
-      if (key === "image" && values[key] instanceof File && values[key].size > 0) {
+      if (key === "image" && values[key] instanceof File && values[key].size > 0 && imageChanged) {
         formData.append(key, values[key]);
       } else if (key !== "image") {
         formData.append(key, values[key]);
       }
     });
 
-    // for (let [key, value] of formData.entries()) {
-    //   console.log(key, value);
-    // }
+    // Object.keys(values).forEach((key) => {
+    //   if (key === "image") {
+    //     if (imageChanged && values[key] instanceof File && values[key].size > 0) {
+    //       formData.append(key, values[key]); // Apenas adiciona a imagem se foi alterada
+    //     }
+    //   } else {
+    //     formData.append(key, values[key]);
+    //   }
+    // });
+
+    for (let [key, value] of formData.entries()) {
+      console.log(key, value);
+    }
 
     try {
       const response = await fetch(url.productlines.findByProductLine_Put_Delete, {
@@ -147,34 +168,38 @@ const FormEditProductLines = () => {
         initialValues={initialValues}
         validationSchema={productLinesSchema}
       >
-        {({ values, errors, touched, handleBlur, handleChange, handleSubmit, setFieldValue }) => (
-          <form onSubmit={handleSubmit}>
-            <Box
-              display="grid"
-              gap="20px"
-              gridTemplateColumns="repeat(5, minmax(0, 1fr))"
-              sx={{
-                "& > div": { gridColumn: isNonMobile ? undefined : "span 5" },
-              }}
-            >
+        {({ values, errors, touched, handleBlur, handleChange, handleSubmit, setFieldValue }) => {
 
-              <ProductLinesFormInput
-                handleBlur={handleBlur} handleChange={handleChange} values={values} touched={touched}
-                errors={errors} setFieldValue={setFieldValue} onResetImage={(resetFunc) =>
-                  (resetImageRef.current = resetFunc)} isEdit={true}
-              />
+          return (
+            <form onSubmit={handleSubmit}>
+              <Box
+                display="grid"
+                gap="20px"
+                gridTemplateColumns="repeat(5, minmax(0, 1fr))"
+                sx={{
+                  "& > div": { gridColumn: isNonMobile ? undefined : "span 5" },
+                }}
+              >
 
-            </Box>
-            <Box display="flex" justifyContent="end" mt="20px">
-              <Button type="submit" color="secondary" variant="contained">
-                Save
-              </Button>
-            </Box>
+                <ProductLinesFormInput
+                  handleBlur={handleBlur} handleChange={handleChange} values={values} touched={touched}
+                  errors={errors} setFieldValue={setFieldValue} onResetImage={(resetFunc) =>
+                    (resetImageRef.current = resetFunc)} isEdit={true}
+                  setImageChanged={setImageChanged}
+                />
 
-            <Divider sx={{ gridColumn: "span 5" }} />
+              </Box>
+              <Box display="flex" justifyContent="end" mt="20px">
+                <Button type="submit" color="secondary" variant="contained">
+                  Save
+                </Button>
+              </Box>
 
-          </form>
-        )}
+              <Divider sx={{ gridColumn: "span 5" }} />
+
+            </form>
+          )
+        }}
       </Formik>
 
       <OperationStatusDialog
