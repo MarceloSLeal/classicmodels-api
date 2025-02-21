@@ -1,8 +1,6 @@
 package com.classicmodels.storage;
 
-import org.springframework.web.multipart.MultipartFile;
-
-public class FotoStorageRunnable implements Runnable{
+public class FotoStorageSaveRunnable implements Runnable{
 
     private final byte[] file;
 
@@ -10,7 +8,7 @@ public class FotoStorageRunnable implements Runnable{
     private final String contentType;
     private final String nome;
 
-    public FotoStorageRunnable(byte[] file, FotoStorage fotoStorage, String contentType, String nome) {
+    public FotoStorageSaveRunnable(byte[] file, FotoStorage fotoStorage, String contentType, String nome) {
         this.file = file;
         this.fotoStorage = fotoStorage;
         this.contentType = contentType;

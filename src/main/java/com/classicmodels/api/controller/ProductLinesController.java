@@ -9,7 +9,8 @@ import com.classicmodels.domain.model.ProductLines;
 import com.classicmodels.domain.repository.ProductLinesRepository;
 import com.classicmodels.domain.service.ProductLinesCatalogService;
 import com.classicmodels.storage.FotoStorage;
-import com.classicmodels.storage.FotoStorageRunnable;
+import com.classicmodels.storage.FotoStorageDeleteRunnable;
+import com.classicmodels.storage.FotoStorageSaveRunnable;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpHeaders;
@@ -96,7 +97,7 @@ public class ProductLinesController {
 
             byte[] fileContent = productLinesInput.getImage().getBytes();
 
-            Thread thread = new Thread(new FotoStorageRunnable(fileContent, fotoStorage,
+            Thread thread = new Thread(new FotoStorageSaveRunnable(fileContent, fotoStorage,
                     productLinesInput.getImage().getContentType(), productLinesInput.getProductLine()));
 
             thread.start();
@@ -133,7 +134,7 @@ public class ProductLinesController {
 
             byte[] fileContent = productLinesInput.getImage().getBytes();
 
-            Thread thread = new Thread(new FotoStorageRunnable(fileContent, fotoStorage,
+            Thread thread = new Thread(new FotoStorageSaveRunnable(fileContent, fotoStorage,
                     productLinesInput.getImage().getContentType(), productLinesInput.getProductLine()));
 
             thread.start();
@@ -144,15 +145,33 @@ public class ProductLinesController {
     }
 
     @DeleteMapping("/{productLine}")
-    public ResponseEntity<Void> excluir(@PathVariable String productLine) {
+    public ResponseEntity<Map<String, String>> excluir(@PathVariable String productLine) {
 
-        if (!productLinesRepository.existsById(productLine)) {
-            return ResponseEntity.badRequest().build();
+        Map<String, String> response = new HashMap<>();
+
+        ProductLines existingProductLines = productLinesRepository.findByProductLine(productLine)
+                .orElseThrow(() -> new EntityNotFoundException("This product line %s doesn't exist".formatted(productLine)));
+
+//        if (!productLinesRepository.existsById(productLine)) {
+//            response.put("message", "This product line %s doesn't exist".formatted(productLine));
+//            return ResponseEntity.badRequest().body(response);
+//        }
+
+//        try {
+//            productLinesCatalogService.excluir(productLine);
+//        } catch (Exception e) {
+//            response.put("message", "Error deleting product line");
+//            return ResponseEntity.badRequest().body(response);
+//        }
+
+        if (existingProductLines.getImage() != null) {
+            Thread thread = new Thread(new FotoStorageDeleteRunnable(existingProductLines.getImage(), fotoStorage));
+
+            thread.start();
         }
 
-        productLinesCatalogService.excluir(productLine);
-
-        return ResponseEntity.noContent().build();
+        response.put("message", "Product Line deleted successfully");
+        return ResponseEntity.ok().body(response);
     }
 
     private ProductLines getProductLines(ProductLinesInput productLinesInput) {

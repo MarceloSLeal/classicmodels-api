@@ -11,6 +11,8 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.core.sync.ResponseTransformer;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.S3Exception;
 import software.amazon.awssdk.utils.IoUtils;
@@ -99,27 +101,28 @@ public class FotoStorageS3 implements FotoStorage {
         return null;
     }
 
-//    @Override
-//    public byte[] recuperar(String foto) {
-//        InputStream is = s3Client.getObject(BUCKET, foto).getObjectContent();
-//        try {
-//            return IoUtils.toByteArray(is);
-//        } catch (IOException e) {
-//            //logger.error("Não conseguiu recuerar foto do S3", e);
-//        }
-//        return null;
-//    }
-//
-//    @Override
-//    public byte[] recuperarThumbnail(String foto) {
-//        return recuperar(FotoStorage.THUMBNAIL_PREFIX + foto);
-//    }
-//
-//    @Override
-//    public void excluir(String foto) {
+    @Override
+    public String excluir(String foto) {
 //        amazonS3.deleteObjects(new DeleteObjectsRequest(BUCKET).withKeys(foto, THUMBNAIL_PREFIX + foto));
-//    }
-//
+
+        try {
+            S3Client s3 = s3Config.getS3();
+
+            DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder()
+                    .bucket(s3Config.getBUCKET())
+                    .key("%s%s".formatted(folderPrefix, foto))
+                    .build();
+
+            s3Config.getS3().deleteObject(deleteObjectRequest);
+            System.out.println("File deleted: " + foto);
+        } catch (S3Exception e) {
+            log.error("Error deleting file: {}", foto);
+            return "Error deleting file: %s".formatted(foto);
+        }
+
+        return "File deleted: %s".formatted(foto);
+    }
+
 //    @Override
 //    public String getUrl(String foto) {
 //        if (!StringUtils.isEmpty(foto)) {

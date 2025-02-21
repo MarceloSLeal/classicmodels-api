@@ -8,8 +8,8 @@ public interface FotoStorage {
 
     public byte[] recuperar(String foto);
 
-//    public void excluir(String foto);
-//
+    public String excluir(String foto);
+
 //    public String getUrl(String foto);
 //
 //    default String renomearArquivo(String nomeOriginal) {
