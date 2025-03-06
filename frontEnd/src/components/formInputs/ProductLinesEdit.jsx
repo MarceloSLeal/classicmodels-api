@@ -43,7 +43,6 @@ const ProductLinesFormInputEdit = ({ handleBlur, handleChange, values, touched,
         .then(blob => {
           const extension = mimeType === "image/jpeg" ? "jpeg" : "png";
           const file = new File([blob], `image.${extension}`, { type: mimeType });
-          console.log("Novo arquivo criado:", file);
           setFieldValue("image", file, true);
         });
     } else {
@@ -79,12 +78,11 @@ const ProductLinesFormInputEdit = ({ handleBlur, handleChange, values, touched,
 
     const reader = new FileReader();
     reader.onloadend = () => {
-      setImage(reader.result); // Atualiza o preview corretamente
-      setFieldValue("image", file); // Atualiza o Formik com o novo arquivo
+      setImage(reader.result);
+      setFieldValue("image", file);
     };
     reader.readAsDataURL(file);
     setImageChanged(true);
-    console.log("Imagem alterada:");
 
   };
 

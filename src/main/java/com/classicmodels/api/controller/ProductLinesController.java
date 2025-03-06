@@ -117,8 +117,7 @@ public class ProductLinesController {
         ProductLines existingProductLines = productLinesRepository.findByProductLine(productLine)
                 .orElseThrow(() -> new EntityNotFoundException("This product line %s doesn't exist".formatted(productLine)));
 
-        ProductLines productLines = productLinesInputMapper.toEntity(productLinesInput);
-        productLines.setImage(existingProductLines.getImage());
+        ProductLines productLines = getProductLines(productLinesInput);
 
         try {
             productLinesCatalogService.salvar(productLines);
@@ -128,6 +127,7 @@ public class ProductLinesController {
         }
 
         if (productLinesInput.getImage() != null) {
+            System.out.println("imagem não nula");
             if (!Objects.requireNonNull(productLinesInput.getImage().getContentType()).matches("image/png|image/jpeg")) {
                 throw new IllegalArgumentException("Only PNG or JPEG images are allowed");
             }

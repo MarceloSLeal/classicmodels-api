@@ -96,26 +96,24 @@ const FormEditProductLines = () => {
     //   }
     // });
 
-    console.log("imageChanged:", imageChanged);
-    console.log("image:", values.image);
-
-    Object.keys(values).forEach((key) => {
-      if (key === "image" && values[key] instanceof File && values[key].size > 0 && imageChanged) {
-        formData.append(key, values[key]);
-      } else if (key !== "image") {
-        formData.append(key, values[key]);
-      }
-    });
 
     // Object.keys(values).forEach((key) => {
-    //   if (key === "image") {
-    //     if (imageChanged && values[key] instanceof File && values[key].size > 0) {
-    //       formData.append(key, values[key]); // Apenas adiciona a imagem se foi alterada
-    //     }
-    //   } else {
+    //   if (key === "image" && values[key] instanceof File && values[key].size > 0 && imageChanged) {
+    //     formData.append(key, values[key]);
+    //   } else if (key !== "image") {
     //     formData.append(key, values[key]);
     //   }
     // });
+
+    Object.keys(values).forEach((key) => {
+      if (key === "image") {
+        if (imageChanged && values[key] instanceof File && values[key].size > 0) {
+          formData.append(key, values[key]); // Apenas adiciona a imagem se foi alterada
+        }
+      } else {
+        formData.append(key, values[key]);
+      }
+    });
 
     for (let [key, value] of formData.entries()) {
       console.log(key, value);
