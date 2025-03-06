@@ -5,7 +5,7 @@ import { TextField } from "@mui/material";
 import Divider from '@mui/material/Divider';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 
-const ProductLinesFormInput = ({ handleBlur, handleChange, values, touched,
+const ProductLinesFormInputAdd = ({ handleBlur, handleChange, values, touched,
   errors, setFieldValue, onResetImage }) => {
 
   const [image, setImage] = useState(null);
@@ -79,7 +79,6 @@ const ProductLinesFormInput = ({ handleBlur, handleChange, values, touched,
         error={!!touched.productLine && !!errors.productLine}
         helperText={touched.productLine && errors.productLine}
         sx={{ gridColumn: "span 1" }}
-      // disabled={!!isEdit}
       />
 
       <TextField
@@ -179,5 +178,5 @@ const ProductLinesFormInput = ({ handleBlur, handleChange, values, touched,
 
 }
 
-export default ProductLinesFormInput;
+export default ProductLinesFormInputAdd;
 

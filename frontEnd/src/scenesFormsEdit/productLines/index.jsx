@@ -8,7 +8,7 @@ import Divider from '@mui/material/Divider';
 import { Formik } from "formik";
 import * as yup from "yup";
 
-import ProductLinesFormInput from "../../components/formInputs/ProductLines";
+import ProductLinesFormInputEdit from "../../components/formInputs/ProductLinesEdit";
 import { useNavigate } from "react-router-dom";
 import Header from "../../components/Header";
 import { Urls } from "../../api/Paths";
@@ -79,6 +79,8 @@ const FormEditProductLines = () => {
     image: rowData?.image || "",
   };
 
+  console.log("rowData:", rowData);
+
   const handleFormSubmit = async (values, { setSubmitting }) => {
 
     setStatus('');
@@ -95,6 +97,7 @@ const FormEditProductLines = () => {
     // });
 
     console.log("imageChanged:", imageChanged);
+    console.log("image:", values.image);
 
     Object.keys(values).forEach((key) => {
       if (key === "image" && values[key] instanceof File && values[key].size > 0 && imageChanged) {
@@ -181,11 +184,10 @@ const FormEditProductLines = () => {
                 }}
               >
 
-                <ProductLinesFormInput
+                <ProductLinesFormInputEdit
                   handleBlur={handleBlur} handleChange={handleChange} values={values} touched={touched}
                   errors={errors} setFieldValue={setFieldValue} onResetImage={(resetFunc) =>
-                    (resetImageRef.current = resetFunc)} isEdit={true}
-                  setImageChanged={setImageChanged}
+                    (resetImageRef.current = resetFunc)} setImageChanged={setImageChanged}
                 />
 
               </Box>

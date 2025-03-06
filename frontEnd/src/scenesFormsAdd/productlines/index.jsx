@@ -7,7 +7,7 @@ import Divider from '@mui/material/Divider';
 import { Formik } from "formik";
 import * as yup from "yup";
 
-import ProductLinesFormInput from "../../components/formInputs/ProductLines";
+import ProductLinesFormInputAdd from "../../components/formInputs/ProductLinesAdd";
 import Header from "../../components/Header";
 import { Urls } from "../../api/Paths";
 import OperationStatusDialog from "../../components/dialogs/OperationStatusDialog"
@@ -138,7 +138,7 @@ const FormAddProductLines = () => {
               }}
             >
 
-              <ProductLinesFormInput
+              <ProductLinesFormInputAdd
                 handleBlur={handleBlur} handleChange={handleChange} values={values} touched={touched}
                 errors={errors} setFieldValue={setFieldValue}
                 onResetImage={(resetFunc) => (resetImageRef.current = resetFunc)} />
