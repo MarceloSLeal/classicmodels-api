@@ -6,7 +6,7 @@ import Divider from '@mui/material/Divider';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 
 const ProductLinesFormInput = ({ handleBlur, handleChange, values, touched,
-  errors, setFieldValue, onResetImage, isEdit, setImageChanged }) => {
+  errors, setFieldValue, onResetImage }) => {
 
   const [image, setImage] = useState(null);
   const [dragActive, setDragActive] = useState(false);
@@ -17,37 +17,19 @@ const ProductLinesFormInput = ({ handleBlur, handleChange, values, touched,
 
     const reader = new FileReader();
     reader.onload = () => {
-      setImage(reader.result);
+      const result = reader.result;
+      setImage(result);
+      setFieldValue('image', file);
     };
     reader.readAsDataURL(file);
-
-    setFieldValue("image", file);
   };
 
   useEffect(() => {
-    if (values.image instanceof File) {
-      // Se já for um arquivo, apenas exibe o preview
-      const reader = new FileReader();
-      reader.onload = () => {
-        setImage(reader.result);
-      };
-      reader.readAsDataURL(values.image);
-    } else if (typeof values.image === "string" && values.image.length > 0) {
-      const mimeType = values.image.startsWith("/9j/") ? "image/jpeg" : "image/png";
-      setImage(`data:${mimeType};base64,${values.image}`);
-
-      fetch(`data:${mimeType};base64,${values.image}`)
-        .then(res => res.blob())
-        .then(blob => {
-          const extension = mimeType === "image/jpeg" ? "jpeg" : "png";
-          const file = new File([blob], `image.${extension}`, { type: mimeType });
-          setFieldValue("image", file, true);
-        });
-    } else {
-      setImage(null);
-      setFieldValue("image", null, true);
+    if (onResetImage) {
+      onResetImage(() => setImage(null));
     }
-  }, [values.image, setFieldValue]);
+  }, [onResetImage]);
+
 
   const handleDragOver = (event) => {
     event.preventDefault();
@@ -80,9 +62,6 @@ const ProductLinesFormInput = ({ handleBlur, handleChange, values, touched,
     };
     reader.readAsDataURL(file);
 
-    setImageChanged(true);
-
-    console.log("handleFileChange");
   };
 
   return (
@@ -100,7 +79,7 @@ const ProductLinesFormInput = ({ handleBlur, handleChange, values, touched,
         error={!!touched.productLine && !!errors.productLine}
         helperText={touched.productLine && errors.productLine}
         sx={{ gridColumn: "span 1" }}
-        disabled={!!isEdit}
+      // disabled={!!isEdit}
       />
 
       <TextField
@@ -201,3 +180,4 @@ const ProductLinesFormInput = ({ handleBlur, handleChange, values, touched,
 }
 
 export default ProductLinesFormInput;
+

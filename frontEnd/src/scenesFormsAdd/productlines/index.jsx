@@ -11,7 +11,6 @@ import ProductLinesFormInput from "../../components/formInputs/ProductLines";
 import Header from "../../components/Header";
 import { Urls } from "../../api/Paths";
 import OperationStatusDialog from "../../components/dialogs/OperationStatusDialog"
-import PostForms from "../../components/formsRequests/PostForms";
 
 const initialValues = {
   productLine: "",
@@ -63,6 +62,8 @@ const FormAddProductLines = () => {
   const [status, setStatus] = useState('');
   const resetImageRef = useRef(null);
 
+  const token = import.meta.env.VITE_TOKEN;
+
   const handleFormSubmit = async (values, { setSubmitting, resetForm }) => {
     setStatus('');
     setResponseCode(null);
@@ -70,9 +71,9 @@ const FormAddProductLines = () => {
     const formData = new FormData();
 
     Object.keys(values).forEach((key) => {
-      if (key === "image" && values[key] instanceof File && values[key].size > 0) {
+      if (key === "image" && values[key] instanceof File) {
         formData.append(key, values[key]);
-      } else if (key !== "image") {
+      } else {
         formData.append(key, values[key]);
       }
     });
@@ -83,17 +84,18 @@ const FormAddProductLines = () => {
     // }
 
     try {
-      // const response = await fetch(url.productlines.findAll_Post, {
-      //   method: 'POST',
-      //   credentials: "include",
-      //
-      //   body: formData,
-      // });
+      const response = await fetch(url.productlines.findAll_Post, {
+        method: 'POST',
+        credentials: "include",
+        'Authorization': `${token}`,
 
-      //provavelmente não poderei usar esse componete
+        body: formData,
+      });
+
+      //Não poderei usar esse componete
       //ele usa o cabeçalho 'Content-Type': 'Application/json'
       //que eu não posso usar nesse formulário
-      const response = await PostForms(formData, url.productlines.findAll_Post);
+      // const response = await PostForms(formData, url.productlines.findAll_Post);
       const data = await response.json();
 
       setResponseCode(response.status);
@@ -138,9 +140,8 @@ const FormAddProductLines = () => {
 
               <ProductLinesFormInput
                 handleBlur={handleBlur} handleChange={handleChange} values={values} touched={touched}
-                errors={errors} setFieldValue={setFieldValue} onResetImage={(resetFunc) =>
-                  (resetImageRef.current = resetFunc)}
-              />
+                errors={errors} setFieldValue={setFieldValue}
+                onResetImage={(resetFunc) => (resetImageRef.current = resetFunc)} />
 
             </Box>
             <Box display="flex" justifyContent="end" mt="20px">

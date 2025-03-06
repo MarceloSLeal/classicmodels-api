@@ -43,6 +43,7 @@ const ProductLines = () => {
   }
 
   const handleDeleteConfirm = async () => {
+    console.log('handleDeleteConfirm:', idDelete);
     setDialogConfirmOpen(false);
     const urlDelete = Urls(idDelete);
 
@@ -50,16 +51,17 @@ const ProductLines = () => {
 
     try {
       // TODO -- alterar o caminho para deletar productLines
-      const response = await fetch(urlDelete.customers.findById_Put_Delete, {
+      const response = await fetch(urlDelete.productlines.findByProductLine_Put_Delete, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
         },
+        credentials: 'include',
       });
 
       setStatus(response.status);
 
-      if (response.status === 204) {
+      if (response.status === 200) {
         setStatus(`${response.status} Product Line Deleted Succesfully!`);
 
         setRows((prevData) => prevData.filter((item) => item.id !== idDelete));

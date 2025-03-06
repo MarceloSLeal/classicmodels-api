@@ -152,17 +152,17 @@ public class ProductLinesController {
         ProductLines existingProductLines = productLinesRepository.findByProductLine(productLine)
                 .orElseThrow(() -> new EntityNotFoundException("This product line %s doesn't exist".formatted(productLine)));
 
-//        if (!productLinesRepository.existsById(productLine)) {
-//            response.put("message", "This product line %s doesn't exist".formatted(productLine));
-//            return ResponseEntity.badRequest().body(response);
-//        }
+        if (!productLinesRepository.existsById(productLine)) {
+            response.put("message", "This product line %s doesn't exist".formatted(productLine));
+            return ResponseEntity.badRequest().body(response);
+        }
 
-//        try {
-//            productLinesCatalogService.excluir(productLine);
-//        } catch (Exception e) {
-//            response.put("message", "Error deleting product line");
-//            return ResponseEntity.badRequest().body(response);
-//        }
+        try {
+            productLinesCatalogService.excluir(productLine);
+        } catch (Exception e) {
+            response.put("message", "Error deleting product line");
+            return ResponseEntity.badRequest().body(response);
+        }
 
         if (existingProductLines.getImage() != null) {
             Thread thread = new Thread(new FotoStorageDeleteRunnable(existingProductLines.getImage(), fotoStorage));
