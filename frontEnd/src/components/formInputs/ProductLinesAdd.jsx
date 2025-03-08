@@ -6,7 +6,7 @@ import Divider from '@mui/material/Divider';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 
 const ProductLinesFormInputAdd = ({ handleBlur, handleChange, values, touched,
-  errors, setFieldValue, onResetImage }) => {
+  errors, setFieldValue, onResetImage, setImageChanged }) => {
 
   const [image, setImage] = useState(null);
   const [dragActive, setDragActive] = useState(false);
@@ -22,6 +22,8 @@ const ProductLinesFormInputAdd = ({ handleBlur, handleChange, values, touched,
       setFieldValue('image', file);
     };
     reader.readAsDataURL(file);
+
+    setImageChanged(true);
   };
 
   useEffect(() => {
@@ -62,6 +64,7 @@ const ProductLinesFormInputAdd = ({ handleBlur, handleChange, values, touched,
     };
     reader.readAsDataURL(file);
 
+    setImageChanged(true);
   };
 
   return (

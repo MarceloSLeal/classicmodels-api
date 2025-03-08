@@ -61,6 +61,7 @@ const FormAddProductLines = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [status, setStatus] = useState('');
   const resetImageRef = useRef(null);
+  const [imageChanged, setImageChanged] = useState(false);
 
   const token = import.meta.env.VITE_TOKEN;
 
@@ -71,17 +72,19 @@ const FormAddProductLines = () => {
     const formData = new FormData();
 
     Object.keys(values).forEach((key) => {
-      if (key === "image" && values[key] instanceof File) {
-        formData.append(key, values[key]);
+      if (key === "image") {
+        if (imageChanged && values[key] instanceof File && values[key].size > 0) {
+          formData.append(key, values[key]); // Apenas adiciona a imagem se foi alterada
+        }
       } else {
         formData.append(key, values[key]);
       }
     });
 
     // Depuração: Log dos dados do FormData
-    // for (const pair of formData.entries()) {
-    //   console.log(`${pair[0]}:`, pair[1]);
-    // }
+    for (const pair of formData.entries()) {
+      console.log(`${pair[0]}:`, pair[1]);
+    }
 
     try {
       const response = await fetch(url.productlines.findAll_Post, {
@@ -141,7 +144,8 @@ const FormAddProductLines = () => {
               <ProductLinesFormInputAdd
                 handleBlur={handleBlur} handleChange={handleChange} values={values} touched={touched}
                 errors={errors} setFieldValue={setFieldValue}
-                onResetImage={(resetFunc) => (resetImageRef.current = resetFunc)} />
+                onResetImage={(resetFunc) => (resetImageRef.current = resetFunc)}
+                setImageChanged={setImageChanged} />
 
             </Box>
             <Box display="flex" justifyContent="end" mt="20px">

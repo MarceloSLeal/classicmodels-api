@@ -90,6 +90,7 @@ public class ProductLinesController {
             return ResponseEntity.badRequest().body(response);
         }
 
+
         if (productLinesInput.getImage() != null) {
             if (!Objects.requireNonNull(productLinesInput.getImage().getContentType()).matches("image/png|image/jpeg")) {
                 throw new IllegalArgumentException("Only PNG or JPEG images are allowed");
