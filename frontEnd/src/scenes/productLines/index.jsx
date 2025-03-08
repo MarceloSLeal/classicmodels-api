@@ -29,7 +29,6 @@ const ProductLines = () => {
 
   const handleEditDatagridButton = (params) => () => {
     const rowData = params.row;
-    // console.log(rowData);
     navigateEdit("/formeditproductlines", { state: { rowData } });
   };
   const handleDeleteDatagridButton = (params) => () => {
@@ -199,7 +198,7 @@ const ProductLines = () => {
   if (loading) {
     return (
       <Box m="20px">
-        <Header title="PRODUCT LINES" subtitle="Manage PRODUCT LINES" />
+        <Header title="PRODUCT LINES" subtitle="Manage Product Lines" />
         <Box
           sx={{ fontSize: "2rem" }} >
           Loading...
@@ -210,7 +209,7 @@ const ProductLines = () => {
   if (error) {
     return (
       <Box m="20px">
-        <Header title="PRODUCT LINES" subtitle="Manage PRODUCT LINES" />
+        <Header title="PRODUCT LINES" subtitle="Manage Product Lines" />
         <Box>Error: {error.message}{ }</Box>
       </Box>
     );

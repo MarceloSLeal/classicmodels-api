@@ -117,7 +117,7 @@ public class ProductLinesController {
         ProductLines existingProductLines = productLinesRepository.findByProductLine(productLine)
                 .orElseThrow(() -> new EntityNotFoundException("This product line %s doesn't exist".formatted(productLine)));
 
-        ProductLines productLines = getProductLines(productLinesInput);
+        ProductLines productLines = getProductLines(productLinesInput, existingProductLines.getImage());
 
         try {
             productLinesCatalogService.salvar(productLines);
@@ -127,7 +127,6 @@ public class ProductLinesController {
         }
 
         if (productLinesInput.getImage() != null) {
-            System.out.println("imagem não nula");
             if (!Objects.requireNonNull(productLinesInput.getImage().getContentType()).matches("image/png|image/jpeg")) {
                 throw new IllegalArgumentException("Only PNG or JPEG images are allowed");
             }
@@ -174,22 +173,27 @@ public class ProductLinesController {
         return ResponseEntity.ok().body(response);
     }
 
-    private ProductLines getProductLines(ProductLinesInput productLinesInput) {
+    private ProductLines getProductLines(ProductLinesInput productLinesInput, String imageName) {
         String aux = null;
+        String extension = "";
+        String fileName = null;
+
         if (productLinesInput.getImage() != null) {
             aux = productLinesInput.getImage().getOriginalFilename();
-        }
-        String extension = "";
-
-        if (aux != null && aux.contains(".")) {
-            extension = aux.substring(aux.lastIndexOf(".") + 1);
+            assert aux != null;
+            if (aux.contains(".")) {
+                extension = aux.substring(aux.lastIndexOf(".") + 1);
+                fileName = productLinesInput.getProductLine() + "." + extension;
+            }
+        } else {
+            fileName = imageName;
         }
 
         return new ProductLines(
                 productLinesInput.getProductLine(),
                 productLinesInput.getTextDescription(),
                 productLinesInput.getHtmlDescription(),
-                productLinesInput.getProductLine() + "." + extension
+                fileName
         );
     }
 }

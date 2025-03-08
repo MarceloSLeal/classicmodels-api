@@ -79,31 +79,12 @@ const FormEditProductLines = () => {
     image: rowData?.image || "",
   };
 
-  console.log("rowData:", rowData);
-
   const handleFormSubmit = async (values, { setSubmitting }) => {
 
     setStatus('');
     setResponseCode(null);
 
     const formData = new FormData();
-
-    // Object.keys(values).forEach((key) => {
-    //   if (key === "image" && values[key] instanceof File && values[key].size > 0) {
-    //     formData.append(key, values[key]);
-    //   } else if (key !== "image") {
-    //     formData.append(key, values[key]);
-    //   }
-    // });
-
-
-    // Object.keys(values).forEach((key) => {
-    //   if (key === "image" && values[key] instanceof File && values[key].size > 0 && imageChanged) {
-    //     formData.append(key, values[key]);
-    //   } else if (key !== "image") {
-    //     formData.append(key, values[key]);
-    //   }
-    // });
 
     Object.keys(values).forEach((key) => {
       if (key === "image") {
@@ -115,9 +96,9 @@ const FormEditProductLines = () => {
       }
     });
 
-    for (let [key, value] of formData.entries()) {
-      console.log(key, value);
-    }
+    // for (let [key, value] of formData.entries()) {
+    //   console.log(key, value);
+    // }
 
     try {
       const response = await fetch(url.productlines.findByProductLine_Put_Delete, {
@@ -143,10 +124,8 @@ const FormEditProductLines = () => {
         setStatus(`Error: ${data.title || 'Failed to update Product Line'} - ${data.detail || ''}`);
       }
 
-      // console.log("response:", data);
     } catch (error) {
       setStatus(`Error: ${error.message || 'Failed to update Product Line'}`);
-      // console.log(error);
     }
     setSubmitting(false);
     setDialogOpen(true);

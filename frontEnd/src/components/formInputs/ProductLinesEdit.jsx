@@ -26,7 +26,6 @@ const ProductLinesFormInputEdit = ({ handleBlur, handleChange, values, touched,
 
 
   useEffect(() => {
-    console.log("Valores Formik (antes da verificação):", values.image);
     if (values.image instanceof File) {
       // Se já for um arquivo, apenas exibe o preview
       const reader = new FileReader();
