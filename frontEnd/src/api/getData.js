@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
 import { useRefreshToken } from "../auth/RefreshToken";
 
@@ -8,7 +8,8 @@ const useFetchData = (apiUrl) => {
   const [error, setError] = useState(null);
   const refreshToken = useRefreshToken();
 
-  const fetchData = async (retry = false) => {
+  // const fetchData = async (retry = false) => {
+  const fetchData = useCallback(async (retry = false) => {
     try {
 
       const response = await fetch(apiUrl, {
@@ -33,13 +34,15 @@ const useFetchData = (apiUrl) => {
     } finally {
       setLoading(false);
     }
-  };
+    // };
+  }, [apiUrl, refreshToken]);
 
   useEffect(() => {
     fetchData();
   }, [apiUrl]);
 
-  return { data, loading, error };
+  // return { data, loading, error };
+  return { data, loading, error, refetchData: fetchData };
 };
 
 export default useFetchData;

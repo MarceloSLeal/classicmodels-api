@@ -18,7 +18,7 @@ import BoxDataGrid from "../../components/boxes/BoxDataGrid"
 const ProductLines = () => {
   const urlData = Urls();
   const theme = useTheme();
-  const { data, loading, error } = useFetchData(urlData.productlines.findAll_Post);
+  const { data, loading, error, refetchData } = useFetchData(urlData.productlines.findAll_Post);
   const [dialogConfirmOpen, setDialogConfirmOpen] = useState(false);
   const [dialogDeleteOpen, setDialogDeleteOpen] = useState(false);
   const [idDelete, setIdDelete] = useState(null);
@@ -42,14 +42,13 @@ const ProductLines = () => {
   }
 
   const handleDeleteConfirm = async () => {
-    console.log('handleDeleteConfirm:', idDelete);
+
     setDialogConfirmOpen(false);
     const urlDelete = Urls(idDelete);
 
     setStatus('');
 
     try {
-      // TODO -- alterar o caminho para deletar productLines
       const response = await fetch(urlDelete.productlines.findByProductLine_Put_Delete, {
         method: 'DELETE',
         headers: {
@@ -63,7 +62,8 @@ const ProductLines = () => {
       if (response.status === 200) {
         setStatus(`${response.status} Product Line Deleted Succesfully!`);
 
-        setRows((prevData) => prevData.filter((item) => item.id !== idDelete));
+        refetchData();
+
       } else {
         setStatus(`Error: ${response.status} Failed to delete Product Line`);
       }

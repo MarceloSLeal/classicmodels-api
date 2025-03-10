@@ -82,9 +82,9 @@ const FormAddProductLines = () => {
     });
 
     // Depuração: Log dos dados do FormData
-    for (const pair of formData.entries()) {
-      console.log(`${pair[0]}:`, pair[1]);
-    }
+    // for (const pair of formData.entries()) {
+    //   console.log(`${pair[0]}:`, pair[1]);
+    // }
 
     try {
       const response = await fetch(url.productlines.findAll_Post, {
