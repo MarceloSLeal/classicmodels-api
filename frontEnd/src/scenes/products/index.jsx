@@ -95,7 +95,7 @@ const Products = () => {
     { field: "scale", headerName: "SCALE", flex: 1 },
     { field: "vendor", headerName: "VENDOR", flex: 1 },
     { field: "description", headerName: "DESCRIPTION", flex: 1 },
-    { field: "quatityInStock", headerName: "QUANTITY", flex: 1 },
+    { field: "quantityInStock", headerName: "QUANTITY", flex: 1 },
     { field: "buyPrice", headerName: "BUY PRICE", flex: 1 },
     { field: "msrp", headerName: "MSRP", flex: 1 },
 
