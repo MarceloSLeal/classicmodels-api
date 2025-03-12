@@ -15,10 +15,10 @@ import { tokens } from "../../theme";
 import ConfirmDeleteDialog from "../../components/dialogs/ConfirmDeleteDialog"
 import BoxDataGrid from "../../components/boxes/BoxDataGrid"
 
-const Customers = () => {
+const Products = () => {
   const urlData = Urls();
   const theme = useTheme();
-  const { data, loading, error } = useFetchData(urlData.customers.findAll_Post);
+  const { data, loading, error } = useFetchData(urlData.products.findAll_Post);
   const [dialogConfirmOpen, setDialogConfirmOpen] = useState(false);
   const [dialogDeleteOpen, setDialogDeleteOpen] = useState(false);
 
@@ -30,7 +30,8 @@ const Customers = () => {
 
   const handleEditDatagridButton = (params) => () => {
     const rowData = params.row;
-    navigateEdit("/formeditcustomer", { state: { rowData } });
+    // adicionar a página de edição
+    // navigateEdit("/formeditcustomer", { state: { rowData } });
   };
   const handleDeleteDatagridButton = (params) => () => {
     setIdDelete(params.id);
@@ -49,7 +50,7 @@ const Customers = () => {
     setStatus('');
 
     try {
-      const response = await fetch(urlDelete.customers.findById_Put_Delete, {
+      const response = await fetch(urlDelete.products.put_Delete, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
@@ -59,14 +60,14 @@ const Customers = () => {
       setStatus(response.status);
 
       if (response.status === 204) {
-        setStatus(`${response.status} Customer Deleted Succesfully!`);
+        setStatus(`${response.status} Product Deleted Succesfully!`);
 
         setRows((prevData) => prevData.filter((item) => item.id !== idDelete));
       } else {
-        setStatus(`Error: ${response.status} Failed to delete Customer`);
+        setStatus(`Error: ${response.status} Failed to delete Product`);
       }
     } catch (error) {
-      setStatus(`Error: ${error.message} Failed to delete Customer`);
+      setStatus(`Error: ${error.message} Failed to delete Product`);
     }
 
     setDialogDeleteOpen(true);
@@ -90,18 +91,13 @@ const Customers = () => {
   const columns = [
     { field: "id", headerName: "ID", flex: 0.5 },
     { field: "name", headerName: "NAME", flex: 1, cellClassName: "name-column--cell" },
-    { field: "email", headerName: "EMAIL", flex: 1 },
-    { field: "contactLastName", headerName: "CONT.LAST NAME", flex: 1 },
-    { field: "contactFirstName", headerName: "CONT.FIRST NAME", flex: 1 },
-    { field: "phone", headerName: "PHONE", flex: 1 },
-    { field: "addressLine1", headerName: "ADRESS1", flex: 1 },
-    { field: "addressLine2", headerName: "ADRESS2", flex: 1 },
-    { field: "city", headerName: "CITY", flex: 1 },
-    { field: "state", headerName: "STATE", flex: 1 },
-    { field: "postalCode", headerName: "P.CODE", flex: 1 },
-    { field: "country", headerName: "COUNTRY", flex: 1 },
-    { field: "creditLimit", headerName: "CREDIT", flex: 1 },
-    { field: "employeeId", headerName: "EMP.ID", flex: 1 },
+    { field: "productLine", headerName: "PRODUCT LINE", flex: 1 },
+    { field: "scale", headerName: "SCALE", flex: 1 },
+    { field: "vendor", headerName: "VENDOR", flex: 1 },
+    { field: "description", headerName: "DESCRIPTION", flex: 1 },
+    { field: "quatityInStock", headerName: "QUANTITY", flex: 1 },
+    { field: "buyPrice", headerName: "BUY PRICE", flex: 1 },
+    { field: "msrp", headerName: "MSRP", flex: 1 },
 
     {
       field: 'actions',
@@ -113,7 +109,7 @@ const Customers = () => {
 
         return [
 
-          <GridActionTooltip title="Edit this Customer"
+          <GridActionTooltip title="Edit this Product"
             placement="bottom">
             <GridActionsCellItem
               icon={<EditIcon />}
@@ -124,7 +120,7 @@ const Customers = () => {
             />
           </GridActionTooltip>,
 
-          <GridActionTooltip title="Delete this Customer"
+          <GridActionTooltip title="Delete this Product"
             placement="bottom">
             <GridActionsCellItem
               icon={<DeleteIcon />}
@@ -138,7 +134,6 @@ const Customers = () => {
     },
   ];
 
-
   useEffect(() => {
     if (data) {
       setRows(data);
@@ -148,7 +143,7 @@ const Customers = () => {
   if (loading) {
     return (
       <Box m="20px">
-        <Header title="CUSTOMERS" subtitle="Manage Customers" />
+        <Header title="PRODUCTS" subtitle="Manage Products" />
         <Box
           sx={{ fontSize: "2rem" }} >
           Loading...
@@ -159,7 +154,7 @@ const Customers = () => {
   if (error) {
     return (
       <Box m="20px">
-        <Header title="CUSTOMERS" subtitle="Manage Customers" />
+        <Header title="PRODUCTS" subtitle="Manage Products" />
         <Box>Error: {error.message}{ }</Box>
       </Box>
     );
@@ -167,13 +162,14 @@ const Customers = () => {
 
   return (
     <Box m="20px">
-      <Header title="CUSTOMERS" subtitle="Manage Customers" />
+      <Header title="PRODUCTS" subtitle="Manage Products" />
 
       <BoxDataGrid
         colors={colors}
         rows={rows}
         columns={columns}
-        path={"/formaddcustomer"}
+      // Adicionar página de adição
+      // path={"/formaddcustomer"}
       />
 
       <ConfirmDeleteDialog
@@ -187,4 +183,4 @@ const Customers = () => {
   )
 }
 
-export default Customers;
+export default Products;
