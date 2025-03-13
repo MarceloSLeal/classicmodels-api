@@ -168,8 +168,7 @@ const Products = () => {
         colors={colors}
         rows={rows}
         columns={columns}
-      // Adicionar página de adição
-      // path={"/formaddcustomer"}
+        path={"/formaddproducts"}
       />
 
       <ConfirmDeleteDialog

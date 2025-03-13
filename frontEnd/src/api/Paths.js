@@ -47,6 +47,7 @@ export const Urls = (param) => ({
       productlines: {
         findAll_Post: `${prefix}productlines`,
         findByProductLine_Put_Delete: `${prefix}productlines/${param}`,
+        findByProductLineList: `${prefix}productlines/productlinelist`,
       },
       products: {
         findAll_Post: `${prefix}products`,

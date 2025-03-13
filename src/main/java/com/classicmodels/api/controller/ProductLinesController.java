@@ -61,6 +61,11 @@ public class ProductLinesController {
                 .body(productLinesRepModelList);
     }
 
+    @GetMapping("/productlinelist")
+    public ResponseEntity<List<String>> buscarPorProductLineList() {
+        return ResponseEntity.ok(productLinesRepository.findProductLineList());
+    }
+
     @GetMapping("/{productLine}")
     public ResponseEntity<ProductLinesRepModel> buscarPorProductLine(@PathVariable String productLine) {
 

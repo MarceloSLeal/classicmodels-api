@@ -7,7 +7,7 @@ import Divider from '@mui/material/Divider';
 import { Formik } from "formik";
 import * as yup from "yup";
 
-import CustomersFormInputs from "../../components/formInputs/Customers";
+import ProductsFormInputs from "../../components/formInputs/ProductsFormInput";
 import Header from "../../components/Header";
 import { Urls } from "../../api/Paths";
 import FormListCalls from "../../components/FormsListCalls";
@@ -26,7 +26,7 @@ const productsSchema = yup.object().shape({
   vendor: yup.string().max(50).required(),
   description: yup.string().max(4000).required(),
   quantityInStock: yup.number().required(),
-  byPrice: yup.number().required(),
+  buyPrice: yup.number().required(),
   msrp: yup.number().required()
 });
 
@@ -35,6 +35,98 @@ const FormAddProducts = () => {
 
   const [dataProductLine, setDataProductLine] = useState(null);
 
+  useEffect(() => {
+    FormListCalls(url.productlines.findByProductLineList, setDataProductLine);
+  })
+
+  const isNonMobile = useMediaQuery("(min-width:600px)");
+  const [responseCode, setResponseCode] = useState(null);
+  const [resetFormFn, setResetFormFn] = useState(null);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [status, setStatus] = useState('');
+
+  const handleFormSubmit = async (values, { setSubmitting, resetForm }) => {
+    setStatus('');
+    setResponseCode(null);
+    try {
+
+      const response = await PostForms(values, url.products.findAll_Post);
+      const data = await response.json();
+
+      setResponseCode(response.status);
+
+      if (response.ok) {
+        setStatus('Product created successfully!');
+        setResetFormFn(() => resetForm);
+      } else {
+        setStatus(`Error: ${data.title || 'Failed to create Product'} - ${data.detail || ''}`);
+      }
+    } catch (error) {
+      setStatus(`Error: ${error.message || 'Failed to create Product'}`);
+    }
+    setSubmitting(false);
+    setDialogOpen(true);
+  }
+
+  const handleClose = () => {
+    setDialogOpen(false);
+    if (responseCode === 201 && resetFormFn) {
+      resetFormFn();
+    }
+  }
+
+  return (
+    <Box m="20px">
+      <Header title="CREATE PRODUCT" subtitle="Create a new Product" />
+
+      <Formik
+        onSubmit={handleFormSubmit}
+        initialValues={initialValues}
+        validationSchema={productsSchema}
+      >
+        {({ values, errors, touched, handleBlur, handleChange, handleSubmit, setFieldValue }) => (
+          <form onSubmit={handleSubmit}>
+            <Box
+              display="grid"
+              gap="20px"
+              gridTemplateColumns="repeat(5, minmax(0, 1fr))"
+              sx={{
+                "& > div": { gridColumn: isNonMobile ? undefined : "span 5" },
+              }}
+            >
+
+              <Divider sx={{ gridColumn: "span 5" }} />
+
+              {/* Criar ProductFormInputs */}
+              {/* <CustomersFormInputs handleBlur={handleBlur} handleChange={handleChange} */}
+              {/*   values={values} touched={touched} errors={errors} isEdit={false} */}
+              {/*   dataEmployeeIdNameList={dataEmployeeIdNameList} setFieldValue={setFieldValue} /> */}
+
+              <ProductsFormInputs handleBlur={handleBlur} handleChange={handleChange}
+                values={values} touched={touched} errors={errors} isEdit={false}
+                setFieldValue={setFieldValue} dataProductLine={dataProductLine} />
+
+
+            </Box>
+            <Box display="flex" justifyContent="end" mt="20px">
+              <Button type="submit" color="secondary" variant="contained">
+                Create New Product
+              </Button>
+            </Box>
+
+            <Divider sx={{ gridColumn: "span 5" }} />
+
+          </form>
+        )}
+      </Formik>
+
+      <OperationStatusDialog
+        dialogOpen={dialogOpen} onClose={handleClose} status={status}
+        responseCode={responseCode} onClick={handleClose}
+      />
+
+    </Box>
+  );
 }
 
 export default FormAddProducts;
