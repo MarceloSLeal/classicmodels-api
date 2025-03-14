@@ -9,6 +9,17 @@ const ProductsFormInputs = ({ rowData, handleBlur, handleChange, values,
 
   return (
     <>
+      {isEdit && (
+        <TextField
+          disabled
+          variant="filled"
+          type="text"
+          label="Id"
+          value={values.id}
+          name="id"
+          sx={{ gridColumn: "span 1" }}
+        />
+      )}
       <TextField
         variant="filled"
         type="text"
@@ -31,15 +42,11 @@ const ProductsFormInputs = ({ rowData, handleBlur, handleChange, values,
           labelId="productline-select-label"
           id="productline-select"
           name="productline"
-          value={isProductLineValid ? values.productLine : ""}
+          value={isProductLineValid ? values.productline : ''}
           onChange={(event) => setFieldValue('productline', event.target.value)}
           onBlur={handleBlur}
           label="Product Line"
         >
-          <MenuItem value="">
-            <em>None</em>
-          </MenuItem>
-
           {dataProductLine && dataProductLine.map((pline) => (
             <MenuItem key={pline} value={pline}>
               {pline}
@@ -51,7 +58,7 @@ const ProductsFormInputs = ({ rowData, handleBlur, handleChange, values,
       <TextField
         variant="filled"
         type="text"
-        label="scale"
+        label="Scale"
         onBlur={handleBlur}
         onChange={handleChange}
         value={values.scale}
@@ -63,7 +70,7 @@ const ProductsFormInputs = ({ rowData, handleBlur, handleChange, values,
       <TextField
         variant="filled"
         type="text"
-        label="vendor"
+        label="Vendor"
         onBlur={handleBlur}
         onChange={handleChange}
         value={values.vendor}
@@ -75,7 +82,7 @@ const ProductsFormInputs = ({ rowData, handleBlur, handleChange, values,
       <TextField
         variant="filled"
         type="text"
-        label="description"
+        label="Description"
         onBlur={handleBlur}
         onChange={handleChange}
         value={values.description}
@@ -87,31 +94,31 @@ const ProductsFormInputs = ({ rowData, handleBlur, handleChange, values,
       <TextField
         variant="filled"
         type="text"
-        label="quantity"
+        label="Quantity"
         onBlur={handleBlur}
         onChange={handleChange}
         value={values.quantityInStock}
-        name="quantity"
-        error={!!touched.quantity && !!errors.quantity}
-        helperText={touched.quantity && errors.quantity}
+        name="quantityInStock"
+        error={!!touched.quantityInStock && !!errors.quantityInStock}
+        helperText={touched.quantityInStock && errors.quantityInStock}
         sx={{ gridColumn: "span 1" }}
       />
       <TextField
         variant="filled"
         type="text"
-        label="buy price"
+        label="Buy Price"
         onBlur={handleBlur}
         onChange={handleChange}
         value={values.buyPrice}
-        name="buyprice"
-        error={!!touched.buyprice && !!errors.buyprice}
-        helperText={touched.buyprice && errors.buyprice}
+        name="buyPrice"
+        error={!!touched.buyPrice && !!errors.buyPrice}
+        helperText={touched.buyPrice && errors.buyPrice}
         sx={{ gridColumn: "span 2" }}
       />
       <TextField
         variant="filled"
         type="text"
-        label="msrp"
+        label="MSRP"
         onBlur={handleBlur}
         onChange={handleChange}
         value={values.msrp}

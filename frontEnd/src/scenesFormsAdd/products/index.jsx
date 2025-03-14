@@ -37,7 +37,7 @@ const FormAddProducts = () => {
 
   useEffect(() => {
     FormListCalls(url.productlines.findByProductLineList, setDataProductLine);
-  })
+  }, []);
 
   const isNonMobile = useMediaQuery("(min-width:600px)");
   const [responseCode, setResponseCode] = useState(null);
@@ -46,6 +46,7 @@ const FormAddProducts = () => {
   const [status, setStatus] = useState('');
 
   const handleFormSubmit = async (values, { setSubmitting, resetForm }) => {
+    console.log("submit");
     setStatus('');
     setResponseCode(null);
     try {
