@@ -3,8 +3,8 @@ import { TextField, FormControl, InputLabel, Select, MenuItem } from "@mui/mater
 const ProductsFormInputs = ({ rowData, handleBlur, handleChange, values,
   touched, errors, isEdit, setFieldValue, dataProductLine }) => {
 
-  const isProductLineValid = dataProductLine
-    ? dataProductLine.some((productline) => productline === values.productline)
+  const isproductLineValid = dataProductLine
+    ? dataProductLine.some((productLine) => productLine === values.productLine)
     : false;
 
   return (
@@ -37,13 +37,13 @@ const ProductsFormInputs = ({ rowData, handleBlur, handleChange, values,
         variant="filled"
         sx={{ gridColumn: "span 2" }}
       >
-        <InputLabel id="productline-select-label">Product Line</InputLabel>
+        <InputLabel id="productLine-select-label">Product Line</InputLabel>
         <Select
-          labelId="productline-select-label"
-          id="productline-select"
-          name="productline"
-          value={isProductLineValid ? values.productline : ''}
-          onChange={(event) => setFieldValue('productline', event.target.value)}
+          labelId="productLine-select-label"
+          id="productLine-select"
+          name="productLine"
+          value={isproductLineValid ? values.productLine : ''}
+          onChange={(event) => setFieldValue('productLine', event.target.value)}
           onBlur={handleBlur}
           label="Product Line"
         >

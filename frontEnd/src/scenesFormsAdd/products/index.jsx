@@ -16,7 +16,7 @@ import PostForms from "../../components/formsRequests/PostForms";
 
 const initialValues = {
   name: "", productLine: "", scale: "", vendor: "", description: "",
-  quantityInStock: "", buyPrice: "", MSRP: ""
+  quantityInStock: "", buyPrice: "", msrp: ""
 }
 
 const productsSchema = yup.object().shape({
@@ -46,7 +46,6 @@ const FormAddProducts = () => {
   const [status, setStatus] = useState('');
 
   const handleFormSubmit = async (values, { setSubmitting, resetForm }) => {
-    console.log("submit");
     setStatus('');
     setResponseCode(null);
     try {
@@ -98,15 +97,9 @@ const FormAddProducts = () => {
 
               <Divider sx={{ gridColumn: "span 5" }} />
 
-              {/* Criar ProductFormInputs */}
-              {/* <CustomersFormInputs handleBlur={handleBlur} handleChange={handleChange} */}
-              {/*   values={values} touched={touched} errors={errors} isEdit={false} */}
-              {/*   dataEmployeeIdNameList={dataEmployeeIdNameList} setFieldValue={setFieldValue} /> */}
-
               <ProductsFormInputs handleBlur={handleBlur} handleChange={handleChange}
                 values={values} touched={touched} errors={errors} isEdit={false}
                 setFieldValue={setFieldValue} dataProductLine={dataProductLine} />
-
 
             </Box>
             <Box display="flex" justifyContent="end" mt="20px">
