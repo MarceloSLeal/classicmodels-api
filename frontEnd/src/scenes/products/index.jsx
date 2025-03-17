@@ -30,8 +30,7 @@ const Products = () => {
 
   const handleEditDatagridButton = (params) => () => {
     const rowData = params.row;
-    // adicionar a página de edição
-    // navigateEdit("/formeditcustomer", { state: { rowData } });
+    navigateEdit("/formeditproducts", { state: { rowData } });
   };
   const handleDeleteDatagridButton = (params) => () => {
     setIdDelete(params.id);

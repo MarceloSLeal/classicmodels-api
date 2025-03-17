@@ -34,6 +34,7 @@ import FormAddPayments from './scenesFormsAdd/payments';
 import FormAddProductLines from './scenesFormsAdd/productlines';
 import FormEditProductLines from './scenesFormsEdit/productLines';
 import FormAddProducts from './scenesFormsAdd/products';
+import FormEditProducts from './scenesFormsEdit/products';
 
 import Form from './scenes/form';
 import Calendar from "./scenes/calendar";
@@ -112,6 +113,7 @@ const Layout = () => {
                   <Route path="/formaddproductlines" element={<FormAddProductLines />} />
                   <Route path="/formeditproductlines" element={<FormEditProductLines />} />
                   <Route path="/formaddproducts" element={<FormAddProducts />} />
+                  <Route path="/formeditproducts" element={<FormEditProducts />} />
 
                   <Route path="/form" element={<Form />} />
                   <Route path="/calendar" element={<Calendar />} />
