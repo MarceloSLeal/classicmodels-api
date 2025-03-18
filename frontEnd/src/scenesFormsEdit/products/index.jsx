@@ -14,6 +14,7 @@ import Header from "../../components/Header";
 import { Urls } from "../../api/Paths";
 import FormListCalls from "../../components/FormsListCalls";
 import OperationStatusDialog from "../../components/dialogs/OperationStatusDialog"
+import PutForms from "../../components/formsRequests/PutForms";
 
 const productsSchema = yup.object().shape({
   name: yup.string().max(70).required(),
@@ -53,13 +54,8 @@ const FormEditProducts = () => {
     setStatus('');
     setResponseCode(null);
     try {
-      const response = await fetch(url.products.put_Delete, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(values),
-      });
+
+      const response = await PutForms(values, url.products.put_Delete);
       const data = await response.json();
 
       setResponseCode(response.status);

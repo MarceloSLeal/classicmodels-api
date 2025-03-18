@@ -1,16 +1,16 @@
-const PostForms = async (values, url) => {
+const PutForms = async (values, url) => {
 
   const response = await fetch(url, {
-    method: 'POST',
+    method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
     },
     credentials: 'include',
 
     body: JSON.stringify(values),
-  });
+  })
 
   return response;
 }
 
-export default PostForms;
+export default PutForms;
