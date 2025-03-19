@@ -14,6 +14,7 @@ import Header from "../../components/Header";
 import { Urls } from "../../api/Paths";
 import FormListCalls from "../../components/FormsListCalls";
 import OperationStatusDialog from "../../components/dialogs/OperationStatusDialog"
+import PutForms from "../../components/formsRequests/PutForms";
 
 const phoneRegExp = /^((\+[1-9]{1,4}[ -]?)|(\([0-9]{2,3}\)[ -]?)|([0-9]{2,4})[ -]?)*?[0-9]{3,4}[ -]?[0-9]{3,4}$/;
 const customersSchema = yup.object().shape({
@@ -64,13 +65,8 @@ const FormEditCustomer = () => {
     setStatus('');
     setResponseCode(null);
     try {
-      const response = await fetch(url.customers.findById_Put_Delete, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(values),
-      });
+
+      const response = await PutForms(values, url.customers.findById_Put_Delete);
       const data = await response.json();
 
       setResponseCode(response.status);

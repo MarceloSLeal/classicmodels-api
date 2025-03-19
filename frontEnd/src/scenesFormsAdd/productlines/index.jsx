@@ -63,8 +63,6 @@ const FormAddProductLines = () => {
   const resetImageRef = useRef(null);
   const [imageChanged, setImageChanged] = useState(false);
 
-  const token = import.meta.env.VITE_TOKEN;
-
   const handleFormSubmit = async (values, { setSubmitting, resetForm }) => {
     setStatus('');
     setResponseCode(null);
@@ -90,8 +88,6 @@ const FormAddProductLines = () => {
       const response = await fetch(url.productlines.findAll_Post, {
         method: 'POST',
         credentials: "include",
-        'Authorization': `${token}`,
-
         body: formData,
       });
 

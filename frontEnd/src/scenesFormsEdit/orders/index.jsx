@@ -14,6 +14,7 @@ import Header from "../../components/Header";
 import { Urls } from "../../api/Paths";
 import OperationStatusDialog from "../../components/dialogs/OperationStatusDialog"
 import { Constants } from "../../data/constants";
+import PutForms from "../../components/formsRequests/PutForms";
 
 const commentsRegex = /^[\p{L}\p{N}\s.,!?'"()-]+$/u;
 const ordersSchema = yup.object().shape({
@@ -53,13 +54,8 @@ const FormEditOrders = () => {
     setStatus('');
     setResponseCode(null);
     try {
-      const response = await fetch(url.orders.findById_Put_Delete, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(submitValues),
-      });
+
+      const response = await PutForms(submitValues, url.orders.findById_Put_Delete);
       const data = await response.json();
 
       setResponseCode(response.status);
