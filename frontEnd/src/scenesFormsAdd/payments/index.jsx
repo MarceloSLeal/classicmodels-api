@@ -45,7 +45,7 @@ const FormAddPayments = () => {
   const [status, setStatus] = useState('');
   const [urlSelectState, setUrlSelectState] = useState(null);
   const urlSelect = urlSelectState ? Urls(urlSelectState) : null;
-  const { data, loading, error } = useFetchData(urlSelect ? urlSelect.orderdetails.findByOrderId : null);
+  const { data, loading } = useFetchData(urlSelect ? urlSelect.orderdetails.findByOrderId : null);
   const [dataOrdersIdStatus, setDataOrdersIdStatus] = useState(null);
   const amountFormikValuesRef = useRef(null);
   const setAmountFieldValueRef = useRef(null);
