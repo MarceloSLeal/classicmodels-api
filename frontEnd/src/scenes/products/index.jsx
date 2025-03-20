@@ -14,6 +14,7 @@ import { Urls } from "../../api/Paths";
 import { tokens } from "../../theme";
 import ConfirmDeleteDialog from "../../components/dialogs/ConfirmDeleteDialog"
 import BoxDataGrid from "../../components/boxes/BoxDataGrid"
+import DeleteScenes from "../../components/formsRequests/DeleteScenes";
 
 const Products = () => {
   const urlData = Urls();
@@ -49,12 +50,8 @@ const Products = () => {
     setStatus('');
 
     try {
-      const response = await fetch(urlDelete.products.put_Delete, {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
+
+      const response = await DeleteScenes(urlDelete.products.put_Delete);
 
       setStatus(response.status);
 

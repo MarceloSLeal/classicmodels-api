@@ -14,6 +14,7 @@ import { Urls } from '../../api/Paths';
 import { tokens } from "../../theme";
 import ConfirmDeleteDialog from '../../components/dialogs/ConfirmDeleteDialog';
 import BoxDataGrid from "../../components/boxes/BoxDataGrid"
+import DeleteScenes from '../../components/formsRequests/DeleteScenes';
 
 const Offices = () => {
 
@@ -47,12 +48,8 @@ const Offices = () => {
     setStatus('');
 
     try {
-      const response = await fetch(urlDelete.offices.findById_Put_Delete, {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
+
+      const response = await DeleteScenes(urlDelete.offices.findById_Put_Delete);
 
       setStatus(response.status);
 

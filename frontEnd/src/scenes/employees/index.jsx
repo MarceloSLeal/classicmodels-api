@@ -14,6 +14,7 @@ import { Urls } from "../../api/Paths";
 import { tokens } from "../../theme";
 import ConfirmDeleteDialog from '../../components/dialogs/ConfirmDeleteDialog';
 import BoxDataGrid from '../../components/boxes/BoxDataGrid';
+import DeleteScenes from '../../components/formsRequests/DeleteScenes';
 
 const Employees = () => {
 
@@ -48,20 +49,15 @@ const Employees = () => {
     setStatus('');
 
     try {
-      const response = await fetch(urlDelete.employees.findById_Put_Delete, {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
+
+      const response = await DeleteScenes(urlDelete.employees.findById_Put_Delete);
 
       setStatus(response.status);
 
       if (response.status === 204) {
         setStatus(`${response.status} Employee Deleted Succesfully!`);
 
-        refreshData();
-
+        setRows((prevData) => prevData.filter((item) => item.id !== idDelete));
       } else {
         setStatus(`Error: ${response.status} Failed to delete Employee`);
       }
@@ -80,10 +76,12 @@ const Employees = () => {
     try {
 
       //TODO -- provavelmente terei que tratar essa requisição
-      const response = await fetch(urlData.employees.findAll_Post);
-      const updatedData = await response.json();
+      // const response = await fetch(urlData.employees.findAll_Post);
+      // const updatedData = await response.json();
 
-      setRows(updatedData);
+      // setRows(updatedData);
+      // setRows(data);
+      refetchData();
     } catch (error) {
       // TODO -- verificar como colocar isso em um dialog
       console.error('Failed to refresh data:', error);
