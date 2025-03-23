@@ -72,22 +72,6 @@ const Employees = () => {
     setDialogDeleteOpen(false);
   }
 
-  const refreshData = async () => {
-    try {
-
-      //TODO -- provavelmente terei que tratar essa requisição
-      // const response = await fetch(urlData.employees.findAll_Post);
-      // const updatedData = await response.json();
-
-      // setRows(updatedData);
-      // setRows(data);
-      refetchData();
-    } catch (error) {
-      // TODO -- verificar como colocar isso em um dialog
-      console.error('Failed to refresh data:', error);
-    }
-  };
-
   const GridActionTooltip = styled(({ className, ...props }) => (
     <Tooltip {...props} classes={{ popper: className }} />
   ))(() => ({

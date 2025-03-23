@@ -43,6 +43,7 @@ const Orders = () => {
       field: "date",
       headerName: "DATE",
       flex: 1,
+      cellClassName: "name-column--cell",
       renderCell: (params) => {
         const date = new Date(params.value);
         return date instanceof Date && !isNaN(date) ? date.toLocaleString() : "Invalid Date";

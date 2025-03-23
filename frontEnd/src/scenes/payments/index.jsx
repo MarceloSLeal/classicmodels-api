@@ -17,7 +17,7 @@ const Payments = () => {
 
   const columns = [
     { field: "orderId", headerName: "ORDER ID", flex: 1 },
-    { field: "checkNumber", headerName: "CHECK NUMBER", flex: 1 },
+    { field: "checkNumber", headerName: "CHECK NUMBER", flex: 1, cellClassName: "name-column--cell" },
     {
       field: "paymentDate",
       headerName: "PAYMENT DATE",

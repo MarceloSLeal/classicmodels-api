@@ -69,7 +69,7 @@ const OrderDetails = () => {
       }
     },
 
-    { field: "orderId", headerName: "ORDER ID", flex: 0.5 },
+    { field: "orderId", headerName: "ORDER ID", flex: 0.5, cellClassName: "name-column--cell" },
 
     {
       field: 'selectProduct',

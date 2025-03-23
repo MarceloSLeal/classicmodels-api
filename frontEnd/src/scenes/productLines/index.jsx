@@ -85,7 +85,7 @@ const ProductLines = () => {
   }));
 
   const columns = [
-    { field: "productLine", headerName: "PRODUCT LINE", flex: 0.5, cellClassName: "name-column-cell" },
+    { field: "productLine", headerName: "PRODUCT LINE", flex: 0.5, cellClassName: "name-column--cell" },
     {
       field: "textDescription",
       headerName: "TEXT DESCRIPTION",
