@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { ProSidebar, Menu, MenuItem } from "react-pro-sidebar";
-import { Box, IconButton, Typography, useTheme } from '@mui/material';
 import { Link } from "react-router-dom";
 import 'react-pro-sidebar/dist/css/styles.css';
-import { tokens } from "../../theme";
+import CustomTooltip from "../../components/SideBarTooltips";
+
+import { Box, IconButton, Typography, useTheme } from '@mui/material';
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import PersonOutlinedIcon from "@mui/icons-material/PersonOutlined";
 import CalendarTodayOutLinedIcon from "@mui/icons-material/CalendarTodayOutlined";
@@ -21,6 +22,8 @@ import BorderColorOutlinedIcon from '@mui/icons-material/BorderColorOutlined';
 import PaymentOutlinedIcon from '@mui/icons-material/PaymentOutlined';
 import CategoryOutlinedIcon from '@mui/icons-material/CategoryOutlined';
 import ToysOutlinedIcon from '@mui/icons-material/ToysOutlined';
+
+import { tokens } from "../../theme";
 
 const Item = ({ title, to, icon, selected, setSelected }) => {
   const theme = useTheme();
@@ -126,13 +129,16 @@ const Sidebar = () => {
 
           {/* MENU ITEMS */}
           <Box paddingLeft={isCollapsed ? undefined : "10%"}>
-            <Item
-              title="Dashboard"
-              to="/"
-              icon={<HomeOutlinedIcon />}
-              selected={selected}
-              setSelected={setSelected}
-            />
+
+            <CustomTooltip title="Dashboard" isCollapsed={isCollapsed} X={60} Y={-50}>
+              <Item
+                title="Dashboard"
+                to="/"
+                icon={<HomeOutlinedIcon />}
+                selected={selected}
+                setSelected={setSelected}
+              />
+            </CustomTooltip>
 
             <Typography
               variant="h6"
@@ -141,62 +147,78 @@ const Sidebar = () => {
             >
               Data
             </Typography>
-            <Item
-              title="Customers"
-              to="/customers"
-              icon={<PeopleAltOutlinedIcon />}
-              selected={selected}
-              setSelected={setSelected}
-            />
-            <Item
-              title="Employees"
-              to="/employees"
-              icon={<Person4OutlinedIcon />}
-              selected={selected}
-              setSelected={setSelected}
-            />
-            <Item
-              title="Offices"
-              to="/offices"
-              icon={<ApartmentOutlinedIcon />}
-              selected={selected}
-              setSelected={setSelected}
-            />
-            <Item
-              title="Order Details"
-              to="/orderdetails"
-              icon={<ViewListOutlinedIcon />}
-              selected={selected}
-              setSelected={setSelected}
-            />
-            <Item
-              title="Orders"
-              to="/orders"
-              icon={<BorderColorOutlinedIcon />}
-              selected={selected}
-              setSelected={setSelected}
-            />
-            <Item
-              title="Payments"
-              to="/payments"
-              icon={<PaymentOutlinedIcon />}
-              selected={selected}
-              setSelected={setSelected}
-            />
-            <Item
-              title="Product Line"
-              to="/productlines"
-              icon={<CategoryOutlinedIcon />}
-              selected={selected}
-              setSelected={setSelected}
-            />
-            <Item
-              title="Products"
-              to="/products"
-              icon={<ToysOutlinedIcon />}
-              selected={selected}
-              setSelected={setSelected}
-            />
+            <CustomTooltip title="Customers" isCollapsed={isCollapsed} X={60} Y={-50}>
+              <Item
+                title="Customers"
+                to="/customers"
+                icon={<PeopleAltOutlinedIcon />}
+                selected={selected}
+                setSelected={setSelected}
+              />
+            </CustomTooltip>
+            <CustomTooltip title="Employees" isCollapsed={isCollapsed} X={60} Y={-50}>
+              <Item
+                title="Employees"
+                to="/employees"
+                icon={<Person4OutlinedIcon />}
+                selected={selected}
+                setSelected={setSelected}
+              />
+            </CustomTooltip>
+            <CustomTooltip title="Offices" isCollapsed={isCollapsed} X={60} Y={-50}>
+              <Item
+                title="Offices"
+                to="/offices"
+                icon={<ApartmentOutlinedIcon />}
+                selected={selected}
+                setSelected={setSelected}
+              />
+            </CustomTooltip>
+            <CustomTooltip title="Order Details" isCollapsed={isCollapsed} X={60} Y={-50}>
+              <Item
+                title="Order Details"
+                to="/orderdetails"
+                icon={<ViewListOutlinedIcon />}
+                selected={selected}
+                setSelected={setSelected}
+              />
+            </CustomTooltip>
+            <CustomTooltip title="Orders" isCollapsed={isCollapsed} X={60} Y={-50}>
+              <Item
+                title="Orders"
+                to="/orders"
+                icon={<BorderColorOutlinedIcon />}
+                selected={selected}
+                setSelected={setSelected}
+              />
+            </CustomTooltip>
+            <CustomTooltip title="Payments" isCollapsed={isCollapsed} X={60} Y={-50}>
+              <Item
+                title="Payments"
+                to="/payments"
+                icon={<PaymentOutlinedIcon />}
+                selected={selected}
+                setSelected={setSelected}
+              />
+            </CustomTooltip>
+            <CustomTooltip title="Product Line" isCollapsed={isCollapsed} X={60} Y={-50}>
+              <Item
+                title="Product Line"
+                to="/productlines"
+                icon={<CategoryOutlinedIcon />}
+                selected={selected}
+                setSelected={setSelected}
+              />
+            </CustomTooltip>
+            <CustomTooltip title="Products" isCollapsed={isCollapsed} X={60} Y={-50}>
+              <Item
+                title="Products"
+                to="/products"
+                icon={<ToysOutlinedIcon />}
+                selected={selected}
+                setSelected={setSelected}
+              />
+            </CustomTooltip>
 
             <Typography
               variant="h6"
@@ -205,20 +227,24 @@ const Sidebar = () => {
             >
               Pages
             </Typography>
-            <Item
-              title="Profile Form"
-              to="/form"
-              icon={<PersonOutlinedIcon />}
-              selected={selected}
-              setSelected={setSelected}
-            />
-            <Item
-              title="Calendar"
-              to="/calendar"
-              icon={<CalendarTodayOutLinedIcon />}
-              selected={selected}
-              setSelected={setSelected}
-            />
+            <CustomTooltip title="Profile Form" isCollapsed={isCollapsed} X={60} Y={-50}>
+              <Item
+                title="Profile Form"
+                to="/form"
+                icon={<PersonOutlinedIcon />}
+                selected={selected}
+                setSelected={setSelected}
+              />
+            </CustomTooltip>
+            <CustomTooltip title="Calendar" isCollapsed={isCollapsed} X={60} Y={-50}>
+              <Item
+                title="Calendar"
+                to="/calendar"
+                icon={<CalendarTodayOutLinedIcon />}
+                selected={selected}
+                setSelected={setSelected}
+              />
+            </CustomTooltip>
 
             <Typography
               variant="h6"
@@ -227,34 +253,42 @@ const Sidebar = () => {
             >
               Charts
             </Typography>
-            <Item
-              title="Bar Chart"
-              to="/bar"
-              icon={<BarChartOutLinedIcon />}
-              selected={selected}
-              setSelected={setSelected}
-            />
-            <Item
-              title="Pie Chart"
-              to="/pie"
-              icon={<PieChartOutlineOutlinedicon />}
-              selected={selected}
-              setSelected={setSelected}
-            />
-            <Item
-              title="Line Chart"
-              to="/line"
-              icon={<TimelineOutLinedIcon />}
-              selected={selected}
-              setSelected={setSelected}
-            />
-            <Item
-              title="Geography Chart"
-              to="/geography"
-              icon={<MapOutLinedIcon />}
-              selected={selected}
-              setSelected={setSelected}
-            />
+            <CustomTooltip title="Bar Chart" isCollapsed={isCollapsed} X={60} Y={-50}>
+              <Item
+                title="Bar Chart"
+                to="/bar"
+                icon={<BarChartOutLinedIcon />}
+                selected={selected}
+                setSelected={setSelected}
+              />
+            </CustomTooltip>
+            <CustomTooltip title="Pie Chart" isCollapsed={isCollapsed} X={60} Y={-50}>
+              <Item
+                title="Pie Chart"
+                to="/pie"
+                icon={<PieChartOutlineOutlinedicon />}
+                selected={selected}
+                setSelected={setSelected}
+              />
+            </CustomTooltip>
+            <CustomTooltip title="Line Chart" isCollapsed={isCollapsed} X={60} Y={-50}>
+              <Item
+                title="Line Chart"
+                to="/line"
+                icon={<TimelineOutLinedIcon />}
+                selected={selected}
+                setSelected={setSelected}
+              />
+            </CustomTooltip>
+            <CustomTooltip title="Geography Chart" isCollapsed={isCollapsed} X={60} Y={-50}>
+              <Item
+                title="Geography Chart"
+                to="/geography"
+                icon={<MapOutLinedIcon />}
+                selected={selected}
+                setSelected={setSelected}
+              />
+            </CustomTooltip>
           </Box>
         </Menu>
       </ProSidebar>
