@@ -1,12 +1,18 @@
+import React, { useState } from "react";
+
 import { Box, Button, FormControl, Select, TextField, InputLabel, MenuItem } from "@mui/material";
 import { Formik } from "formik";
 import * as yup from "yup";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import Header from "../../components/Header";
+import PostForms from "../../components/formsRequests/PostForms";
+import { Urls } from "../../api/Paths";
+import OperationStatusDialog from "../../components/dialogs/OperationStatusDialog"
 
 const initialValues = {
   login: "",
   password: "",
+  passwordConfirm: "",
   role: "",
 }
 
@@ -19,9 +25,47 @@ const userSchema = yup.object().shape({
 
 const Form = () => {
   const isNonMobile = useMediaQuery("(min-width:600px)");
+  const [responseCode, setResponseCode] = useState(null);
+  const [resetFormFn, setResetFormFn] = useState(null);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [status, setStatus] = useState('');
+  const url = Urls();
 
-  const handleFormSubmit = (values) => {
+  const handleFormSubmit = async (values, { setSubmitting, resetForm }) => {
+    const { passwordConfirm, ...user } = values;
+
+    setStatus('');
+    setResponseCode(null);
+
+    try {
+
+      const response = await PostForms(values, url.auth.register_Post);
+      const data = await response.json();
+
+      setResponseCode(response.status);
+
+      if (response.ok) {
+        setStatus("User created successfully");
+        setResetFormFn(() => resetForm);
+      } else {
+        setStatus(`Error: ${data.title || 'Failed to Create User'} - ${data.detail || ''}`);
+      }
+    } catch (error) {
+      setStatus(`Error: ${error.message || 'Failed to create User'}`);
+    }
+
+    setSubmitting(false);
+    setDialogOpen(true);
+
     console.log(values);
+    console.log(user);
+  }
+
+  const handleClose = () => {
+    setDialogOpen(false);
+    if (responseCode === 201 && resetFormFn) {
+      resetFormFn();
+    }
   }
 
   return <Box m="20px">
@@ -32,7 +76,8 @@ const Form = () => {
       initialValues={initialValues}
       validationSchema={userSchema}
     >
-      {({ values, errors, touched, handleBlur, handleChange, handleSubmit }) => (
+      {({ values, errors, touched, handleBlur, handleChange, handleSubmit,
+        setFieldValue }) => (
         <form onSubmit={handleSubmit}>
           <Box
             display="grid"
@@ -96,25 +141,14 @@ const Form = () => {
               <Select
                 labelId="user-select-role"
                 id="user-role"
-                name="userRole"
+                name="role"
                 value={values.role}
-                onChange={(event) => setFieldValue('userRole', event.target.value)}
+                onChange={(event) => setFieldValue('role', event.target.value)}
                 onBlur={handleBlur}
                 label="User Role"
               >
-                <MenuItem value="">
-                  <em>None</em>
-                </MenuItem>
-                <MenuItem key="USER" value="USER" />
-                <MenuItem key="ADMIN" value="ADMIN" />
-
-                {/* {dataEmployeeIdNameList && dataEmployeeIdNameList.map((employee) => ( */}
-                {/*   <MenuItem key={employee.id} value={employee.id}> */}
-                {/*     {employee.id} */}
-                {/*     {" "} {employee.lastName} {employee.firstName} */}
-                {/*     {" "} - {employee.jobTitle} */}
-                {/*   </MenuItem> */}
-                {/* ))} */}
+                <MenuItem key="USER" value="USER" >USER</MenuItem>
+                <MenuItem key="ADMIN" value="ADMIN" >ADMIN</MenuItem>
               </Select>
             </FormControl>
 
@@ -128,6 +162,12 @@ const Form = () => {
         </form>
       )}
     </Formik>
+
+    <OperationStatusDialog
+      dialogOpen={dialogOpen} onClose={handleClose} status={status}
+      responseCode={responseCode} onClick={handleClose}
+    />
+
   </Box>
 }
 

@@ -59,6 +59,11 @@ export const Urls = (param) => ({
         put_Delete: `${prefix}products/${param}`,
         findByIdNameQuantityInStock: `${prefix}products/idnamequantityinstock`,
       },
+      auth: {
+        login_Post: `${prefix}auth/login`,
+        refresh_Post: `${prefix}auth/refresh`,
+        register_Post: `${prefix}auth/register`,
+      },
     }
   )
 })
