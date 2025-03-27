@@ -48,7 +48,7 @@ const Form = () => {
         setStatus("User created successfully");
         setResetFormFn(() => resetForm);
       } else {
-        setStatus(`Error: ${data.title || 'Failed to Create User'} - ${data.detail || ''}`);
+        setStatus(`Error if: ${data.title || 'Failed to Create User'} - ${data.detail || ''}`);
       }
     } catch (error) {
       setStatus(`Error: ${error.message || 'Failed to create User'}`);
@@ -56,14 +56,11 @@ const Form = () => {
 
     setSubmitting(false);
     setDialogOpen(true);
-
-    console.log(values);
-    console.log(user);
   }
 
   const handleClose = () => {
     setDialogOpen(false);
-    if (responseCode === 201 && resetFormFn) {
+    if (responseCode === 200 && resetFormFn) {
       resetFormFn();
     }
   }
@@ -154,7 +151,7 @@ const Form = () => {
 
 
           </Box>
-          <Box display="flex" justifyContent="end" mt="20px">
+          <Box display="flex" justifyContent="start" mt="20px">
             <Button type="submit" color="secondary" variant="contained">
               Create New user
             </Button>

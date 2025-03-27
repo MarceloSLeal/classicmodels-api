@@ -13,6 +13,7 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -104,8 +105,15 @@ public class AuthenticationController {
         String encryptedPassword = new BCryptPasswordEncoder().encode(usersInput.getPassword());
         Users newUser = new Users(usersInput.getLogin(), encryptedPassword, usersInput.getRole());
 
-        this.usersRepository.save(newUser);
-        return ResponseEntity.ok().build();
+        try {
+            this.usersRepository.save(newUser);
+            return ResponseEntity.ok("{\"message\": \"User registered successfully\"}");
+        } catch (Exception e) {
+            log.error("Error registering user: {}", usersInput.getLogin());
+            return ResponseEntity.badRequest()
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body("{\"message\": \"Error registering user\"}");
+        }
     }
 
     private ResponseCookie createCookie(String tokenName, String token, LocalDateTime expireTime) {

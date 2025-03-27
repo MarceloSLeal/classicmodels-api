@@ -62,16 +62,6 @@ const FormAddCustomer = () => {
     setStatus('');
     setResponseCode(null);
     try {
-      // const response = await fetch(url.customers.findAll_Post, {
-      //   method: 'POST',
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //   },
-      //   body: JSON.stringify(values),
-      // });
-      // const data = await response.json();
-
-      // console.log(url.customers.findAll_Post);
 
       const response = await PostForms(values, url.customers.findAll_Post);
       const data = await response.json();
