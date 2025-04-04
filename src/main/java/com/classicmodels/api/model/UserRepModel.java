@@ -10,7 +10,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class UserRepModel {
 
-    private String user;
+    private String email;
     private UsersRole role;
 
 }

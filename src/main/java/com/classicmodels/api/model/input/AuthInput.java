@@ -11,7 +11,7 @@ public class AuthInput {
 
     @Size(max = 50)
     @NotBlank
-    private String login;
+    private String email;
 
     @Size(max = 50)
     @NotBlank

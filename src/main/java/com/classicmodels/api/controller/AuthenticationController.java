@@ -44,7 +44,7 @@ public class AuthenticationController {
     public ResponseEntity<UserRepModel> login(@RequestBody @Valid AuthInput authInput) throws IOException {
 
         try {
-            var userNamePassword = new UsernamePasswordAuthenticationToken(authInput.getLogin(), authInput.getPassword());
+            var userNamePassword = new UsernamePasswordAuthenticationToken(authInput.getEmail(), authInput.getPassword());
             var auth = this.authenticationManager.authenticate(userNamePassword);
 
             log.info("User authenticated: {}", auth.getName());
@@ -62,7 +62,7 @@ public class AuthenticationController {
                     .body(user);
 
         } catch (Exception e) {
-            log.error("Error authenticating user: {}", authInput.getLogin());
+            log.error("Error authenticating user: {}", authInput.getEmail());
             return ResponseEntity.badRequest().build();
         }
     }
@@ -98,18 +98,18 @@ public class AuthenticationController {
     @PostMapping("/register")
     public ResponseEntity<String> register(@RequestBody @Valid UsersInput usersInput) {
 
-        if (this.usersRepository.findByLogin(usersInput.getLogin()) != null) {
+        if (this.usersRepository.findByEmail(usersInput.getEmail()) != null) {
             return ResponseEntity.badRequest().body("This login is already in use");
         }
 
         String encryptedPassword = new BCryptPasswordEncoder().encode(usersInput.getPassword());
-        Users newUser = new Users(usersInput.getLogin(), encryptedPassword, usersInput.getRole());
+        Users newUser = new Users(usersInput.getEmail(), encryptedPassword, usersInput.getRole());
 
         try {
             this.usersRepository.save(newUser);
             return ResponseEntity.ok("{\"message\": \"User registered successfully\"}");
         } catch (Exception e) {
-            log.error("Error registering user: {}", usersInput.getLogin());
+            log.error("Error registering user: {}", usersInput.getEmail());
             return ResponseEntity.badRequest()
                     .contentType(MediaType.APPLICATION_JSON)
                     .body("{\"message\": \"Error registering user\"}");

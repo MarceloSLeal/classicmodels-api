@@ -10,10 +10,10 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface UsersRepository extends JpaRepository<Users, String> {
 
-    UserDetails findByLogin(String login);
+    UserDetails findByEmail(String email);
 //    Optional<Users> findByLogin(String login);
 
-    @Query( value = "SELECT role from classicmodels_api.users WHERE login= :login", nativeQuery = true)
-    UsersRole findRoleByLogin(String login);
+    @Query( value = "SELECT role from classicmodels_api.users WHERE email= :email", nativeQuery = true)
+    UsersRole findRoleByEmail(String email);
 
 }

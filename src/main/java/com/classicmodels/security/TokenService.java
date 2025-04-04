@@ -38,15 +38,15 @@ public class TokenService {
             return new TokenRepModel(
                     JWT.create()
                             .withIssuer("auth-api")
-                            .withSubject(users.getLogin())
+                            .withSubject(users.getEmail())
                             .withExpiresAt(tokenExpiration())
                             .sign(algorithm),
                     JWT.create()
                             .withIssuer("auth-api")
-                            .withSubject(users.getLogin())
+                            .withSubject(users.getEmail())
                             .withExpiresAt(refreshTokenExpiration())
                             .sign(algorithm),
-                    users.getLogin(),
+                    users.getEmail(),
                     LocalDateTime.ofInstant(tokenExpiration(), zoneOffset),
                     LocalDateTime.ofInstant(refreshTokenExpiration(), zoneOffset),
                     users.getRole()
@@ -63,7 +63,7 @@ public class TokenService {
             String userName = decodedJWT.getSubject();
 
             log.debug("Decoded username from token: {}", userName);
-            Users user = (Users) usersRepository.findByLogin(userName);
+            Users user = (Users) usersRepository.findByEmail(userName);
 
             return generateToken(user);
 

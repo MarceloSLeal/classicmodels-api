@@ -1,54 +1,54 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+import { IconButton, InputAdornment } from '@mui/material';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
+
 import { Box, Button, TextField } from "@mui/material";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { Formik } from "formik";
 import * as yup from "yup";
 import OperationStatusDialog from "../../components/dialogs/OperationStatusDialog";
 import { useAuth } from "../../auth/AuthContext";
+import PostForms from "../../components/formsRequests/PostForms";
+import { Urls } from "../../api/Paths";
 
 const Login = () => {
   const isNonMobile = useMediaQuery("(min-width:600px)");
-  const url = import.meta.env.VITE_URL_PREFIX;
+  // const url = import.meta.env.VITE_URL_PREFIX;
   const [responseCode, setResponseCode] = useState(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [status, setStatus] = useState('');
   const navigateDashBoard = useNavigate();
   const userLogin = useAuth();
+  const url = Urls();
+
+  const [showPassword, setShowPassword] = useState(false);
 
   const initialValues = {
-    login: "", password: "",
+    email: "", password: "",
   };
 
   const loginSchema = yup.object().shape({
-    login: yup.string().max(50).required(),
+    email: yup.string().email().max(50).required(),
     password: yup.string().max(50).required(),
   })
 
   const handleLogin = async (values) => {
 
-    const response = await fetch(url + "auth/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(values),
-      credentials: "include",
-    });
+    const response = await PostForms(values, url.auth.login_Post);
+    const data = await response.json();
 
     if (!response.ok) {
       setDialogOpen(true);
       setResponseCode(response.status);
-      setStatus("Invalid username or password");
+      setStatus("Invalid email or password");
       return;
     }
 
-    const data = await response.json();
-
     userLogin.login();
 
-    localStorage.setItem("user", data.user);
+    localStorage.setItem("user", data.email);
     localStorage.setItem("role", data.role);
 
     navigateDashBoard("/");
@@ -57,6 +57,10 @@ const Login = () => {
   const handleClose = () => {
     setDialogOpen(false);
   }
+
+  const handleTogglePassword = () => {
+    setShowPassword((prev) => !prev);
+  };
 
   return (
     <Box
@@ -86,19 +90,20 @@ const Login = () => {
               <TextField
                 variant="filled"
                 type="text"
-                label="Login"
+                label="Email"
                 placeholder="example@email.com"
-                value={values.login}
-                name="login"
+                value={values.email}
+                name="email"
                 onChange={handleChange}
                 onBlur={handleBlur}
-                error={touched.login && Boolean(errors.login)}
-                helperText={touched.login && errors.login}
+                error={touched.email && Boolean(errors.email)}
+                helperText={touched.email && errors.email}
                 fullWidth
               />
               <TextField
                 variant="filled"
-                type="password"
+                type={showPassword ? "text" : "password"}
+
                 label="Password"
                 value={values.password}
                 name="password"
@@ -107,6 +112,20 @@ const Login = () => {
                 error={touched.password && Boolean(errors.password)}
                 helperText={touched.password && errors.password}
                 fullWidth
+
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        onClick={handleTogglePassword}
+                        onMouseDown={(e) => e.preventDefault()}
+                        edge="end"
+                      >
+                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
               />
             </Box>
 

@@ -46,8 +46,8 @@ const Sidebar = () => {
   const colors = tokens(theme.palette.mode);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [selected, setSelected] = useState("Dashboard");
-  const [user, setUser] = useState(() => localStorage.getItem("user") || "");
-  const [role, setRole] = useState(() => localStorage.getItem("role") || "");
+  const [user] = useState(() => localStorage.getItem("user") || "");
+  const [role] = useState(() => localStorage.getItem("role") || "");
 
   return (
     <Box
@@ -113,7 +113,7 @@ const Sidebar = () => {
 
               <Box textAlign="center">
                 <Typography
-                  variant="h2"
+                  variant="h4"
                   color={colors.grey[100]}
                   fontWeight="bold"
                   sx={{ m: "10px 0 0 0" }}

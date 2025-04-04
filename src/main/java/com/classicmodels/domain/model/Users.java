@@ -1,6 +1,7 @@
 package com.classicmodels.domain.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -26,10 +27,11 @@ public class Users implements UserDetails {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
+    @Email
     @Size(max = 50)
     @Column(unique = true)
     @NotBlank
-    private String login;
+    private String email;
 
     @Size(max = 256)
     @NotBlank
@@ -41,8 +43,8 @@ public class Users implements UserDetails {
     public Users(){
     }
 
-    public Users(String login, String password, UsersRole role){
-        this.login = login;
+    public Users(String email, String password, UsersRole role){
+        this.email = email;
         this.password = password;
         this.role = role;
     }
@@ -55,7 +57,7 @@ public class Users implements UserDetails {
 
     @Override
     public String getUsername() {
-        return login;
+        return email;
     }
 
     @Override
