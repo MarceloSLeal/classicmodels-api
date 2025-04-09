@@ -64,6 +64,10 @@ export const Urls = (param) => ({
         refresh_Post: `${prefix}auth/refresh`,
         register_Post: `${prefix}auth/register`,
       },
+      users: {
+        findAll: `${prefix}users`,
+        delete: `${prefix}users/${param}`,
+      }
     }
   )
 })

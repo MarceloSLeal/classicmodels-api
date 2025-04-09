@@ -227,10 +227,10 @@ const Sidebar = () => {
             >
               Pages
             </Typography>
-            <CustomTooltip title="Profile Form" isCollapsed={isCollapsed} X={60} Y={-50}>
+            <CustomTooltip title="Users" isCollapsed={isCollapsed} X={60} Y={-50}>
               <Item
-                title="Profile Form"
-                to="/form"
+                title="Users"
+                to="/users"
                 icon={<PersonOutlinedIcon />}
                 selected={selected}
                 setSelected={setSelected}

@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 
 import { Box, Button, FormControl, Select, TextField, InputLabel, MenuItem } from "@mui/material";
@@ -10,20 +11,20 @@ import { Urls } from "../../api/Paths";
 import OperationStatusDialog from "../../components/dialogs/OperationStatusDialog"
 
 const initialValues = {
-  login: "",
+  email: "",
   password: "",
   passwordConfirm: "",
   role: "",
 }
 
 const userSchema = yup.object().shape({
-  login: yup.string().max(50).required("required"),
+  email: yup.string().email().max(50).required("required"),
   password: yup.string().max(10).required("required"),
   passwordConfirm: yup.string().oneOf([yup.ref("password"), null], "Passwords must match"),
   role: yup.string().required("required"),
 });
 
-const Form = () => {
+const FormAddUser = () => {
   const isNonMobile = useMediaQuery("(min-width:600px)");
   const [responseCode, setResponseCode] = useState(null);
   const [resetFormFn, setResetFormFn] = useState(null);
@@ -88,13 +89,13 @@ const Form = () => {
               fullWidth
               variant="filled"
               type="text"
-              label="Login"
+              label="Email"
               onBlur={handleBlur}
               onChange={handleChange}
-              value={values.login}
-              name="login"
-              error={!!touched.login && !!errors.login}
-              helperText={touched.login && errors.login}
+              value={values.email}
+              name="email"
+              error={!!touched.email && !!errors.email}
+              helperText={touched.email && errors.email}
               sx={{ gridColumn: "span 2" }}
             />
 
@@ -168,4 +169,4 @@ const Form = () => {
   </Box>
 }
 
-export default Form;
+export default FormAddUser;

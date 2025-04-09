@@ -18,6 +18,7 @@ import Orders from './scenes/orders';
 import Payments from './scenes/payments';
 import ProductLines from './scenes/productLines';
 import Products from './scenes/products';
+import Users from './scenes/users';
 
 import SelectOrderId from './scenesSelects/selectOrderId';
 import SelectProductId from './scenesSelects/selectProductId';
@@ -35,8 +36,8 @@ import FormAddProductLines from './scenesFormsAdd/productlines';
 import FormEditProductLines from './scenesFormsEdit/productLines';
 import FormAddProducts from './scenesFormsAdd/products';
 import FormEditProducts from './scenesFormsEdit/products';
+import FormAddUser from './scenesFormsAdd/users';
 
-import Form from './scenes/form';
 import Calendar from "./scenes/calendar";
 import Bar from "./scenes/bar"
 import Pie from "./scenes/pie";
@@ -97,6 +98,7 @@ const Layout = () => {
                   <Route path="/payments" element={<Payments />} />
                   <Route path="/productlines" element={<ProductLines />} />
                   <Route path="/products" element={<Products />} />
+                  <Route path="/users" element={<Users />} />
 
                   <Route path="/selectorderid" element={<SelectOrderId />} />
                   <Route path="/selectproductid" element={<SelectProductId />} />
@@ -114,8 +116,8 @@ const Layout = () => {
                   <Route path="/formeditproductlines" element={<FormEditProductLines />} />
                   <Route path="/formaddproducts" element={<FormAddProducts />} />
                   <Route path="/formeditproducts" element={<FormEditProducts />} />
+                  <Route path="/formadduser" element={<FormAddUser />} />
 
-                  <Route path="/form" element={<Form />} />
                   <Route path="/calendar" element={<Calendar />} />
                   <Route path="/bar" element={<Bar />} />
                   <Route path="/pie" element={<Pie />} />

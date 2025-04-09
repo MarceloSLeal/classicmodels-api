@@ -10,6 +10,16 @@ import lombok.Setter;
 @AllArgsConstructor
 public class UserRepModel {
 
+    public UserRepModel() {
+
+    }
+
+    public UserRepModel(String email, UsersRole role) {
+        this.email = email;
+        this.role = role;
+    }
+
+    private String id;
     private String email;
     private UsersRole role;
 
