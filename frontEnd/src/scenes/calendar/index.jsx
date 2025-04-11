@@ -17,6 +17,24 @@ const Calendar = () => {
   const colors = tokens(theme.palette.mode);
   const [currentEvents, setCurrentEvents] = useState([]);
 
+  const timeFormat = {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  }
+
+  const calendarViews = [
+    "dayGridMonth",
+    "timeGridWeek",
+    "timeGridDay",
+    "listMonth",
+    "multiMonthYear",
+  ];
+
+  const views = Object.fromEntries(
+    calendarViews.map((view) => [view, { eventTimeFormat: timeFormat, slotLabelFormat: timeFormat }])
+  );
+
   const handleDateClick = (selected) => {
     const title = prompt("Please enter a new title for your event");
     const calendarApi = selected.view.calendar;
@@ -107,10 +125,22 @@ const Calendar = () => {
           eventClick={handleEventClick}
           eventsSet={(events) => setCurrentEvents(events)}
           initialEvents={[
-            { id: "1234", title: "All-day event", date: "2022-09-14" },
-            { id: "4321", title: "Timed event", date: "2022-09-28" },
-            { id: "2345", title: "All-day event", date: "2024-06-21" },
+            { id: "1234", title: "All-day event", date: "2025-04-14" },
+            { id: "2345", title: "All-day event", date: "2025-04-21" },
+            { id: "4321", title: "Timed event", date: "2025-04-28" },
+            {
+              id: "345",
+              title: "teste1",
+              start: "2025-04-20T10:30:00",
+              end: "2025-04-20T14:00:00",
+              extendedProps: {
+                description: "leitura"
+              }
+            },
           ]}
+
+          eventTimeFormat={timeFormat}
+          views={views}
 
         />
 
