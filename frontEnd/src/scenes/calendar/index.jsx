@@ -1,5 +1,3 @@
-import React, { useEffect } from 'react';
-
 import { useState } from "react";
 import { formatDate } from "@fullcalendar/core";
 import FullCallendar from "@fullcalendar/react";
