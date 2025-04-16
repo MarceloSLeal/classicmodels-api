@@ -1,3 +1,5 @@
+import React, { useEffect } from 'react';
+
 import { useState } from "react";
 import { formatDate } from "@fullcalendar/core";
 import FullCallendar from "@fullcalendar/react";
@@ -35,20 +37,72 @@ const Calendar = () => {
     calendarViews.map((view) => [view, { eventTimeFormat: timeFormat, slotLabelFormat: timeFormat }])
   );
 
+  const formatEventTime = (start, end, timeFormat) => {
+    const startDate = new Date(start);
+    const endDate = new Date(end);
+
+    const sameDay =
+      startDate.getFullYear() === endDate.getFullYear() &&
+      startDate.getMonth() === endDate.getMonth() &&
+      startDate.getDate() === endDate.getDate();
+
+    const startStr = formatDate(startDate, {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+      ...timeFormat,
+    });
+
+    const endStr = formatDate(endDate, sameDay ? timeFormat : {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+      ...timeFormat,
+    });
+
+    return `${startStr} | ${endStr}`;
+  };
+
   const handleDateClick = (selected) => {
     const title = prompt("Please enter a new title for your event");
     const calendarApi = selected.view.calendar;
     calendarApi.unselect();
 
     if (title) {
-      calendarApi.addEvent({
-        id: `${selected.dateStr}-${title}`,
+
+      let start = selected.start;
+      let end = selected.end;
+
+      if (selected.allDay) {
+        const startDate = new Date(start);
+        startDate.setHours(6, 0, 0, 0);
+
+        const endDate = new Date(start);
+        endDate.setHours(20, 0, 0, 0);
+
+        start = startDate;
+        end = endDate;
+      }
+
+      const uuid = crypto.randomUUID();
+
+      const event = calendarApi.addEvent({
+        id: uuid,
         title,
-        start: selected.startStr,
-        end: selected.endStr,
-        allDay: selected.allDay
+        start,
+        end,
+        allDay: false,
+      });
+
+      console.log({
+        id: event.id,
+        title: event.title,
+        start: event.start,
+        end: event.end,
+        allDay: event.allDay
       })
     }
+
   };
 
   const handleEventClick = (selected) => {
@@ -87,11 +141,7 @@ const Calendar = () => {
                 primary={event.title}
                 secondary={
                   <Typography>
-                    {formatDate(event.start, {
-                      year: "numeric",
-                      month: "short",
-                      day: "numeric",
-                    })}
+                    {formatEventTime(event.start, event.end, timeFormat)}
                   </Typography>
                 }
               />
@@ -103,6 +153,8 @@ const Calendar = () => {
       {/* CALENDAR */}
       <Box flex="1 1 100%" ml="15px">
         <FullCallendar
+          slotMinTime="06:00:00"
+          slotMaxTime="20:00:00"
           height="75vh"
           plugins={[
             dayGridPlugin,
@@ -133,9 +185,6 @@ const Calendar = () => {
               title: "teste1",
               start: "2025-04-20T10:30:00",
               end: "2025-04-20T14:00:00",
-              extendedProps: {
-                description: "leitura"
-              }
             },
           ]}
 
