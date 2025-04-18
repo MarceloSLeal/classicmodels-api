@@ -61,6 +61,22 @@ const Calendar = () => {
     return `${startStr} | ${endStr}`;
   };
 
+  const formatDate = (date) => {
+    // Para garantir o offset local (ex: -03:00), usamos Intl API
+    const pad = (n) => (n < 10 ? '0' + n : n);
+    const offset = -date.getTimezoneOffset();
+    const sign = offset >= 0 ? '+' : '-';
+    const hours = pad(Math.floor(Math.abs(offset) / 60));
+    const minutes = pad(Math.abs(offset) % 60);
+
+    return date.getFullYear() +
+      '-' + pad(date.getMonth() + 1) +
+      '-' + pad(date.getDate()) +
+      'T' + pad(date.getHours()) +
+      ':' + pad(date.getMinutes()) +
+      sign + hours + ':' + minutes;
+  };
+
   const handleDateClick = (selected) => {
     const title = prompt("Please enter a new title for your event");
     const calendarApi = selected.view.calendar;
@@ -95,8 +111,8 @@ const Calendar = () => {
       console.log({
         id: event.id,
         title: event.title,
-        start: event.start,
-        end: event.end,
+        start: formatDate(event.start),
+        end: formatDate(event.end),
         allDay: event.allDay
       })
     }

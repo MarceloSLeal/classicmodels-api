@@ -7945,6 +7945,14 @@ CREATE TABLE `users` (
   UNIQUE KEY `login` (`email`)
 );
 
+CREATE TABLE `calendar` (
+	`id` varchar(36) NOT NULL UNIQUE,
+    `title` varchar(50) NOT NULL,
+    `start` datetime NOT NULL,
+    `end` datetime NOT NULL,
+    `allday` boolean NOT NULL,
+    PRIMARY KEY (`id`));
+
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
 /*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
