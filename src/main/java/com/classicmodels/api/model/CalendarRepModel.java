@@ -12,11 +12,21 @@ import java.time.OffsetDateTime;
 public class CalendarRepModel {
 
     private String id;
-    private String tittle;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mmXXX")
+    private String title;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ssXXX")
     private OffsetDateTime start;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mmXXX")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ssXXX")
     private OffsetDateTime end;
     private boolean allday;
 
+    @Override
+    public String toString() {
+        return "CalendarRepModel{" +
+                "id='" + id + '\'' +
+                ", title='" + title + '\'' +
+                ", start=" + start +
+                ", end=" + end +
+                ", allday=" + allday +
+                '}';
+    }
 }

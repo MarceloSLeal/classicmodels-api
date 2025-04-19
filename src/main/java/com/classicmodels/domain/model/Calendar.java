@@ -29,14 +29,24 @@ public class Calendar {
     private String title;
 
     @NotNull
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mmXXX")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ssXXX")
     private OffsetDateTime start;
 
     @NotNull
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mmXXX")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ssXXX")
     private OffsetDateTime end;
 
     @Column(columnDefinition = "TINYINT(1)")
     private boolean allday;
 
+    @Override
+    public String toString() {
+        return "Calendar{" +
+                "id='" + id + '\'' +
+                ", title='" + title + '\'' +
+                ", start=" + start +
+                ", end=" + end +
+                ", allday=" + allday +
+                '}';
+    }
 }

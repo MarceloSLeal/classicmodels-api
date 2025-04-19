@@ -67,6 +67,10 @@ export const Urls = (param) => ({
       users: {
         findAll: `${prefix}users`,
         delete: `${prefix}users/${param}`,
+      },
+      calendar: {
+        findAll_Post: `${prefix}calendar`,
+        put_Delete: `${prefix}calendar/${param}`,
       }
     }
   )

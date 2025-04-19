@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { formatDate } from "@fullcalendar/core";
+import { useState, useEffect } from "react";
+
 import FullCallendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
@@ -9,13 +9,18 @@ import multiMonthPlugin from '@fullcalendar/multimonth'
 import {
   Box, List, ListItem, ListItemText, Typography, useTheme
 } from "@mui/material";
+
 import Header from "../../components/Header";
 import { tokens } from "../../theme";
+import useFetchData from "../../api/getData";
+import { Urls } from "../../api/Paths";
 
 const Calendar = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const [currentEvents, setCurrentEvents] = useState([]);
+  const urlData = Urls();
+  const { data, loading, error } = useFetchData(urlData.calendar.findAll_Post);
 
   const timeFormat = {
     hour: "2-digit",
@@ -74,6 +79,7 @@ const Calendar = () => {
       '-' + pad(date.getDate()) +
       'T' + pad(date.getHours()) +
       ':' + pad(date.getMinutes()) +
+      ':' + pad(date.getSeconds()) +
       sign + hours + ':' + minutes;
   };
 
@@ -128,6 +134,12 @@ const Calendar = () => {
       selected.event.remove();
     }
   };
+
+  useEffect(() => {
+    if (data) {
+      console.log(data);
+    }
+  }, [data]);
 
   return <Box m="20px">
     <Header title="CALENDAR" subtitle="Full calendar Interactive Page" />
@@ -190,17 +202,7 @@ const Calendar = () => {
           select={handleDateClick}
           eventClick={handleEventClick}
           eventsSet={(events) => setCurrentEvents(events)}
-          initialEvents={[
-            { id: "1234", title: "All-day event", date: "2025-04-14" },
-            { id: "2345", title: "All-day event", date: "2025-04-21" },
-            { id: "4321", title: "Timed event", date: "2025-04-28" },
-            {
-              id: "345",
-              title: "teste1",
-              start: "2025-04-20T10:30:00",
-              end: "2025-04-20T14:00:00",
-            },
-          ]}
+          events={data || []}
 
           eventTimeFormat={timeFormat}
           views={views}
