@@ -1,0 +1,62 @@
+services:
+  db:
+    image: mysql:8.0
+    command: --default-authentication-plugin=caching_sha2_password
+    restart: always
+    container_name: classicmodels-mysql
+    volumes:
+      - classicmodels-data:/var/lib/mysql
+      - ./mysql-init:/docker-entrypoint-initdb.d
+    env_file:
+      - .mysql.env
+    ports:
+      - "3306:3306"
+
+  api01: &api
+    image: dockerhub-api-image(need to define one image)
+    restart: always
+    container_name: classicmodels-backend-01
+    env_file: ./backend/.env
+    hostname: api01
+    expose:
+      - 8080
+    depends_on:
+      - db
+    deploy:
+      resources:
+        limits:
+          cpus: "0.70"
+          memory: "0.4GB"
+
+  api02:
+    <<: *api
+    container_name: classicmodels-backend-02
+    hostname: api02
+
+  frontend:
+    image: dockerhub-frontend-image(need to define one image)
+    container_name: classicmodels-frontend-01
+    env_file:
+      - ./frontend/.env
+    expose:
+      - 80
+
+  nginx:
+    image: nginx:1.27.5-alpine
+    container_name: classicmodels-nginx
+    volumes:
+      - ./nginx.prod.conf:/etc/nginx/nginx.conf:ro
+    ports:
+      - 80:80
+    depends_on:
+      - api01
+      - api02
+      - frontend
+    deploy:
+      resources:
+        limits:
+          cpus: "0.15"
+          memory: "0.5GB"
+
+volumes:
+  classicmodels-data:

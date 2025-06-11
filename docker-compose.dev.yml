@@ -1,0 +1,41 @@
+services:
+  db:
+    image: mysql:8.0
+    command: --default-authentication-plugin=caching_sha2_password
+    restart: always
+    container_name: classicmodels-mysql
+    volumes:
+      - classicmodels-data:/var/lib/mysql
+      # insert mysql-init only for prod environment, let the flyway handle the migrations
+      # - ./mysql-init:/docker-entrypoint-initdb.d
+    env_file:
+      - .mysql.env
+    ports:
+      - "3306:3306"
+
+  frontend:
+    image: classicmodels-frontend-image
+    container_name: classicmodels-frontend-01
+    build:
+      context: ./frontend/
+      target: dev
+    env_file:
+      - ./frontend/.dev.env
+    ports:
+      - 5173:5173
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+
+  nginx:
+    image: nginx:1.27.5-alpine
+    container_name: classicmodels-nginx
+    volumes:
+      - ./nginx.dev.conf:/etc/nginx/nginx.conf:ro
+    ports:
+      - 8080:80
+    depends_on:
+      - frontend
+
+volumes:
+  classicmodels-data:
