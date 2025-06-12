@@ -4,6 +4,7 @@
 .project
 .idea
 /logs/*
+/backend/logs/*
 target/
 .mvn/
 

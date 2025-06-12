@@ -14,6 +14,7 @@ import Header from "../../components/Header";
 import { tokens } from "../../theme";
 import useFetchData from "../../api/getData";
 import { Urls } from "../../api/Paths";
+import PostForms from "../../components/formsRequests/PostForms";
 
 const Calendar = () => {
   const theme = useTheme();
@@ -134,6 +135,17 @@ const Calendar = () => {
       selected.event.remove();
     }
   };
+
+  const handleEventPost = async (values) => {
+    try {
+
+      const response = await PostForms(values, urlData.calendar.findAll_Post);
+      const data = await response.json();
+
+    } catch (error) {
+
+    }
+  }
 
   useEffect(() => {
     if (data) {
