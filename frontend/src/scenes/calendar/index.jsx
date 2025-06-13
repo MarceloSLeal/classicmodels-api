@@ -15,6 +15,7 @@ import { tokens } from "../../theme";
 import useFetchData from "../../api/getData";
 import { Urls } from "../../api/Paths";
 import PostForms from "../../components/formsRequests/PostForms";
+import OperationStatusDialog from "../../components/dialogs/OperationStatusDialog";
 
 const Calendar = () => {
   const theme = useTheme();
@@ -22,6 +23,9 @@ const Calendar = () => {
   const [currentEvents, setCurrentEvents] = useState([]);
   const urlData = Urls();
   const { data, loading, error } = useFetchData(urlData.calendar.findAll_Post);
+  const [responseCode, setResponseCode] = useState(null);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [status, setStatus] = useState('');
 
   const timeFormat = {
     hour: "2-digit",
@@ -122,6 +126,8 @@ const Calendar = () => {
         end: formatDate(event.end),
         allDay: event.allDay
       })
+
+      handleEventPost(event);
     }
 
   };
@@ -142,9 +148,21 @@ const Calendar = () => {
       const response = await PostForms(values, urlData.calendar.findAll_Post);
       const data = await response.json();
 
-    } catch (error) {
+      setResponseCode(response.status);
 
+      if (!response === 201) {
+        setStatus(`Error: ${data.tittle || 'Failed to create event'} - ${data.detail || ''}`);
+        setDialogOpen(true);
+      }
+
+    } catch (error) {
+      setStatus(`Error: ${error.message || 'Failed to create event'}`);
+      setDialogOpen(true);
     }
+  }
+
+  const handleClose = () => {
+    setDialogOpen(false);
   }
 
   useEffect(() => {
@@ -235,6 +253,12 @@ const Calendar = () => {
 
       </Box>
     </Box>
+
+    <OperationStatusDialog
+      dialogOpen={dialogOpen} onClose={handleClose} status={status}
+      responseCode={responseCode} onClick={handleClose}
+    />
+
   </Box>
 };
 
