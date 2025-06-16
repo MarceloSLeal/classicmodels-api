@@ -16,6 +16,7 @@ import useFetchData from "../../api/getData";
 import { Urls } from "../../api/Paths";
 import PostForms from "../../components/formsRequests/PostForms";
 import OperationStatusDialog from "../../components/dialogs/OperationStatusDialog";
+import DeleteScenes from '../../components/formsRequests/DeleteScenes';
 
 const Calendar = () => {
   const theme = useTheme();
@@ -74,18 +75,24 @@ const Calendar = () => {
   const formatDate = (date) => {
     // Para garantir o offset local (ex: -03:00), usamos Intl API
     const pad = (n) => (n < 10 ? '0' + n : n);
-    const offset = -date.getTimezoneOffset();
-    const sign = offset >= 0 ? '+' : '-';
-    const hours = pad(Math.floor(Math.abs(offset) / 60));
-    const minutes = pad(Math.abs(offset) % 60);
+    // const offset = -date.getTimezoneOffset();
+    // const sign = offset >= 0 ? '+' : '-';
+    // const hours = pad(Math.floor(Math.abs(offset) / 60));
+    // const minutes = pad(Math.abs(offset) % 60);
+
+    // return date.getFullYear() +
+    //   '-' + pad(date.getMonth() + 1) +
+    //   '-' + pad(date.getDate()) +
+    //   'T' + pad(date.getHours()) +
+    //   ':' + pad(date.getMinutes()) +
+    //   ':' + pad(date.getSeconds()) +
+    //   sign + hours + ':' + minutes;
 
     return date.getFullYear() +
       '-' + pad(date.getMonth() + 1) +
       '-' + pad(date.getDate()) +
-      'T' + pad(date.getHours()) +
-      ':' + pad(date.getMinutes()) +
-      ':' + pad(date.getSeconds()) +
-      sign + hours + ':' + minutes;
+      ' ' + pad(date.getHours()) +
+      ':' + pad(date.getMinutes())
   };
 
   const handleDateClick = (selected) => {
@@ -133,12 +140,14 @@ const Calendar = () => {
   };
 
   const handleEventClick = (selected) => {
+    console.log(selected.event.id);
     if (
       window.confirm(
         `Are you sure you want to delete the event '${selected.event.title}'`
       )
     ) {
       selected.event.remove();
+      handleEventDelete(selected.event.id);
     }
   };
 
@@ -158,6 +167,25 @@ const Calendar = () => {
     } catch (error) {
       setStatus(`Error: ${error.message || 'Failed to create event'}`);
       setDialogOpen(true);
+    }
+  }
+
+  const handleEventDelete = async (id) => {
+    const urlDelete = Urls(id);
+
+    try {
+      const response = await DeleteScenes(urlDelete.calendar.put_Delete);
+      setResponseCode(response.status);
+
+      if (response.status !== 204) {
+        const data = await response.json();
+        setStatus(`${data.tittle || 'Failed to delete event'} - ${data.detail || ''}`);
+      }
+
+    } catch (error) {
+      setStatus(`Error: ${error.message || 'Failed to delete event'}`);
+      setDialogOpen(true);
+
     }
   }
 
@@ -191,6 +219,11 @@ const Calendar = () => {
                 backgroundColor: colors.greenAccent[500],
                 margin: "10px 0",
                 borderRadius: "2px",
+              }}
+              onClick={() => {
+                // console.log(event.id)
+                //criar outro handle para selecionar o evento no FullCalendar
+                //de acordo com o evento clicado no sidebar
               }}
             >
               <ListItemText
