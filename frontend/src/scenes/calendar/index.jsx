@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 import FullCallendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
@@ -27,6 +27,7 @@ const Calendar = () => {
   const [responseCode, setResponseCode] = useState(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [status, setStatus] = useState('');
+  const calendarRef = useRef(null);
 
   const timeFormat = {
     hour: "2-digit",
@@ -126,21 +127,13 @@ const Calendar = () => {
         allDay: false,
       });
 
-      console.log({
-        id: event.id,
-        title: event.title,
-        start: formatDate(event.start),
-        end: formatDate(event.end),
-        allDay: event.allDay
-      })
-
       handleEventPost(event);
     }
 
   };
 
   const handleEventClick = (selected) => {
-    console.log(selected.event.id);
+
     if (
       window.confirm(
         `Are you sure you want to delete the event '${selected.event.title}'`
@@ -189,6 +182,16 @@ const Calendar = () => {
     }
   }
 
+  const handleSelectEvent = (id) => {
+    const calendarApi = calendarRef.current.getApi();
+    const event = calendarApi.getEventById(id);
+
+    if (event) {
+      calendarApi.gotoDate(event.start);
+    }
+  }
+
+
   const handleClose = () => {
     setDialogOpen(false);
   }
@@ -221,9 +224,7 @@ const Calendar = () => {
                 borderRadius: "2px",
               }}
               onClick={() => {
-                // console.log(event.id)
-                //criar outro handle para selecionar o evento no FullCalendar
-                //de acordo com o evento clicado no sidebar
+                handleSelectEvent(event.id);
               }}
             >
               <ListItemText
@@ -269,19 +270,19 @@ const Calendar = () => {
 
           eventTimeFormat={timeFormat}
           views={views}
-
+          ref={calendarRef}
         />
 
         <style>
           {`
-      .fc-multimonth .fc-daygrid-day-number {
-        color: ${colors.grey[600]};
-      }
+            .fc-multimonth .fc-daygrid-day-number {
+              color: ${colors.grey[600]};
+            }
 
-      .fc-multimonth .fc-day-today .fc-daygrid-day-number {
-        color: #d32f2f;
-      }
-    `}
+            .fc-multimonth .fc-day-today .fc-daygrid-day-number {
+              color: #d32f2f;
+            }
+          `}
         </style>
 
       </Box>
