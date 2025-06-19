@@ -3,7 +3,6 @@ import { useRefreshToken } from "../../auth/RefreshToken";
 
 const useDeleteScenes = () => {
   const refreshToken = useRefreshToken();
-  const [response, setResponse] = useState(null);
   const [err, setErr] = useState(null);
 
   const fetchDelete = useCallback(async (url, retry = false) => {
@@ -28,7 +27,6 @@ const useDeleteScenes = () => {
         throw new Error('Network response was not ok');
       }
 
-      setResponse(res);
       return res;
 
     } catch (error) {
@@ -36,7 +34,7 @@ const useDeleteScenes = () => {
     }
   }, [refreshToken]);
 
-  return { response, err, fetchDelete };
+  return { err, fetchDelete };
 }
 
 export default useDeleteScenes;
