@@ -14,7 +14,7 @@ import { Urls } from '../../api/Paths';
 import { tokens } from "../../theme";
 import ConfirmDeleteDialog from '../../components/dialogs/ConfirmDeleteDialog';
 import BoxDataGrid from "../../components/boxes/BoxDataGrid"
-import DeleteScenes from '../../components/formsRequests/DeleteScenes';
+import useDeleteScenes from '../../components/formsRequests/DeleteScenes';
 
 const Offices = () => {
 
@@ -28,6 +28,7 @@ const Offices = () => {
   const [status, setStatus] = useState('');
   const [rows, setRows] = useState([]);
   const navigateEdit = useNavigate();
+  const { err, fetchDelete } = useDeleteScenes();
 
   const handleEditDatagridButton = (params) => () => {
     const rowData = params.row;
@@ -41,6 +42,7 @@ const Offices = () => {
   const handleCloseConfirm = () => {
     setDialogConfirmOpen(false);
   }
+
   const handleDeleteConfirm = async () => {
     setDialogConfirmOpen(false);
     const urlDelete = Urls(idDelete);
@@ -48,10 +50,7 @@ const Offices = () => {
     setStatus('');
 
     try {
-
-      const response = await DeleteScenes(urlDelete.offices.findById_Put_Delete);
-
-      setStatus(response.status);
+      const response = await fetchDelete(urlDelete.offices.findById_Put_Delete);
 
       if (response.status === 204) {
         setStatus(`${response.status} Office Deleted Succesfully!`);
@@ -61,11 +60,13 @@ const Offices = () => {
         setStatus(`Error: ${response.status} Failed to delete Office`);
       }
     } catch (error) {
-      setStatus(`Error: ${error.message} Failed to delete Office`);
+      setStatus(`Error: ${err.message} Failed to delete Office`);
+      setDialogDeleteOpen(true);
     }
 
     setDialogDeleteOpen(true);
   }
+
   const handleCloseDelete = () => {
     setDialogDeleteOpen(false);
   }

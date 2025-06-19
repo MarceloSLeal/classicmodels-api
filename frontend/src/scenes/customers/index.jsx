@@ -51,7 +51,7 @@ const Customers = () => {
 
     try {
 
-      const response = await DeleteScenes(urlDelete.customers.findById_Put_Delete);
+      const response = DeleteScenes(urlDelete.customers.findById_Put_Delete);
 
       setStatus(response.status);
 
