@@ -26,6 +26,12 @@ public class TokenService {
     @Value("${JWT_TOKEN_KEY}")
     private String tokenKey;
 
+    @Value("${JWT_TOKEN_EXPIRATION}")
+    private Long envTokenExpiration;
+
+    @Value("${JWT_REFRESH_TOKEN_EXPIRATION}")
+    private Long envRefreshTokenExpiration;
+
     ZoneOffset zoneOffset = ZoneOffset.of("-03:00");
 
     @Autowired
@@ -86,11 +92,11 @@ public class TokenService {
     }
 
     private Instant tokenExpiration(){
-        return LocalDateTime.now().plusMinutes(10).toInstant(zoneOffset);
+        return LocalDateTime.now().plusMinutes(envTokenExpiration).toInstant(zoneOffset);
     }
 
     private Instant refreshTokenExpiration() {
-        return LocalDateTime.now().plusMinutes(30).toInstant(zoneOffset);
+        return LocalDateTime.now().plusMinutes(envRefreshTokenExpiration).toInstant(zoneOffset);
     }
 
 }
