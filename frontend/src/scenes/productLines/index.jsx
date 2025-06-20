@@ -14,7 +14,7 @@ import { Urls } from "../../api/Paths";
 import { tokens } from "../../theme";
 import ConfirmDeleteDialog from "../../components/dialogs/ConfirmDeleteDialog"
 import BoxDataGrid from "../../components/boxes/BoxDataGrid"
-import DeleteScenes from "../../components/formsRequests/DeleteScenes";
+import useDeleteScenes from "../../components/formsRequests/DeleteScenes";
 
 const ProductLines = () => {
   const urlData = Urls();
@@ -27,6 +27,7 @@ const ProductLines = () => {
   const [status, setStatus] = useState('');
   const [rows, setRows] = useState([]);
   const navigateEdit = useNavigate();
+  const { err, fetchDelete } = useDeleteScenes();
 
   const handleEditDatagridButton = (params) => () => {
     const rowData = params.row;
@@ -43,15 +44,13 @@ const ProductLines = () => {
   }
 
   const handleDeleteConfirm = async () => {
-
     setDialogConfirmOpen(false);
     const urlDelete = Urls(idDelete);
 
     setStatus('');
 
     try {
-
-      const response = await DeleteScenes(urlDelete.productlines.findByProductLine_Put_Delete);
+      const response = await fetchDelete(urlDelete.productlines.findByProductLine_Put_Delete);
 
       setStatus(response.status);
 
@@ -63,7 +62,7 @@ const ProductLines = () => {
         setStatus(`Error: ${response.status} Failed to delete Product Line`);
       }
     } catch (error) {
-      setStatus(`Error: ${error.message} Failed to delete Procut Line`);
+      setStatus(`Error: ${error.message || 'Failed to delete Procut Line'} ${err}`);
     }
 
     setDialogDeleteOpen(true);

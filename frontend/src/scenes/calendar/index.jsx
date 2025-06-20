@@ -16,18 +16,19 @@ import useFetchData from "../../api/getData";
 import { Urls } from "../../api/Paths";
 import PostForms from "../../components/formsRequests/PostForms";
 import OperationStatusDialog from "../../components/dialogs/OperationStatusDialog";
-import DeleteScenes from '../../components/formsRequests/DeleteScenes';
+import useDeleteScenes from '../../components/formsRequests/DeleteScenes';
 
 const Calendar = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const [currentEvents, setCurrentEvents] = useState([]);
   const urlData = Urls();
-  const { data, loading, error } = useFetchData(urlData.calendar.findAll_Post);
+  const { data } = useFetchData(urlData.calendar.findAll_Post);
   const [responseCode, setResponseCode] = useState(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [status, setStatus] = useState('');
   const calendarRef = useRef(null);
+  const { err, fetchDelete } = useDeleteScenes();
 
   const timeFormat = {
     hour: "2-digit",
@@ -167,16 +168,15 @@ const Calendar = () => {
     const urlDelete = Urls(id);
 
     try {
-      const response = await DeleteScenes(urlDelete.calendar.put_Delete);
+      const response = await fetchDelete(urlDelete.calendar.put_Delete);
       setResponseCode(response.status);
 
       if (response.status !== 204) {
-        const data = await response.json();
-        setStatus(`${data.tittle || 'Failed to delete event'} - ${data.detail || ''}`);
+        setStatus(`${response.tittle || 'Failed to delete event'} - ${response.detail || ''}`);
       }
 
     } catch (error) {
-      setStatus(`Error: ${error.message || 'Failed to delete event'}`);
+      setStatus(`Error: ${error.message || 'Failed to delete event'} ${err}`);
       setDialogOpen(true);
 
     }
@@ -198,7 +198,6 @@ const Calendar = () => {
 
   useEffect(() => {
     if (data) {
-      console.log(data);
     }
   }, [data]);
 

@@ -14,7 +14,7 @@ import { Urls } from "../../api/Paths";
 import { tokens } from "../../theme";
 import ConfirmDeleteDialog from '../../components/dialogs/ConfirmDeleteDialog';
 import BoxDataGrid from '../../components/boxes/BoxDataGrid';
-import DeleteScenes from '../../components/formsRequests/DeleteScenes';
+import useDeleteScenes from '../../components/formsRequests/DeleteScenes';
 
 const Employees = () => {
 
@@ -28,6 +28,7 @@ const Employees = () => {
   const [status, setStatus] = useState('');
   const [rows, setRows] = useState([]);
   const navigateEdit = useNavigate();
+  const { err, fetchDelete } = useDeleteScenes();
 
   const handleEditDatagridButton = (params) => () => {
     const rowData = params.row;
@@ -49,8 +50,7 @@ const Employees = () => {
     setStatus('');
 
     try {
-
-      const response = await DeleteScenes(urlDelete.employees.findById_Put_Delete);
+      const response = await fetchDelete(urlDelete.employees.findById_Put_Delete);
 
       setStatus(response.status);
 
@@ -62,7 +62,7 @@ const Employees = () => {
         setStatus(`Error: ${response.status} Failed to delete Employee`);
       }
     } catch (error) {
-      setStatus(`Error: ${error.message} Failed to delete Employee`);
+      setStatus(`Error: ${error.message || 'Failed to delete Employee'} ${err}`);
     }
 
     setDialogDeleteOpen(true);

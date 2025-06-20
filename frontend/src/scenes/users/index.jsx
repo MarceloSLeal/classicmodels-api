@@ -12,7 +12,7 @@ import { Urls } from "../../api/Paths";
 import { tokens } from "../../theme";
 import ConfirmDeleteDialog from "../../components/dialogs/ConfirmDeleteDialog"
 import BoxDataGrid from "../../components/boxes/BoxDataGrid"
-import DeleteScenes from '../../components/formsRequests/DeleteScenes';
+import useDeleteScenes from '../../components/formsRequests/DeleteScenes';
 
 const Users = () => {
   const urlData = Urls();
@@ -26,6 +26,7 @@ const Users = () => {
   const colors = tokens(theme.palette.mode);
   const [status, setStatus] = useState('');
   const [rows, setRows] = useState([]);
+  const { err, fetchDelete } = useDeleteScenes();
 
   const handleDeleteDatagridButton = (params) => () => {
     setIdDelete(params.id);
@@ -46,7 +47,7 @@ const Users = () => {
 
     try {
 
-      const response = await DeleteScenes(urlDelete.users.delete);
+      const response = await fetchDelete(urlDelete.users.delete);
 
       setStatus(response.status);
 
@@ -58,7 +59,7 @@ const Users = () => {
         setStatus(`Error: ${response.status} Failed to delete User`);
       }
     } catch (error) {
-      setStatus(`Error: ${error.message} Failed to delete User`);
+      setStatus(`Error: ${error.message || 'Failed to delete User'} ${err}`);
     }
 
     setDialogDeleteOpen(true);

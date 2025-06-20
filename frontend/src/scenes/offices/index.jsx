@@ -52,6 +52,8 @@ const Offices = () => {
     try {
       const response = await fetchDelete(urlDelete.offices.findById_Put_Delete);
 
+      setStatus(response.status);
+
       if (response.status === 204) {
         setStatus(`${response.status} Office Deleted Succesfully!`);
 
@@ -60,8 +62,7 @@ const Offices = () => {
         setStatus(`Error: ${response.status} Failed to delete Office`);
       }
     } catch (error) {
-      setStatus(`Error: ${err.message} Failed to delete Office`);
-      setDialogDeleteOpen(true);
+      setStatus(`Error: ${error.message || 'Failed to delete Office'} ${err}`);
     }
 
     setDialogDeleteOpen(true);
