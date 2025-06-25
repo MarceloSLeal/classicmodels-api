@@ -28,7 +28,7 @@ const Calendar = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [status, setStatus] = useState('');
   const calendarRef = useRef(null);
-  const { err, fetchDelete } = useDeleteScenes();
+  const { fetchDelete } = useDeleteScenes();
 
   const timeFormat = {
     hour: "2-digit",
@@ -133,15 +133,36 @@ const Calendar = () => {
 
   };
 
-  const handleEventClick = (selected) => {
-
+  const handleEventDelete = async (selected) => {
     if (
       window.confirm(
         `Are you sure you want to delete the event '${selected.event.title}'`
       )
     ) {
-      selected.event.remove();
-      handleEventDelete(selected.event.id);
+
+      try {
+
+        const urlDelete = Urls(selected.event.id);
+
+        const response = await fetchDelete(urlDelete.calendar.put_Delete);
+
+        setResponseCode(response.status);
+
+        if (response.status !== 204) {
+          setStatus(`${response.status || 'Failed to delete event'}`);
+          setDialogOpen(true);
+          return;
+        }
+
+        selected.event.remove();
+
+      } catch (error) {
+        setStatus("Error: Failed to delete event");
+        setResponseCode(error);
+
+        setDialogOpen(true);
+      }
+
     }
   };
 
@@ -161,24 +182,6 @@ const Calendar = () => {
     } catch (error) {
       setStatus(`Error: ${error.message || 'Failed to create event'}`);
       setDialogOpen(true);
-    }
-  }
-
-  const handleEventDelete = async (id) => {
-    const urlDelete = Urls(id);
-
-    try {
-      const response = await fetchDelete(urlDelete.calendar.put_Delete);
-      setResponseCode(response.status);
-
-      if (response.status !== 204) {
-        setStatus(`${response.tittle || 'Failed to delete event'} - ${response.detail || ''}`);
-      }
-
-    } catch (error) {
-      setStatus(`Error: ${error.message || 'Failed to delete event'} ${err}`);
-      setDialogOpen(true);
-
     }
   }
 
@@ -263,7 +266,7 @@ const Calendar = () => {
           selectMirror={true}
           dayMaxEvents={true}
           select={handleDateClick}
-          eventClick={handleEventClick}
+          eventClick={handleEventDelete}
           eventsSet={(events) => setCurrentEvents(events)}
           events={data || []}
 

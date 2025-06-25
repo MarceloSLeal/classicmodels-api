@@ -1,12 +1,10 @@
-import { useState, useCallback } from 'react';
+import { useCallback } from 'react';
 import { useRefreshToken } from "../../auth/RefreshToken";
 
 const useDeleteScenes = () => {
   const refreshToken = useRefreshToken();
-  const [err, setErr] = useState(null);
 
   const fetchDelete = useCallback(async (url, retry = false) => {
-
     try {
 
       const res = await fetch(url, {
@@ -30,11 +28,14 @@ const useDeleteScenes = () => {
       return res;
 
     } catch (error) {
-      setErr(error);
+      if (error instanceof TypeError) {
+        return { ok: false, status: 'CONNECTION_REFUSED'};
+      }
+      return { ok: false, status: 'UNKNOW_ERROR', message: error.message };
     }
   }, [refreshToken]);
 
-  return { err, fetchDelete };
+  return { fetchDelete };
 }
 
 export default useDeleteScenes;
