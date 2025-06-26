@@ -28,7 +28,7 @@ const Customers = () => {
   const [status, setStatus] = useState('');
   const [rows, setRows] = useState([]);
   const navigateEdit = useNavigate();
-  const { err, fetchDelete } = useDeleteScenes();
+  const { fetchDelete } = useDeleteScenes();
 
   const handleEditDatagridButton = (params) => () => {
     const rowData = params.row;
@@ -63,7 +63,7 @@ const Customers = () => {
         setStatus(`Error: ${response.status} Failed to delete Customer`);
       }
     } catch (error) {
-      setStatus(`Error: ${error.message || 'Failed to delete Customer'} ${err}`);
+      setStatus(`Error: ${error || ' Failed to delete Customer'}`);
     }
 
     setDialogDeleteOpen(true);

@@ -27,7 +27,7 @@ const ProductLines = () => {
   const [status, setStatus] = useState('');
   const [rows, setRows] = useState([]);
   const navigateEdit = useNavigate();
-  const { err, fetchDelete } = useDeleteScenes();
+  const { fetchDelete } = useDeleteScenes();
 
   const handleEditDatagridButton = (params) => () => {
     const rowData = params.row;
@@ -62,7 +62,7 @@ const ProductLines = () => {
         setStatus(`Error: ${response.status} Failed to delete Product Line`);
       }
     } catch (error) {
-      setStatus(`Error: ${error.message || 'Failed to delete Procut Line'} ${err}`);
+      setStatus(`Error: ${error || 'Failed to delete Procut Line'}`);
     }
 
     setDialogDeleteOpen(true);

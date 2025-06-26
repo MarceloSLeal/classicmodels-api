@@ -26,7 +26,7 @@ const Users = () => {
   const colors = tokens(theme.palette.mode);
   const [status, setStatus] = useState('');
   const [rows, setRows] = useState([]);
-  const { err, fetchDelete } = useDeleteScenes();
+  const { fetchDelete } = useDeleteScenes();
 
   const handleDeleteDatagridButton = (params) => () => {
     setIdDelete(params.id);
@@ -46,7 +46,6 @@ const Users = () => {
     setStatus('');
 
     try {
-
       const response = await fetchDelete(urlDelete.users.delete);
 
       setStatus(response.status);
@@ -59,7 +58,7 @@ const Users = () => {
         setStatus(`Error: ${response.status} Failed to delete User`);
       }
     } catch (error) {
-      setStatus(`Error: ${error.message || 'Failed to delete User'} ${err}`);
+      setStatus(`Error: ${error || 'Failed to delete User'}`);
     }
 
     setDialogDeleteOpen(true);

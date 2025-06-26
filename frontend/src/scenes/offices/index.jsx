@@ -28,7 +28,7 @@ const Offices = () => {
   const [status, setStatus] = useState('');
   const [rows, setRows] = useState([]);
   const navigateEdit = useNavigate();
-  const { err, fetchDelete } = useDeleteScenes();
+  const { fetchDelete } = useDeleteScenes();
 
   const handleEditDatagridButton = (params) => () => {
     const rowData = params.row;
@@ -62,7 +62,7 @@ const Offices = () => {
         setStatus(`Error: ${response.status} Failed to delete Office`);
       }
     } catch (error) {
-      setStatus(`Error: ${error.message || 'Failed to delete Office'} ${err}`);
+      setStatus(`Error: ${error || 'Failed to delete Office'}`);
     }
 
     setDialogDeleteOpen(true);

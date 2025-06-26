@@ -28,7 +28,7 @@ const Employees = () => {
   const [status, setStatus] = useState('');
   const [rows, setRows] = useState([]);
   const navigateEdit = useNavigate();
-  const { err, fetchDelete } = useDeleteScenes();
+  const { fetchDelete } = useDeleteScenes();
 
   const handleEditDatagridButton = (params) => () => {
     const rowData = params.row;
@@ -62,7 +62,7 @@ const Employees = () => {
         setStatus(`Error: ${response.status} Failed to delete Employee`);
       }
     } catch (error) {
-      setStatus(`Error: ${error.message || 'Failed to delete Employee'} ${err}`);
+      setStatus(`Error: ${error || 'Failed to delete Employee'}`);
     }
 
     setDialogDeleteOpen(true);

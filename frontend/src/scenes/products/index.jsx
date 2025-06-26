@@ -28,7 +28,7 @@ const Products = () => {
   const [status, setStatus] = useState('');
   const [rows, setRows] = useState([]);
   const navigateEdit = useNavigate();
-  const { err, fetchDelete } = useDeleteScenes();
+  const { fetchDelete } = useDeleteScenes();
 
   const handleEditDatagridButton = (params) => () => {
     const rowData = params.row;
@@ -51,7 +51,6 @@ const Products = () => {
     setStatus('');
 
     try {
-
       const response = await fetchDelete(urlDelete.products.put_Delete);
 
       setStatus(response.status);
@@ -64,7 +63,7 @@ const Products = () => {
         setStatus(`Error: ${response.status} Failed to delete Product`);
       }
     } catch (error) {
-      setStatus(`Error: ${error.message || 'Failed to delete Product'} ${err}`);
+      setStatus(`Error: ${error || 'Failed to delete Product'}`);
     }
 
     setDialogDeleteOpen(true);
