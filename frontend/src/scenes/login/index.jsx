@@ -10,18 +10,18 @@ import { Formik } from "formik";
 import * as yup from "yup";
 import OperationStatusDialog from "../../components/dialogs/OperationStatusDialog";
 import { useAuth } from "../../auth/AuthContext";
-import PostForms from "../../components/formsRequests/PostForms";
+import usePostForms from "../../components/formsRequests/PostForms";
 import { Urls } from "../../api/Paths";
 
 const Login = () => {
   const isNonMobile = useMediaQuery("(min-width:600px)");
-  // const url = import.meta.env.VITE_URL_PREFIX;
   const [responseCode, setResponseCode] = useState(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [status, setStatus] = useState('');
   const navigateDashBoard = useNavigate();
   const userLogin = useAuth();
   const url = Urls();
+  const { fetchPost } = usePostForms();
 
   const [showPassword, setShowPassword] = useState(false);
 
@@ -35,23 +35,31 @@ const Login = () => {
   })
 
   const handleLogin = async (values) => {
+    try {
 
-    const response = await PostForms(values, url.auth.login_Post);
-    const data = await response.json();
+      const response = await fetchPost(values, url.auth.login_Post);
+      const data = await response.json;
 
-    if (!response.ok) {
+      console.log(response);
+
+      if (response.badRequest) {
+        setDialogOpen(true);
+        setResponseCode(response.status);
+        setStatus("Invalid email or password");
+        return;
+      }
+
+      userLogin.login();
+
+      localStorage.setItem("user", data.email);
+      localStorage.setItem("role", data.role);
+
+      navigateDashBoard("/");
+
+    } catch (error) {
+      setStatus(`Error: ${error || 'Failed to login'}`);
       setDialogOpen(true);
-      setResponseCode(response.status);
-      setStatus("Invalid email or password");
-      return;
     }
-
-    userLogin.login();
-
-    localStorage.setItem("user", data.email);
-    localStorage.setItem("role", data.role);
-
-    navigateDashBoard("/");
   }
 
   const handleClose = () => {

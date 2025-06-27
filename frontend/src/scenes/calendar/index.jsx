@@ -14,7 +14,7 @@ import Header from "../../components/Header";
 import { tokens } from "../../theme";
 import useFetchData from "../../api/getData";
 import { Urls } from "../../api/Paths";
-import PostForms from "../../components/formsRequests/PostForms";
+import usePostForms from "../../components/formsRequests/PostForms";
 import OperationStatusDialog from "../../components/dialogs/OperationStatusDialog";
 import useDeleteScenes from '../../components/formsRequests/DeleteScenes';
 
@@ -29,6 +29,7 @@ const Calendar = () => {
   const [status, setStatus] = useState('');
   const calendarRef = useRef(null);
   const { fetchDelete } = useDeleteScenes();
+  const { fetchPost } = usePostForms();
 
   const timeFormat = {
     hour: "2-digit",
@@ -169,7 +170,7 @@ const Calendar = () => {
   const handleEventPost = async (values) => {
     try {
 
-      const response = await PostForms(values, urlData.calendar.findAll_Post);
+      const response = await fetchPost(values, urlData.calendar.findAll_Post);
       const data = await response.json();
 
       setResponseCode(response.status);
@@ -180,7 +181,7 @@ const Calendar = () => {
       }
 
     } catch (error) {
-      setStatus(`Error: ${error.message || 'Failed to create event'}`);
+      setStatus(`Error: ${error || 'Failed to create event'}`);
       setDialogOpen(true);
     }
   }
