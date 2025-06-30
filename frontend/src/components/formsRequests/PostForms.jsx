@@ -1,20 +1,3 @@
-// const PostForms = async (values, url) => {
-//
-//   const response = await fetch(url, {
-//     method: 'POST',
-//     headers: {
-//       'Content-Type': 'application/json',
-//     },
-//     credentials: 'include',
-//
-//     body: JSON.stringify(values),
-//   });
-//
-//   return response;
-// }
-//
-// export default PostForms;
-
 import { useCallback } from 'react';
 import { useRefreshToken } from "../../auth/RefreshToken";
 
@@ -37,7 +20,7 @@ const usePostForms = () => {
       if (res.status === 403 && !retry) {
         console.warn("Token. Attempting to refresh...");
         await refreshToken();
-        return fetchPost(url, true);
+        return fetchPost(values, url, true);
       }
 
       if (!res.ok) {

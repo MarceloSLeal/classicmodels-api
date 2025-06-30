@@ -12,7 +12,7 @@ import Header from "../../components/Header";
 import { Urls } from "../../api/Paths";
 import FormListCalls from "../../components/FormsListCalls";
 import OperationStatusDialog from "../../components/dialogs/OperationStatusDialog";
-import PostForms from "../../components/formsRequests/PostForms";
+import usePostForms from "../../components/formsRequests/PostForms";
 
 const initialValues = {
   name: "", email: "", contactLastName: "", contactFirstName: "", phone: "",
@@ -44,6 +44,7 @@ const customersSchema = yup.object().shape({
 
 const FormAddCustomer = () => {
   const url = Urls();
+  const { fetchPost } = usePostForms();
 
   const [dataEmployeeIdNameList, setDataEmployeeIdNameList] = useState(null);
 
@@ -63,19 +64,20 @@ const FormAddCustomer = () => {
     setResponseCode(null);
     try {
 
-      const response = await PostForms(values, url.customers.findAll_Post);
+      const response = await fetchPost(values, url.customers.findAll_Post);
       const data = await response.json();
 
       setResponseCode(response.status);
 
-      if (response.ok) {
+      if (response.status === 201) {
         setStatus('Customer created successfully!');
         setResetFormFn(() => resetForm);
       } else {
-        setStatus(`Error: ${data.title || 'Failed to create Customer'} - ${data.detail || ''}`);
+        setStatus(`Erroraaaa: ${data.title || 'Failed to create Customer'} - ${data.detail || ''}`);
       }
+
     } catch (error) {
-      setStatus(`Error: ${error.message || 'Failed to create Customer'}`);
+      setStatus(`Errorbbbb: ${error || 'Failed to create Customer'}`);
     }
     setSubmitting(false);
     setDialogOpen(true);
