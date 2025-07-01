@@ -37,6 +37,8 @@ public class CalendarController {
     public CalendarRepModel adicionar(@Valid @RequestBody CalendarInput calendarInput) {
         Calendar newCalendar = calendarMapper.toEntity(calendarInput);
 
+        System.out.println("Calendar Input: " + calendarInput);
+
         CalendarRepModel calendarRepModel = calendarMapper.toModel(newCalendar);
 
         boolean calendarId = calendarRepository.findById(calendarInput.getId())

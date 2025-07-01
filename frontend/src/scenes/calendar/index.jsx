@@ -9,6 +9,8 @@ import multiMonthPlugin from '@fullcalendar/multimonth'
 import {
   Box, List, ListItem, ListItemText, Typography, useTheme
 } from "@mui/material";
+import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
 
 import Header from "../../components/Header";
 import { tokens } from "../../theme";
@@ -98,6 +100,42 @@ const Calendar = () => {
       ':' + pad(date.getMinutes())
   };
 
+  // const handleDateClick = (selected) => {
+  //   const title = prompt("Please enter a new title for your event");
+  //   const calendarApi = selected.view.calendar;
+  //   calendarApi.unselect();
+  //
+  //   if (title) {
+  //
+  //     let start = selected.start;
+  //     let end = selected.end;
+  //
+  //     if (selected.allDay) {
+  //       const startDate = new Date(start);
+  //       startDate.setHours(6, 0, 0, 0);
+  //
+  //       const endDate = new Date(start);
+  //       endDate.setHours(20, 0, 0, 0);
+  //
+  //       start = startDate;
+  //       end = endDate;
+  //     }
+  //
+  //     const uuid = crypto.randomUUID();
+  //
+  //     const event = calendarApi.addEvent({
+  //       id: uuid,
+  //       title,
+  //       start,
+  //       end,
+  //       allDay: false,
+  //     });
+  //
+  //     handleEventPost(event);
+  //   }
+  //
+  // };
+
   const handleDateClick = (selected) => {
     const title = prompt("Please enter a new title for your event");
     const calendarApi = selected.view.calendar;
@@ -121,18 +159,38 @@ const Calendar = () => {
 
       const uuid = crypto.randomUUID();
 
-      const event = calendarApi.addEvent({
+      // const event = calendarApi.addEvent({
+      //   id: uuid,
+      //   title,
+      //   start,
+      //   end,
+      //   allDay: false,
+      // });
+      //
+      // console.log(event);
+      //
+      // handleEventPost(event);
+
+      const eventData = {
         id: uuid,
         title,
-        start,
-        end,
+        start: formatDatePost(start),
+        end: formatDatePost(end),
         allDay: false,
-      });
+      };
 
-      handleEventPost(event);
+      console.log(eventData);
+
+      handleEventPost(eventData);
     }
 
   };
+
+  const formatDatePost = (date) => {
+    dayjs.extend(utc);
+    return dayjs(date).utc().format("YYYY-MM-DDTHH:mm:ss[Z]");
+  };
+
 
   const handleEventDelete = async (selected) => {
     if (
@@ -171,11 +229,18 @@ const Calendar = () => {
     try {
 
       const response = await fetchPost(values, urlData.calendar.findAll_Post);
+
+      if (response.status === 'CONNECTION_REFUSED') {
+        setStatus(`Error: ${response.status}`);
+        setDialogOpen(true);
+        return;
+      }
+
       const data = await response.json();
 
       setResponseCode(response.status);
 
-      if (!response === 201) {
+      if (response.status !== 201) {
         setStatus(`Error: ${data.tittle || 'Failed to create event'} - ${data.detail || ''}`);
         setDialogOpen(true);
       }
