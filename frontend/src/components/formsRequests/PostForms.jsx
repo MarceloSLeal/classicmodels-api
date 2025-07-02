@@ -31,7 +31,7 @@ const usePostForms = () => {
 
     } catch (error) {
       if (error instanceof TypeError) {
-        return { ok: false, status: 'CONNECTION_REFUSED' };
+        return { ok: false, status: 'CONNECTION_REFUSED', message: "Can't connect to server" };
       }
       return { ok: false, status: 'UNKNOWN_ERROR', message: error.message };
     }

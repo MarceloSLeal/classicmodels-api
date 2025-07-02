@@ -65,7 +65,12 @@ const FormAddCustomer = () => {
     try {
 
       const response = await fetchPost(values, url.customers.findAll_Post);
-      const data = await response.json();
+
+      if (response.ok === false) {
+        setStatus(`Error: ${response.status} - ${response.message}`);
+        setDialogOpen(true);
+        return;
+      }
 
       setResponseCode(response.status);
 
@@ -73,11 +78,11 @@ const FormAddCustomer = () => {
         setStatus('Customer created successfully!');
         setResetFormFn(() => resetForm);
       } else {
-        setStatus(`Erroraaaa: ${data.title || 'Failed to create Customer'} - ${data.detail || ''}`);
+        setStatus(`Error: ${response.title || 'Failed to create Customer'} - ${response.detail || ''}`);
       }
 
     } catch (error) {
-      setStatus(`Errorbbbb: ${error || 'Failed to create Customer'}`);
+      setStatus(`Error: ${error || 'Failed to create Customer'}`);
     }
     setSubmitting(false);
     setDialogOpen(true);
