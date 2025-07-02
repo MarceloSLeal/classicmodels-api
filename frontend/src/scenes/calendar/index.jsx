@@ -80,18 +80,6 @@ const Calendar = () => {
   const formatDate = (date) => {
     // Para garantir o offset local (ex: -03:00), usamos Intl API
     const pad = (n) => (n < 10 ? '0' + n : n);
-    // const offset = -date.getTimezoneOffset();
-    // const sign = offset >= 0 ? '+' : '-';
-    // const hours = pad(Math.floor(Math.abs(offset) / 60));
-    // const minutes = pad(Math.abs(offset) % 60);
-
-    // return date.getFullYear() +
-    //   '-' + pad(date.getMonth() + 1) +
-    //   '-' + pad(date.getDate()) +
-    //   'T' + pad(date.getHours()) +
-    //   ':' + pad(date.getMinutes()) +
-    //   ':' + pad(date.getSeconds()) +
-    //   sign + hours + ':' + minutes;
 
     return date.getFullYear() +
       '-' + pad(date.getMonth() + 1) +
@@ -99,42 +87,6 @@ const Calendar = () => {
       ' ' + pad(date.getHours()) +
       ':' + pad(date.getMinutes())
   };
-
-  // const handleDateClick = (selected) => {
-  //   const title = prompt("Please enter a new title for your event");
-  //   const calendarApi = selected.view.calendar;
-  //   calendarApi.unselect();
-  //
-  //   if (title) {
-  //
-  //     let start = selected.start;
-  //     let end = selected.end;
-  //
-  //     if (selected.allDay) {
-  //       const startDate = new Date(start);
-  //       startDate.setHours(6, 0, 0, 0);
-  //
-  //       const endDate = new Date(start);
-  //       endDate.setHours(20, 0, 0, 0);
-  //
-  //       start = startDate;
-  //       end = endDate;
-  //     }
-  //
-  //     const uuid = crypto.randomUUID();
-  //
-  //     const event = calendarApi.addEvent({
-  //       id: uuid,
-  //       title,
-  //       start,
-  //       end,
-  //       allDay: false,
-  //     });
-  //
-  //     handleEventPost(event);
-  //   }
-  //
-  // };
 
   const handleDateClick = (selected) => {
     const title = prompt("Please enter a new title for your event");
@@ -159,18 +111,6 @@ const Calendar = () => {
 
       const uuid = crypto.randomUUID();
 
-      // const event = calendarApi.addEvent({
-      //   id: uuid,
-      //   title,
-      //   start,
-      //   end,
-      //   allDay: false,
-      // });
-      //
-      // console.log(event);
-      //
-      // handleEventPost(event);
-
       const eventData = {
         id: uuid,
         title,
@@ -179,11 +119,13 @@ const Calendar = () => {
         allDay: false,
       };
 
-      console.log(eventData);
-
-      handleEventPost(eventData);
+      handleEventPost(eventData).then((status) => {
+        console.log("status", status);
+        if (status) {
+          calendarApi.addEvent(eventData);
+        }
+      });
     }
-
   };
 
   const formatDatePost = (date) => {
@@ -233,7 +175,11 @@ const Calendar = () => {
       if (response.status === 'CONNECTION_REFUSED') {
         setStatus(`Error: ${response.status}`);
         setDialogOpen(true);
-        return;
+        return false;
+      }
+
+      if (response.ok) {
+        return true;
       }
 
       const data = await response.json();
@@ -243,11 +189,13 @@ const Calendar = () => {
       if (response.status !== 201) {
         setStatus(`Error: ${data.tittle || 'Failed to create event'} - ${data.detail || ''}`);
         setDialogOpen(true);
+        return false;
       }
 
     } catch (error) {
       setStatus(`Error: ${error || 'Failed to create event'}`);
       setDialogOpen(true);
+      return false;
     }
   }
 
