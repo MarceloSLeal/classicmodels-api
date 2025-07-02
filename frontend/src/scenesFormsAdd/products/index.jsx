@@ -12,7 +12,7 @@ import Header from "../../components/Header";
 import { Urls } from "../../api/Paths";
 import FormListCalls from "../../components/FormsListCalls";
 import OperationStatusDialog from "../../components/dialogs/OperationStatusDialog";
-import PostForms from "../../components/formsRequests/PostForms";
+import usePostForms from "../../components/formsRequests/PostForms";
 
 const initialValues = {
   name: "", productLine: "", scale: "", vendor: "", description: "",
@@ -44,25 +44,31 @@ const FormAddProducts = () => {
   const [resetFormFn, setResetFormFn] = useState(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [status, setStatus] = useState('');
+  const { fetchPost } = usePostForms();
 
   const handleFormSubmit = async (values, { setSubmitting, resetForm }) => {
     setStatus('');
     setResponseCode(null);
     try {
 
-      const response = await PostForms(values, url.products.findAll_Post);
-      const data = await response.json();
+      const response = await fetchPost(values, url.products.findAll_Post);
+
+      if (response.ok === false) {
+        setStatus(`Error: ${response.status} - ${response.message}`);
+        setDialogOpen(true);
+        return;
+      }
 
       setResponseCode(response.status);
 
-      if (response.ok) {
+      if (response.status === 201) {
         setStatus('Product created successfully!');
         setResetFormFn(() => resetForm);
       } else {
-        setStatus(`Error: ${data.title || 'Failed to create Product'} - ${data.detail || ''}`);
+        setStatus(`Error: ${respone.title || 'Failed to create Product'} - ${response.detail || ''}`);
       }
     } catch (error) {
-      setStatus(`Error: ${error.message || 'Failed to create Product'}`);
+      setStatus(`Error: ${error || 'Failed to create Product'}`);
     }
     setSubmitting(false);
     setDialogOpen(true);

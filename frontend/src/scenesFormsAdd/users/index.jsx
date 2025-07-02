@@ -6,7 +6,7 @@ import { Formik } from "formik";
 import * as yup from "yup";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import Header from "../../components/Header";
-import PostForms from "../../components/formsRequests/PostForms";
+import usePostForms from "../../components/formsRequests/PostForms";
 import { Urls } from "../../api/Paths";
 import OperationStatusDialog from "../../components/dialogs/OperationStatusDialog"
 
@@ -31,6 +31,7 @@ const FormAddUser = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [status, setStatus] = useState('');
   const url = Urls();
+  const { fetchPost } = usePostForms();
 
   const handleFormSubmit = async (values, { setSubmitting, resetForm }) => {
     const { passwordConfirm, ...user } = values;
@@ -40,19 +41,24 @@ const FormAddUser = () => {
 
     try {
 
-      const response = await PostForms(values, url.auth.register_Post);
-      const data = await response.json();
+      const response = await fetchPost(values, url.auth.register_Post);
+
+      if (response.ok === false) {
+        setStatus(`Error: ${response.status} - ${response.message}`);
+        setDialogOpen(true);
+        return;
+      }
 
       setResponseCode(response.status);
 
-      if (response.ok) {
+      if (response.status === 201) {
         setStatus("User created successfully");
         setResetFormFn(() => resetForm);
       } else {
-        setStatus(`Error if: ${data.title || 'Failed to Create User'} - ${data.detail || ''}`);
+        setStatus(`Error if: ${response.title || 'Failed to Create User'} - ${response.detail || ''}`);
       }
     } catch (error) {
-      setStatus(`Error: ${error.message || 'Failed to create User'}`);
+      setStatus(`Error: ${error || 'Failed to create User'}`);
     }
 
     setSubmitting(false);

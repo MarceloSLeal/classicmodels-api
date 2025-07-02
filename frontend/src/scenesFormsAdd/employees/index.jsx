@@ -13,7 +13,7 @@ import { Urls } from "../../api/Paths";
 import { Constants } from "../../data/constants";
 import FormListCalls from "../../components/FormsListCalls";
 import OperationStatusDialog from "../../components/dialogs/OperationStatusDialog"
-import PostForms from "../../components/formsRequests/PostForms";
+import usePostForms from "../../components/formsRequests/PostForms";
 
 const initialValues = {
   lastName: "", firstName: "", email: "", reportsTo: "", jobTitle: "",
@@ -32,6 +32,7 @@ const employeesSchema = yup.object().shape({
 
 const FormAddEmployee = () => {
   const url = Urls();
+  const { fetchPost } = usePostForms();
   const jobTitleList = Constants().employees.jobTitle;
 
   const [dataIdName, setDataIdName] = useState(null);
@@ -53,21 +54,26 @@ const FormAddEmployee = () => {
     setResponseCode(null);
     try {
 
-      const response = await PostForms(values, url.employees.findAll_Post);
-      const data = await response.json();
+      const response = await fetchPost(values, url.employees.findAll_Post);
+
+      if (response.ok === false) {
+        setStatus(`Error: ${response.status} - ${response.message}`);
+        setDialogOpen(true);
+        return;
+      }
 
       setResponseCode(response.status);
 
-      if (response.ok) {
+      if (response.status === 201) {
         setStatus('Employee created successfully!');
         setResetFormFn(() => resetForm);
       } else {
-        setStatus(`Error: ${data.title || 'Failed to create Employee'} - ${data.detail || ''}`);
+        setStatus(`Error: ${response.title || 'Failed to create Employee'} - ${response.detail || ''}`);
       }
+
     } catch (error) {
       setStatus(`Error: ${error.message || 'Failed to create Employee'}`);
     }
-
     setSubmitting(false);
     setDialogOpen(true);
   }

@@ -11,7 +11,7 @@ import OfficesFormInputs from "../../components/formInputs/Offices";
 import Header from "../../components/Header";
 import { Urls } from "../../api/Paths";
 import OperationStatusDialog from "../../components/dialogs/OperationStatusDialog"
-import PostForms from "../../components/formsRequests/PostForms";
+import usePostForms from "../../components/formsRequests/PostForms";
 
 const initialValues = {
   city: "", country: "", state: "", phone: "", addressLine1: "", addressLine2: "",
@@ -42,27 +42,33 @@ const FormAddOffices = () => {
   const [resetFormFn, setResetFormFn] = useState(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [status, setStatus] = useState('');
+  const { fetchPost } = usePostForms();
 
   const handleFormSubmit = async (values, { setSubmitting, resetForm }) => {
     setStatus('');
     setResponseCode(null);
     try {
 
-      const response = await PostForms(values, url.offices.findAll_Post);
-      const data = await response.json();
+      const response = await fetchPost(values, url.offices.findAll_Post);
+
+      if (response.ok === false) {
+        setStatus(`Error: ${response.status} - ${response.message}`);
+        setDialogOpen(true);
+        return;
+      }
 
       setResponseCode(response.status);
 
-      if (response.ok) {
+      if (response.status === 201) {
         setStatus('Office created successfully');
         setResetFormFn(() => resetForm);
       } else {
-        setStatus(`Error: ${data.title || 'Failed to create Office'} - ${data.detail || ''}`);
+        setStatus(`Error: ${response.title || 'Failed to create Office'} - ${response.detail || ''}`);
       }
+
     } catch (error) {
       setStatus(`Error: ${error.message || 'Failed to create Office'}`);
     }
-
     setSubmitting(false);
     setDialogOpen(true);
   }

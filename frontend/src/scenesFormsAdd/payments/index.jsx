@@ -15,7 +15,7 @@ import PaymentsAddFormInputs from "../../components/formInputs/PaymentsAdd";
 import useFetchData from '../../api/getData';
 import dayjs from 'dayjs';
 import OperationStatusDialog from "../../components/dialogs/OperationStatusDialog"
-import PostForms from "../../components/formsRequests/PostForms";
+import usePostForms from "../../components/formsRequests/PostForms";
 
 const initialValues = {
   orderId: "",
@@ -49,6 +49,7 @@ const FormAddPayments = () => {
   const [dataOrdersIdStatus, setDataOrdersIdStatus] = useState(null);
   const amountFormikValuesRef = useRef(null);
   const setAmountFieldValueRef = useRef(null);
+  const { fetchPost } = usePostForms();
 
   const [updateSelect, setUpdateSelect] = useState(false);
 
@@ -78,25 +79,28 @@ const FormAddPayments = () => {
         amount: parseFloat(values.amount),
       }
 
-      const response = await PostForms(valuesToSubmit, url.payments.findAll_Post);
-      const data = await response.json();
+      const response = await fetchPost(valuesToSubmit, url.payments.findAll_Post);
+
+      if (response.ok === false) {
+        setStatus(`Error: ${response.status} - ${response.message}`);
+        setDialogOpen(true);
+        return;
+      }
 
       setResponseCode(response.status);
 
-      if (response.ok) {
+      if (response.status === 201) {
         setStatus('Payment created successfully!');
 
         resetForm();
-
         setRows(null);
-
         setUpdateSelect(true);
 
       } else {
-        setStatus(`Error: ${data.title || 'Failed to create Payment'} - ${data.detail || ''}`);
+        setStatus(`Error: ${response.title || 'Failed to create Payment'} - ${response.detail || ''}`);
       }
     } catch (error) {
-      setStatus(`Error: ${error.message || 'Failed to create Payment'}`);
+      setStatus(`Error: ${error || 'Failed to create Payment'}`);
     }
     setSubmitting(false);
     setDialogOpen(true);

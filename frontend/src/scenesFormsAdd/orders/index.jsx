@@ -18,7 +18,7 @@ import OrdersAddFormInputs from "../../components/formInputs/OrdersAdd";
 import OrdersDetailsFormInputs from "../../components/formInputs/OrdersDetails";
 import dayjs from 'dayjs';
 import OperationStatusDialog from "../../components/dialogs/OperationStatusDialog"
-import PostForms from "../../components/formsRequests/PostForms";
+import usePostForms from "../../components/formsRequests/PostForms";
 
 const currentTime = dayjs();
 let tomorrow = dayjs().add(1, 'day');
@@ -68,6 +68,7 @@ const FormAddOrders = () => {
   const ordersFormikValuesRef = useRef(null);
   const setOrdersFieldValueRef = useRef(null);
   const [lineCounter, setLineCounter] = useState(0);
+  const { fetchPost } = usePostForms();
 
   const [dataProductIdNameQuantityInStock, setDataProductIdNameQuantityInStock] = useState(null);
   const [dataCustomersIdNameCreditLimit, setDataCustomersIdNameCreditLimit] = useState(null);
@@ -207,10 +208,17 @@ const FormAddOrders = () => {
 
     try {
 
-      const response = await PostForms(formattedValues, url.orders.findAll_Post);
+      const response = await fetchPost(formattedValues, url.orders.findAll_Post);
+
+      if (response.ok === false) {
+        setStatus(`Error: ${response.status} - ${response.message}`);
+        setDialogOpen(true);
+        return;
+      }
+
       const data = await response.json();
 
-      if (response.ok) {
+      if (response.status === 201) {
         setStatus(`Order ${data.id} created successfully!`);
 
         const responseOrderId = data.id;
@@ -227,7 +235,7 @@ const FormAddOrders = () => {
         setLineCounter(0);
         resetForm();
       } else {
-        setStatus(`Error: ${data.title || 'Failed to create Order'} - ${data.detail || ''}`);
+        setStatus(`Error: ${response.title || 'Failed to create Order'} - ${response.detail || ''}`);
       }
     } catch (error) {
       setStatus(`Error: ${error.message || 'Failed to create Order'}`);
@@ -243,9 +251,9 @@ const FormAddOrders = () => {
 
     try {
 
-      const response = await PostForms(rowsUpdate, url.orderdetails.Post);
+      const response = await fetchPost(rowsUpdate, url.orderdetails.Post);
 
-      if (response.ok) {
+      if (response.status === 201) {
         setStatus((prevString) => prevString + " Order Details created sucessfully!");
       } else {
         setStatus((prevString) => prevString + " " + response);
