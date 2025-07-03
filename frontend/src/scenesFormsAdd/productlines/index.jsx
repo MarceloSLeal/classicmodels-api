@@ -11,6 +11,7 @@ import ProductLinesFormInputAdd from "../../components/formInputs/ProductLinesAd
 import Header from "../../components/Header";
 import { Urls } from "../../api/Paths";
 import OperationStatusDialog from "../../components/dialogs/OperationStatusDialog"
+import { useRefreshToken } from "../../auth/RefreshToken";
 
 const initialValues = {
   productLine: "",
@@ -62,10 +63,9 @@ const FormAddProductLines = () => {
   const [status, setStatus] = useState('');
   const resetImageRef = useRef(null);
   const [imageChanged, setImageChanged] = useState(false);
+  const refreshToken = useRefreshToken();
 
-  const handleFormSubmit = async (values, { setSubmitting, resetForm }) => {
-    setStatus('');
-    setResponseCode(null);
+  const submitFormData = async (values) => {
 
     const formData = new FormData();
 
@@ -84,19 +84,29 @@ const FormAddProductLines = () => {
     //   console.log(`${pair[0]}:`, pair[1]);
     // }
 
+    const response = await fetch(url.productlines.findAll_Post, {
+      method: 'POST',
+      credentials: "include",
+      body: formData,
+    });
+
+    return response;
+  }
+
+  const handleFormSubmit = async (values, { setSubmitting, resetForm }) => {
+    setStatus('');
+    setResponseCode(null);
+
     try {
-      const response = await fetch(url.productlines.findAll_Post, {
-        method: 'POST',
-        credentials: "include",
-        body: formData,
-      });
+      let response = await submitFormData(values);
 
-      //Não poderei usar esse componete
-      //ele usa o cabeçalho 'Content-Type': 'Application/json'
-      //que eu não posso usar nesse formulário
-      // const response = await PostForms(formData, url.productlines.findAll_Post);
-      const data = await response.json();
+      if (response.status === 403) {
+        console.warn("Token. Attempting to refresh...");
+        await refreshToken();
+        response = await submitFormData(values);
+      }
 
+      // const data = await response.json();
       setResponseCode(response.status);
 
       if (response.ok) {
@@ -104,10 +114,14 @@ const FormAddProductLines = () => {
         resetForm();
         if (resetImageRef.current) resetImageRef.current();
       } else {
-        setStatus(`Error else: ${data.title || 'Failed to create Product Line'} - ${data.detail || ''}`);
+        setStatus(`Error else: ${response.title || 'Failed to create Product Line'} - ${response.detail || ''}`);
       }
     } catch (error) {
-      setStatus(`Error: ${error.message || 'Failed to create Product Line'}`);
+      if (error instanceof TypeError) {
+        setStatus("Error: CONNECTION_REFUSED Can't connect to server");
+      }
+      setStatus(`Error: UNKNOWN_ERROR - ${error.message}`);
+      // setDialogOpen(true);
     }
     setSubmitting(false);
     setDialogOpen(true);
