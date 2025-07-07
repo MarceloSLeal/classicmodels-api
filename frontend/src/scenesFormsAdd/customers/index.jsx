@@ -72,6 +72,12 @@ const FormAddCustomer = () => {
         return;
       }
 
+      console.log("response tittle:", response.title);
+      console.log("response detail:", response.detail);
+      console.log("response:", response);
+      //mudar o response.title para response.status 
+      //e mudar o response.detail para response.statusText
+
       setResponseCode(response.status);
 
       if (response.status === 201) {
