@@ -211,7 +211,7 @@ const FormAddOrders = () => {
       const response = await fetchPost(formattedValues, url.orders.findAll_Post);
 
       if (response.ok === false) {
-        setStatus(`Error: ${response.status} - ${response.message}`);
+        setStatus(`Error: ${response.status} - ${response.statusText}`);
         setDialogOpen(true);
         return;
       }
@@ -235,7 +235,7 @@ const FormAddOrders = () => {
         setLineCounter(0);
         resetForm();
       } else {
-        setStatus(`Error: ${response.title || 'Failed to create Order'} - ${response.detail || ''}`);
+        setStatus(`Error: ${response.status || 'Failed to create Order'} - ${response.statusText || ''}`);
       }
     } catch (error) {
       setStatus(`Error: ${error.message || 'Failed to create Order'}`);

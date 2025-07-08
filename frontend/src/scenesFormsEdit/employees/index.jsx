@@ -68,7 +68,7 @@ const FormEditEmployee = () => {
         setStatus(`Error: ${data.title || 'Failed to update Employee'} - ${data.detail || ''}`);
       }
     } catch (error) {
-      setStatus(`Error: ${error.message || 'Failed to update Employee'}`);
+      setStatus(`Error: ${error || 'Failed to update Employee'}`);
     }
     setSubmitting(false);
     setDialogOpen(true);

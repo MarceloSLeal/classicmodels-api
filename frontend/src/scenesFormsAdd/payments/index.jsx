@@ -82,7 +82,7 @@ const FormAddPayments = () => {
       const response = await fetchPost(valuesToSubmit, url.payments.findAll_Post);
 
       if (response.ok === false) {
-        setStatus(`Error: ${response.status} - ${response.message}`);
+        setStatus(`Error: ${response.status} - ${response.statusText}`);
         setDialogOpen(true);
         return;
       }
@@ -97,7 +97,7 @@ const FormAddPayments = () => {
         setUpdateSelect(true);
 
       } else {
-        setStatus(`Error: ${response.title || 'Failed to create Payment'} - ${response.detail || ''}`);
+        setStatus(`Error: ${response.status || 'Failed to create Payment'} - ${response.statusText || ''}`);
       }
     } catch (error) {
       setStatus(`Error: ${error || 'Failed to create Payment'}`);

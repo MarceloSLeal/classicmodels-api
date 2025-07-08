@@ -67,16 +67,10 @@ const FormAddCustomer = () => {
       const response = await fetchPost(values, url.customers.findAll_Post);
 
       if (response.ok === false) {
-        setStatus(`Error: ${response.status} - ${response.message}`);
+        setStatus(`Error: ${response.status} - ${response.statusText}`);
         setDialogOpen(true);
         return;
       }
-
-      console.log("response tittle:", response.title);
-      console.log("response detail:", response.detail);
-      console.log("response:", response);
-      //mudar o response.title para response.status 
-      //e mudar o response.detail para response.statusText
 
       setResponseCode(response.status);
 
@@ -84,7 +78,7 @@ const FormAddCustomer = () => {
         setStatus('Customer created successfully!');
         setResetFormFn(() => resetForm);
       } else {
-        setStatus(`Error: ${response.title || 'Failed to create Customer'} - ${response.detail || ''}`);
+        setStatus(`Error: ${response.status || 'Failed to create Customer'} - ${response.statusText || ''}`);
       }
 
     } catch (error) {

@@ -106,7 +106,6 @@ const FormAddProductLines = () => {
         response = await submitFormData(values);
       }
 
-      // const data = await response.json();
       setResponseCode(response.status);
 
       if (response.ok) {
@@ -114,14 +113,13 @@ const FormAddProductLines = () => {
         resetForm();
         if (resetImageRef.current) resetImageRef.current();
       } else {
-        setStatus(`Error else: ${response.title || 'Failed to create Product Line'} - ${response.detail || ''}`);
+        setStatus(`Error else: ${response.status || 'Failed to create Product Line'} - ${response.statusText || ''}`);
       }
     } catch (error) {
       if (error instanceof TypeError) {
         setStatus("Error: CONNECTION_REFUSED Can't connect to server");
       }
       setStatus(`Error: UNKNOWN_ERROR - ${error.message}`);
-      // setDialogOpen(true);
     }
     setSubmitting(false);
     setDialogOpen(true);

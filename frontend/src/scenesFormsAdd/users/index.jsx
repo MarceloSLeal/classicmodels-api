@@ -44,7 +44,7 @@ const FormAddUser = () => {
       const response = await fetchPost(values, url.auth.register_Post);
 
       if (response.ok === false) {
-        setStatus(`Error: ${response.status} - ${response.message}`);
+        setStatus(`Error: ${response.status} - ${response.statusText}`);
         setDialogOpen(true);
         return;
       }
@@ -55,7 +55,7 @@ const FormAddUser = () => {
         setStatus("User created successfully");
         setResetFormFn(() => resetForm);
       } else {
-        setStatus(`Error if: ${response.title || 'Failed to Create User'} - ${response.detail || ''}`);
+        setStatus(`Error if: ${response.title || 'Failed to Create User'} - ${response.statusText || ''}`);
       }
     } catch (error) {
       setStatus(`Error: ${error || 'Failed to create User'}`);

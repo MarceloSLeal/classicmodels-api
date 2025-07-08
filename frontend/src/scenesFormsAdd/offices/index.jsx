@@ -63,7 +63,7 @@ const FormAddOffices = () => {
         setStatus('Office created successfully');
         setResetFormFn(() => resetForm);
       } else {
-        setStatus(`Error: ${response.title || 'Failed to create Office'} - ${response.detail || ''}`);
+        setStatus(`Error: ${response.status || 'Failed to create Office'} - ${response.statusText || ''}`);
       }
 
     } catch (error) {

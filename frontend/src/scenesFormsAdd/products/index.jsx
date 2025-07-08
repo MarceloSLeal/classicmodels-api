@@ -54,7 +54,7 @@ const FormAddProducts = () => {
       const response = await fetchPost(values, url.products.findAll_Post);
 
       if (response.ok === false) {
-        setStatus(`Error: ${response.status} - ${response.message}`);
+        setStatus(`Error: ${response.status} - ${response.statusText}`);
         setDialogOpen(true);
         return;
       }
@@ -65,7 +65,7 @@ const FormAddProducts = () => {
         setStatus('Product created successfully!');
         setResetFormFn(() => resetForm);
       } else {
-        setStatus(`Error: ${respone.title || 'Failed to create Product'} - ${response.detail || ''}`);
+        setStatus(`Error: ${response.status || 'Failed to create Product'} - ${response.statusText || ''}`);
       }
     } catch (error) {
       setStatus(`Error: ${error || 'Failed to create Product'}`);

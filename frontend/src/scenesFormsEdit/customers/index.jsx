@@ -14,7 +14,7 @@ import Header from "../../components/Header";
 import { Urls } from "../../api/Paths";
 import FormListCalls from "../../components/FormsListCalls";
 import OperationStatusDialog from "../../components/dialogs/OperationStatusDialog"
-import PutForms from "../../components/formsRequests/PutForms";
+import usePutForms from "../../components/formsRequests/PutForms";
 
 const phoneRegExp = /^((\+[1-9]{1,4}[ -]?)|(\([0-9]{2,3}\)[ -]?)|([0-9]{2,4})[ -]?)*?[0-9]{3,4}[ -]?[0-9]{3,4}$/;
 const customersSchema = yup.object().shape({
@@ -25,13 +25,14 @@ const customersSchema = yup.object().shape({
   phone: yup
     .string()
     .matches(phoneRegExp, "Phone number is not valid")
+    .max(50)
     .required(),
   addressLine1: yup.string().max(50).required(),
   addressLine2: yup.string().max(50),
   city: yup.string().max(50).required(),
   state: yup.string().max(50),
   postalCode: yup.string().max(15),
-  country: yup.string().max(51).required(),
+  country: yup.string().max(50).required(),
   creditLimit: yup.number().positive().max(999999.99).required(),
   employeeId: yup.number().positive(),
 });
@@ -45,6 +46,7 @@ const FormEditCustomer = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [status, setStatus] = useState('');
   const navigate = useNavigate();
+  const { fetchPut } = usePutForms();
 
   const [dataEmployeeIdNameList, setDataEmployeeIdNameList] = useState(null);
 
@@ -66,18 +68,27 @@ const FormEditCustomer = () => {
     setResponseCode(null);
     try {
 
-      const response = await PutForms(values, url.customers.findById_Put_Delete);
-      const data = await response.json();
+      console.log("antes do PUT");
+
+      const response = await fetchPut(values, url.customers.findById_Put_Delete);
+      // const data = await response.json();
+      
+      if (response.ok === false) {
+        setStatus(`Error: ${response.status} - ${response.statusText}`);
+        setDialogOpen(true);
+        return;
+      }
 
       setResponseCode(response.status);
 
       if (response.ok) {
         setStatus('Customer updated successfully!');
       } else {
-        setStatus(`Error: ${data.title || 'Failed to update Customer'} - ${data.detail || ''}`);
+        setStatus(`Error: ${response.status || 'Failed to update Customer'} - ${response.statusText || ''}`);
       }
+
     } catch (error) {
-      setStatus(`Error: ${error.message || 'Failed to update Customer'}`);
+      setStatus(`Error: ${error || 'Failed to update Customer'}`);
     }
     setSubmitting(false);
     setDialogOpen(true);

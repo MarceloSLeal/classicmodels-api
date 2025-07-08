@@ -57,7 +57,7 @@ const FormAddEmployee = () => {
       const response = await fetchPost(values, url.employees.findAll_Post);
 
       if (response.ok === false) {
-        setStatus(`Error: ${response.status} - ${response.message}`);
+        setStatus(`Error: ${response.status} - ${response.statusText}`);
         setDialogOpen(true);
         return;
       }
@@ -68,7 +68,7 @@ const FormAddEmployee = () => {
         setStatus('Employee created successfully!');
         setResetFormFn(() => resetForm);
       } else {
-        setStatus(`Error: ${response.title || 'Failed to create Employee'} - ${response.detail || ''}`);
+        setStatus(`Error: ${response.status || 'Failed to create Employee'} - ${response.statusText || ''}`);
       }
 
     } catch (error) {

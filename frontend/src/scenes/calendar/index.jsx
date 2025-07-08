@@ -182,12 +182,10 @@ const Calendar = () => {
         return true;
       }
 
-      const data = await response.json();
-
       setResponseCode(response.status);
 
       if (response.status !== 201) {
-        setStatus(`Error: ${data.tittle || 'Failed to create event'} - ${data.detail || ''}`);
+        setStatus(`Error: ${response.status || 'Failed to create event'} - ${response.statusText || ''}`);
         setDialogOpen(true);
         return false;
       }
