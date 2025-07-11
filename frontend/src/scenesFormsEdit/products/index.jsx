@@ -14,7 +14,7 @@ import Header from "../../components/Header";
 import { Urls } from "../../api/Paths";
 import FormListCalls from "../../components/FormsListCalls";
 import OperationStatusDialog from "../../components/dialogs/OperationStatusDialog"
-import PutForms from "../../components/formsRequests/PutForms";
+import usePutForms from "../../components/formsRequests/PutForms";
 
 const productsSchema = yup.object().shape({
   name: yup.string().max(70).required(),
@@ -36,6 +36,7 @@ const FormEditProducts = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [status, setStatus] = useState('');
   const navigate = useNavigate();
+  const { fetchPut } = usePutForms();
 
   const [dataProductLine, setDataProductLine] = useState(null);
 
@@ -55,18 +56,23 @@ const FormEditProducts = () => {
     setResponseCode(null);
     try {
 
-      const response = await PutForms(values, url.products.put_Delete);
-      const data = await response.json();
+      const response = await fetchPut(values, url.products.put_Delete);
+
+      if (response.ok === false) {
+        setStatus(`Error: ${response.status} - ${response.statusText}`);
+        setDialogOpen(true);
+        return;
+      }
 
       setResponseCode(response.status);
 
       if (response.ok) {
         setStatus('Product updated successfully!');
       } else {
-        setStatus(`Error: ${data.title || 'Failed to update Product'} - ${data.detail || ''}`);
+        setStatus(`Error: ${response.status || 'Failed to update Product'} - ${response.statusText || ''}`);
       }
     } catch (error) {
-      setStatus(`Error: ${error.message || 'Failed to update Product'}`);
+      setStatus(`Error: ${error || 'Failed to update Product'}`);
     }
     setSubmitting(false);
     setDialogOpen(true);

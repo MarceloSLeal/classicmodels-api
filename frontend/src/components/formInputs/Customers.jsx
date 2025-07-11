@@ -1,6 +1,6 @@
 import { TextField, FormControl, InputLabel, Select, MenuItem } from "@mui/material";
 
-const CustomersFormInputs = ({ rowData, handleBlur, handleChange, values,
+const CustomersFormInputs = ({ handleBlur, handleChange, values,
   touched, errors, isEdit, setFieldValue, dataEmployeeIdNameList }) => {
 
   const isEmployeeIdValid = dataEmployeeIdNameList
@@ -15,7 +15,7 @@ const CustomersFormInputs = ({ rowData, handleBlur, handleChange, values,
           variant="filled"
           type="text"
           label="Id"
-          value={rowData.id}
+          value={values.id}
           name="id"
           sx={{ gridColumn: "span 1" }}
         />

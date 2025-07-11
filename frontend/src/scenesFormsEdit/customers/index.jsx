@@ -34,7 +34,7 @@ const customersSchema = yup.object().shape({
   postalCode: yup.string().max(15),
   country: yup.string().max(50).required(),
   creditLimit: yup.number().positive().max(999999.99).required(),
-  employeeId: yup.number().positive(),
+  employeeId: yup.number().positive().nullable(),
 });
 
 const FormEditCustomer = () => {
@@ -68,11 +68,8 @@ const FormEditCustomer = () => {
     setResponseCode(null);
     try {
 
-      console.log("antes do PUT");
-
       const response = await fetchPut(values, url.customers.findById_Put_Delete);
-      // const data = await response.json();
-      
+
       if (response.ok === false) {
         setStatus(`Error: ${response.status} - ${response.statusText}`);
         setDialogOpen(true);
@@ -124,7 +121,7 @@ const FormEditCustomer = () => {
 
               <Divider sx={{ gridColumn: "span 5" }} />
 
-              <CustomersFormInputs rowData={rowData} handleBlur={handleBlur}
+              <CustomersFormInputs handleBlur={handleBlur}
                 handleChange={handleChange} values={values} touched={touched}
                 errors={errors} isEdit={true} setFieldValue={setFieldValue}
                 dataEmployeeIdNameList={dataEmployeeIdNameList} />

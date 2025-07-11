@@ -14,7 +14,7 @@ import Header from "../../components/Header";
 import { Urls } from "../../api/Paths";
 import OperationStatusDialog from "../../components/dialogs/OperationStatusDialog"
 import { Constants } from "../../data/constants";
-import PutForms from "../../components/formsRequests/PutForms";
+import usePutForms from "../../components/formsRequests/PutForms";
 
 const commentsRegex = /^[\p{L}\p{N}\s.,!?'"()-]+$/u;
 const ordersSchema = yup.object().shape({
@@ -38,6 +38,7 @@ const FormEditOrders = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [status, setStatus] = useState('');
   const navigate = useNavigate();
+  const { fetchPut } = usePutForms();
 
   const initialValues = {
     id: rowData.id,
@@ -49,24 +50,28 @@ const FormEditOrders = () => {
     customerId: rowData.customerId,
   }
 
-  const handleFormSubmit = async (submitValues, { setSubmitting }) => {
-
+  const handleFormSubmit = async (values, { setSubmitting }) => {
     setStatus('');
     setResponseCode(null);
     try {
 
-      const response = await PutForms(submitValues, url.orders.findById_Put_Delete);
-      const data = await response.json();
+      const response = await fetchPut(values, url.orders.findById_Put_Delete);
+
+      if (response.ok === false) {
+        setStatus(`Error: ${response.status} - ${response.statusText}`);
+        setDialogOpen(true);
+        return;
+      }
 
       setResponseCode(response.status);
 
       if (response.ok) {
         setStatus('Order updated successfully!');
       } else {
-        setStatus(`Error: ${data.title || 'Failed to update Order'} - ${data.detail || ''}`);
+        setStatus(`Error: ${response.status || 'Failed to update Order'} - ${response.statusText || ''}`);
       }
     } catch (error) {
-      setStatus(`Error: ${error.message || 'Failed to update Order'}`);
+      setStatus(`Error: ${error || 'Failed to update Order'}`);
     }
     setSubmitting(false);
     setDialogOpen(true);

@@ -12,14 +12,14 @@ import { useNavigate } from "react-router-dom";
 import Header from "../../components/Header";
 import { Urls } from "../../api/Paths";
 import OperationStatusDialog from "../../components/dialogs/OperationStatusDialog"
-import PutForms from "../../components/formsRequests/PutForms";
+import usePutForms from "../../components/formsRequests/PutForms";
 
 const phoneRegExp = /^((\+[1-9]{1,4}[ -]?)|(\([0-9]{2,3}\)[ -]?)|([0-9]{2,4})[ -]?)*?[0-9]{3,4}[ -]?[0-9]{3,4}$/;
 
 const officesSchema = yup.object().shape({
   city: yup.string().max(50).required(),
   country: yup.string().max(50).required(),
-  state: yup.string().max(50),
+  state: yup.string().max(50).nullable(),
   phone: yup
     .string()
     .matches(phoneRegExp, "Phone number is not valid")
@@ -41,6 +41,7 @@ const FormEditOffices = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [status, setStatus] = useState('');
   const navigate = useNavigate();
+  const { fetchPut } = usePutForms();
 
   const initialValues = {
     id: rowData.id, city: rowData.city, country: rowData.country,
@@ -54,18 +55,23 @@ const FormEditOffices = () => {
     setResponseCode(null);
     try {
 
-      const response = await PutForms(values, url.offices.findById_Put_Delete);
-      const data = await response.json();
+      const response = await fetchPut(values, url.offices.findById_Put_Delete);
+
+      if (response.ok == false ) {
+        setStatus(`Error: ${response.status} - ${response.statusText}`);
+        setDialogOpen(true);
+        return;
+      }
 
       setResponseCode(response.status);
 
       if (response.ok) {
         setStatus('Office updated successfully!');
       } else {
-        setStatus(`Error: ${data.title || 'Failed to update Office'} - ${data.detail || ''}`);
+        setStatus(`Error: ${response.status || 'Failed to update Office'} - ${response.statusText || ''}`);
       }
     } catch (error) {
-      setStatus(`Error: ${error.message || 'Failed to update Office'}`);
+      setStatus(`Error: ${error || 'Failed to update Office'}`);
     }
     setSubmitting(false);
     setDialogOpen(true);

@@ -13,6 +13,7 @@ import { useNavigate } from "react-router-dom";
 import Header from "../../components/Header";
 import { Urls } from "../../api/Paths";
 import OperationStatusDialog from "../../components/dialogs/OperationStatusDialog"
+import { useRefreshToken } from "../../auth/RefreshToken";
 
 const MAX_FILE_SIZE = 200 * 1024;
 
@@ -71,6 +72,7 @@ const FormEditProductLines = () => {
   const resetImageRef = useRef(null);
   const navigate = useNavigate();
   const [imageChanged, setImageChanged] = useState(false);
+  const refreshToken = useRefreshToken();
 
   const initialValues = {
     productLine: rowData.productLine,
@@ -79,10 +81,8 @@ const FormEditProductLines = () => {
     image: rowData?.image || "",
   };
 
-  const handleFormSubmit = async (values, { setSubmitting }) => {
+  const submitFormData = async (values) => {
 
-    setStatus('');
-    setResponseCode(null);
 
     const formData = new FormData();
 
@@ -100,16 +100,31 @@ const FormEditProductLines = () => {
     //   console.log(key, value);
     // }
 
-    try {
       const response = await fetch(url.productlines.findByProductLine_Put_Delete, {
         method: 'PUT',
         credentials: 'include',
         body: formData,
       });
 
-      let data;
-      const contentType = response.headers.get("content-type");
+    return response;
+  }
 
+  const handleFormSubmit = async (values, { setSubmitting }) => {
+    setStatus('');
+    setResponseCode(null);
+
+    try {
+
+      let response = await submitFormData(values);
+      let data;
+
+      if (response.status === 403) {
+        console.warn("Token. Attempting to refresh...");
+        await refreshToken();
+        response = await submitFormData(values);
+      }
+
+      const contentType = response.headers.get("content-type");
       setResponseCode(response.status);
 
       if (contentType && contentType.includes("application/json")) {

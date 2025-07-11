@@ -14,7 +14,7 @@ import { Urls } from "../../api/Paths";
 import FormListCalls from "../../components/FormsListCalls";
 import { Constants } from "../../data/constants";
 import OperationStatusDialog from "../../components/dialogs/OperationStatusDialog"
-import PutForms from "../../components/formsRequests/PutForms";
+import usePutForms from "../../components/formsRequests/PutForms";
 
 const employeeSchema = yup.object().shape({
   lastName: yup.string().max(50).required(),
@@ -45,6 +45,7 @@ const FormEditEmployee = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [status, setStatus] = useState('');
   const navigate = useNavigate();
+  const { fetchPut } = usePutForms();
 
   const initialValues = {
     id: rowData.id, lastName: rowData.lastName, firstName: rowData.firstName,
@@ -57,15 +58,20 @@ const FormEditEmployee = () => {
     setResponseCode(null);
     try {
 
-      const response = await PutForms(values, url.employees.findById_Put_Delete);
-      const data = await response.json();
+      const response = await fetchPut(values, url.employees.findById_Put_Delete);
+
+      if (response.ok === false) {
+        setStatus(`Error: ${response.status} - ${response.statusText}`);
+        setDialogOpen(true);
+        return;
+      }
 
       setResponseCode(response.status);
 
       if (response.ok) {
         setStatus('Employee updated successfully!');
       } else {
-        setStatus(`Error: ${data.title || 'Failed to update Employee'} - ${data.detail || ''}`);
+        setStatus(`Error: ${response.status || 'Failed to update Employee'} - ${response.statusText || ''}`);
       }
     } catch (error) {
       setStatus(`Error: ${error || 'Failed to update Employee'}`);
