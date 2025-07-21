@@ -2,6 +2,7 @@ package com.classicmodels.domain.repository.charts;
 
 import com.classicmodels.api.model.charts.PieChartProjection;
 import com.classicmodels.domain.model.Customer;
+import com.classicmodels.domain.model.charts.PieChart;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -9,7 +10,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface PieChartRepository extends JpaRepository<Customer, Long> {
+public interface PieChartRepository extends JpaRepository<PieChart, String> {
 
     @Query( value="SELECT" +
             " c.country as id, c.country as label," +

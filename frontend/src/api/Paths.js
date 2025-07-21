@@ -72,6 +72,9 @@ export const Urls = (param) => ({
       calendar: {
         findAll_Post: `${prefix}calendar`,
         put_Delete: `${prefix}calendar/${param}`,
+      },
+      charts: {
+        piechart: `${prefix}charts/pie`,
       }
     }
   )
