@@ -2,7 +2,6 @@ import React, { useMemo } from "react";
 import { ResponsivePie } from "@nivo/pie";
 import { tokens } from "../theme";
 import { useTheme } from "@mui/material";
-// import { mockPieData as data } from "../data/mockDataPieChart";
 
 import useFetchData from "../api/getData";
 import { Urls } from "../api/Paths";
@@ -22,8 +21,6 @@ const PieChart = () => {
       value: item.totalOrdered,
     }));
   }, [data]);
-
-  console.log("PieChart data:", pieData);
 
   return (
     <ResponsivePie

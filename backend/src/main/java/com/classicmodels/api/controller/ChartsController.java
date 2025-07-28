@@ -2,7 +2,6 @@ package com.classicmodels.api.controller;
 
 import com.classicmodels.api.model.charts.PieChartProjection;
 import com.classicmodels.domain.repository.charts.PieChartRepository;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
