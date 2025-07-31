@@ -1,19 +1,38 @@
+import React, { useState, useEffect } from 'react';
 import { useTheme } from "@mui/material";
 import { ResponsiveBar } from "@nivo/bar";
 import { tokens } from "../theme";
-import { mockBarData as data } from "../data/mockDataBarChart";
+
+import useFetchData from "../api/getData";
+import { Urls } from "../api/Paths";
 
 const BarChart = ({ isDashboard = false }) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
+  const urlData = Urls();
+  const { data } = useFetchData(urlData.charts.barchart);
+  const [productKeys, setProductKeys] = useState([]);
+  const [chartData, setChartData] = useState([]);
 
-  const productKeys = ["product1", "burger", "sandwich", "kebab", "fries", "donut"];
+  useEffect(() => {
+    if (data && Array.isArray(data)) {
+      const keys = Array.from(
+        new Set(data.flatMap(entry => Object.keys(entry.products ?? {})))
+      );
+      setProductKeys(keys);
+
+      const formatted = data.map(entry => ({
+        country: entry.country,
+        ...entry.products
+      }));
+      setChartData(formatted);
+    }
+  }, [data]);
 
   return (
     <ResponsiveBar
-      data={data}
+      data={chartData}
       theme={{
-        // added
         axis: {
           domain: {
             line: {
@@ -83,7 +102,7 @@ const BarChart = ({ isDashboard = false }) => {
         tickSize: 5,
         tickPadding: 5,
         tickRotation: 0,
-        legend: isDashboard ? undefined : "country", // changed
+        legend: isDashboard ? undefined : "Country", // changed
         legendPosition: "middle",
         legendOffset: 32,
       }}
@@ -91,7 +110,7 @@ const BarChart = ({ isDashboard = false }) => {
         tickSize: 5,
         tickPadding: 5,
         tickRotation: 0,
-        legend: isDashboard ? undefined : "food", // changed
+        legend: isDashboard ? undefined : "Products", // changed
         legendPosition: "middle",
         legendOffset: -40,
       }}
@@ -108,7 +127,7 @@ const BarChart = ({ isDashboard = false }) => {
           anchor: "bottom-right",
           direction: "column",
           justify: false,
-          translateX: 120,
+          translateX: 70,
           translateY: 0,
           itemsSpacing: 2,
           itemWidth: 100,

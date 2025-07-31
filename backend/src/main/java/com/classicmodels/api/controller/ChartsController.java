@@ -4,27 +4,26 @@ import com.classicmodels.api.model.charts.PieChartProjection;
 import com.classicmodels.domain.model.charts.BarChart;
 import com.classicmodels.domain.repository.charts.BarChartRepository;
 import com.classicmodels.domain.repository.charts.PieChartRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/charts")
 @CrossOrigin(origins = "${CONTROLLERS_CROSS_ORIGIN}")
 public class ChartsController {
 
     @Autowired
-    private PieChartRepository pieChartRepository;
+    private final PieChartRepository pieChartRepository;
 
     @Autowired
-    private BarChartRepository barChartRepository;
+    private final BarChartRepository barChartRepository;
 
     @GetMapping("/pie")
     public List<PieChartProjection> listar() {

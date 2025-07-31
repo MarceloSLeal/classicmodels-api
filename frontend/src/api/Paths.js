@@ -75,6 +75,7 @@ export const Urls = (param) => ({
       },
       charts: {
         piechart: `${prefix}charts/pie`,
+        barchart: `${prefix}charts/bar`,
       }
     }
   )
