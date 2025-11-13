@@ -40,8 +40,6 @@ const Login = () => {
       const response = await fetchPost(values, url.auth.login_Post);
       const data = await response.json;
 
-      console.log(response);
-
       if (response.badRequest) {
         setDialogOpen(true);
         setResponseCode(response.status);
@@ -56,10 +54,16 @@ const Login = () => {
 
       navigateDashBoard("/");
 
+
+
+      console.log("login form data:", data)
+      console.log("login form:", data.email, data.role);
+
     } catch (error) {
       setStatus(`Error: ${error || 'Failed to login'}`);
       setDialogOpen(true);
     }
+
   }
 
   const handleClose = () => {

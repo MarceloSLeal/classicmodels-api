@@ -10,9 +10,7 @@ import PersonOutlinedIcon from "@mui/icons-material/PersonOutlined";
 import CalendarTodayOutLinedIcon from "@mui/icons-material/CalendarTodayOutlined";
 import BarChartOutLinedIcon from "@mui/icons-material/BarChartOutlined";
 import PieChartOutlineOutlinedicon from "@mui/icons-material/PieChartOutlineOutlined";
-import TimelineOutLinedIcon from "@mui/icons-material/TimelineOutlined";
 import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
-import MapOutLinedIcon from "@mui/icons-material/MapOutlined";
 
 import PeopleAltOutlinedIcon from '@mui/icons-material/PeopleAltOutlined';
 import Person4OutlinedIcon from '@mui/icons-material/Person4Outlined';
@@ -48,6 +46,8 @@ const Sidebar = () => {
   const [selected, setSelected] = useState("Dashboard");
   const [user] = useState(() => localStorage.getItem("user") || "");
   const [role] = useState(() => localStorage.getItem("role") || "");
+
+  console.log("sidebar", user, role);
 
   return (
     <Box
@@ -89,7 +89,7 @@ const Sidebar = () => {
                 ml="15px"
               >
                 <Typography variant="h3" color={colors.grey[100]}>
-                  ADMINIS
+                  ADMIN
                 </Typography>
                 <IconButton onClick={() => setIsCollapsed(!isCollapsed)}>
                   <MenuOutlinedIcon />
@@ -267,24 +267,6 @@ const Sidebar = () => {
                 title="Pie Chart"
                 to="/pie"
                 icon={<PieChartOutlineOutlinedicon />}
-                selected={selected}
-                setSelected={setSelected}
-              />
-            </CustomTooltip>
-            <CustomTooltip title="Line Chart" isCollapsed={isCollapsed} X={60} Y={-50}>
-              <Item
-                title="Line Chart"
-                to="/line"
-                icon={<TimelineOutLinedIcon />}
-                selected={selected}
-                setSelected={setSelected}
-              />
-            </CustomTooltip>
-            <CustomTooltip title="Geography Chart" isCollapsed={isCollapsed} X={60} Y={-50}>
-              <Item
-                title="Geography Chart"
-                to="/geography"
-                icon={<MapOutLinedIcon />}
                 selected={selected}
                 setSelected={setSelected}
               />
