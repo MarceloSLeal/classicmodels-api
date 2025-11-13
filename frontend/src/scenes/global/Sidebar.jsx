@@ -47,8 +47,6 @@ const Sidebar = () => {
   const [user] = useState(() => localStorage.getItem("user") || "");
   const [role] = useState(() => localStorage.getItem("role") || "");
 
-  console.log("sidebar", user, role);
-
   return (
     <Box
       sx={{

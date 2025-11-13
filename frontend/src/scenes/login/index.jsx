@@ -38,7 +38,7 @@ const Login = () => {
     try {
 
       const response = await fetchPost(values, url.auth.login_Post);
-      const data = await response.json;
+      const data = await response.json();
 
       if (response.badRequest) {
         setDialogOpen(true);
@@ -53,11 +53,6 @@ const Login = () => {
       localStorage.setItem("role", data.role);
 
       navigateDashBoard("/");
-
-
-
-      console.log("login form data:", data)
-      console.log("login form:", data.email, data.role);
 
     } catch (error) {
       setStatus(`Error: ${error || 'Failed to login'}`);
