@@ -1,4 +1,6 @@
-import React, { useState, useEffect } from 'react';
+// import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
+
 import { useNavigate } from "react-router-dom";
 
 import { GridActionsCellItem } from "@mui/x-data-grid";
@@ -30,15 +32,29 @@ const Customers = () => {
   const navigateEdit = useNavigate();
   const { fetchDelete } = useDeleteScenes();
 
-  const handleEditDatagridButton = (params) => () => {
-    const rowData = params.row;
-    navigateEdit("/formeditcustomer", { state: { rowData } });
-  };
-  const handleDeleteDatagridButton = (params) => () => {
-    setIdDelete(params.id);
+  // const handleEditDatagridButton = (params) => () => {
+  //   const rowData = params.row;
+  //   navigateEdit("/formeditcustomer", { state: { rowData } });
+  // };
+  const handleEditDatagridButton = useCallback(
+    (params) => () => {
+      navigateEdit("/formeditcustomer", { state: { rowData: params.row } });
+    },
+    [navigateEdit]
+  );
 
-    setDialogConfirmOpen(true);
-  }
+  // const handleDeleteDatagridButton = (params) => () => {
+  //   setIdDelete(params.id);
+  //
+  //   setDialogConfirmOpen(true);
+  // }
+  const handleDeleteDatagridButton = useCallback(
+    (params) => () => {
+      setIdDelete(params.id);
+      setDialogConfirmOpen(true);
+    },
+    []
+  );
 
   const handleCloseConfirm = () => {
     setDialogConfirmOpen(false);
@@ -73,7 +89,17 @@ const Customers = () => {
     setDialogDeleteOpen(false);
   }
 
-  const GridActionTooltip = styled(({ className, ...props }) => (
+  // const GridActionTooltip = styled(({ className, ...props }) => (
+  //   <Tooltip {...props} classes={{ popper: className }} />
+  // ))(() => ({
+  //   [`& .${tooltipClasses.tooltip}`]: {
+  //     backgroundColor: colors.primary[400],
+  //     color: colors.primary[100],
+  //     fontSize: 15,
+  //     border: `1px solid ${colors.primary[100]}`,
+  //   },
+  // }));
+  const GridActionTooltip = useMemo(() => styled(({ className, ...props }) => (
     <Tooltip {...props} classes={{ popper: className }} />
   ))(() => ({
     [`& .${tooltipClasses.tooltip}`]: {
@@ -82,11 +108,61 @@ const Customers = () => {
       fontSize: 15,
       border: `1px solid ${colors.primary[100]}`,
     },
-  }));
+  })), [colors]);
 
-  const columns = [
+  // const columns = [
+  //   { field: "id", headerName: "ID", flex: 0.5 },
+  //   { field: "name", headerName: "NAME", flex: 1, cellClassName: "name-column--cell" },
+  //   { field: "email", headerName: "EMAIL", flex: 1 },
+  //   { field: "contactLastName", headerName: "CONT.LAST NAME", flex: 1 },
+  //   { field: "contactFirstName", headerName: "CONT.FIRST NAME", flex: 1 },
+  //   { field: "phone", headerName: "PHONE", flex: 1 },
+  //   { field: "addressLine1", headerName: "ADRESS1", flex: 1 },
+  //   { field: "addressLine2", headerName: "ADRESS2", flex: 1 },
+  //   { field: "city", headerName: "CITY", flex: 1 },
+  //   { field: "state", headerName: "STATE", flex: 1 },
+  //   { field: "postalCode", headerName: "P.CODE", flex: 1 },
+  //   { field: "country", headerName: "COUNTRY", flex: 1 },
+  //   { field: "creditLimit", headerName: "CREDIT", flex: 1 },
+  //   { field: "employeeId", headerName: "EMP.ID", flex: 1 },
+  //
+  //   {
+  //     field: 'actions',
+  //     type: 'actions',
+  //     headerName: 'ACTIONS',
+  //     width: 100,
+  //     cellClassName: 'actions',
+  //     getActions: (params) => {
+  //
+  //       return [
+  //
+  //         <GridActionTooltip title="Edit this Customer"
+  //           placement="bottom">
+  //           <GridActionsCellItem
+  //             icon={<EditIcon />}
+  //             label="Edit"
+  //             className="textPrimary"
+  //             onClick={handleEditDatagridButton(params)}
+  //             color="inherit"
+  //           />
+  //         </GridActionTooltip>,
+  //
+  //         <GridActionTooltip title="Delete this Customer"
+  //           placement="bottom">
+  //           <GridActionsCellItem
+  //             icon={<DeleteIcon />}
+  //             label="Delete"
+  //             onClick={handleDeleteDatagridButton(params)}
+  //             color="inherit"
+  //           />
+  //         </GridActionTooltip>,
+  //       ];
+  //     },
+  //   },
+  // ];
+  const columns = useMemo(() => [
     { field: "id", headerName: "ID", flex: 0.5 },
-    { field: "name", headerName: "NAME", flex: 1, cellClassName: "name-column--cell" },
+    { field: "name", headerName: "NAME", flex: 1 },
     { field: "email", headerName: "EMAIL", flex: 1 },
     { field: "contactLastName", headerName: "CONT.LAST NAME", flex: 1 },
     { field: "contactFirstName", headerName: "CONT.FIRST NAME", flex: 1 },
@@ -99,41 +175,34 @@ const Customers = () => {
     { field: "country", headerName: "COUNTRY", flex: 1 },
     { field: "creditLimit", headerName: "CREDIT", flex: 1 },
     { field: "employeeId", headerName: "EMP.ID", flex: 1 },
-
     {
       field: 'actions',
       type: 'actions',
       headerName: 'ACTIONS',
       width: 100,
-      cellClassName: 'actions',
-      getActions: (params) => {
+      getActions: (params) => [
+        <GridActionTooltip title="Edit this Customer" placement="bottom">
+          <GridActionsCellItem
+            icon={<EditIcon />}
+            label="Edit"
+            onClick={handleEditDatagridButton(params)}
+          />
+        </GridActionTooltip>,
 
-        return [
-
-          <GridActionTooltip title="Edit this Customer"
-            placement="bottom">
-            <GridActionsCellItem
-              icon={<EditIcon />}
-              label="Edit"
-              className="textPrimary"
-              onClick={handleEditDatagridButton(params)}
-              color="inherit"
-            />
-          </GridActionTooltip>,
-
-          <GridActionTooltip title="Delete this Customer"
-            placement="bottom">
-            <GridActionsCellItem
-              icon={<DeleteIcon />}
-              label="Delete"
-              onClick={handleDeleteDatagridButton(params)}
-              color="inherit"
-            />
-          </GridActionTooltip>,
-        ];
-      },
-    },
-  ];
+        <GridActionTooltip title="Delete this Customer" placement="bottom">
+          <GridActionsCellItem
+            icon={<DeleteIcon />}
+            label="Delete"
+            onClick={handleDeleteDatagridButton(params)}
+          />
+        </GridActionTooltip>,
+      ]
+    }
+  ], [
+    handleEditDatagridButton,
+    handleDeleteDatagridButton,
+    GridActionTooltip
+  ]);
 
 
   useEffect(() => {
